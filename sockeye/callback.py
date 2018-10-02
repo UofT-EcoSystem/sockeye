@@ -64,13 +64,13 @@ class TrainingMonitor(object):
         self.start_tic = time.time()
         self.summary_writer = None
         if use_tensorboard:
-            import tensorboard  # pylint: disable=import-error
+            import mxboard  # pylint: disable=import-error
             log_dir = os.path.join(output_folder, C.TENSORBOARD_NAME)
             if os.path.exists(log_dir):
                 logger.info("Deleting existing tensorboard log dir %s", log_dir)
                 shutil.rmtree(log_dir)
             logger.info("Logging training events for Tensorboard at '%s'", log_dir)
-            self.summary_writer = tensorboard.FileWriter(log_dir)
+            self.summary_writer = mxboard.SummaryWriter(log_dir)
         self.cp_decoder = cp_decoder
         self.ctx = mp.get_context('spawn') # type: ignore
         self.num_concurrent_decodes = num_concurrent_decodes
@@ -282,8 +282,9 @@ def write_tensorboard(summary_writer,
     :param metrics: Mapping of metric names to their values.
     :param checkpoint: Current checkpoint.
     """
-    from tensorboard.summary import scalar  # pylint: disable=import-error
+    import mxboard  # pylint: disable=import-error
+
     for name, value in metrics.items():
-        summary_writer.add_summary(
-            scalar(
-                name=name, scalar=value), global_step=checkpoint)
+        summary_writer.add_scalar(tag=name, value=value,
+                                  global_step=checkpoint)
+

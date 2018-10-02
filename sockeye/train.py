@@ -57,12 +57,17 @@ def none_if_negative(val):
 
 def _build_or_load_vocab(existing_vocab_path: Optional[str], data_paths: List[str], num_words: int,
                          word_min_count: int) -> Dict:
-    if existing_vocab_path is None:
-        vocabulary = vocab.build_from_paths(paths=data_paths,
-                                            num_words=num_words,
-                                            min_count=word_min_count)
-    else:
-        vocabulary = vocab.vocab_from_json(existing_vocab_path)
+    # if existing_vocab_path is None:
+    #     vocabulary = vocab.build_from_paths(paths=data_paths,
+    #                                         num_words=num_words,
+    #                                         min_count=word_min_count)
+    # else:
+    #     vocabulary = vocab.vocab_from_json(existing_vocab_path)
+    check_condition(existing_vocab_path is not None, 
+                    "Please provide the vocabulary files.")
+    vocabulary = vocab.build_from_paths(paths=[existing_vocab_path], 
+                                        num_words=num_words, 
+                                        min_count=word_min_count)
     return vocabulary
 
 
