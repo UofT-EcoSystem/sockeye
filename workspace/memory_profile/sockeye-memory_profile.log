@@ -6071,9 +6071,3 @@
 [INFO:sockeye.training] Training stopped
 [INFO:sockeye.training] Training finished. Best checkpoint: 0. Best validation perplexity: inf
 [INFO:sockeye.utils] Releasing GPU 0.
-executor_group:_bind_ith_exec begin
-executor_group:_bind_ith_exec begin
-executor_group:_bind_ith_exec begin
-executor_group:_bind_ith_exec begin
-executor_group:_bind_ith_exec begin
-executor_group:_bind_ith_exec begin
