@@ -1,3 +1,4 @@
 # Training Log
+*.log
 wmt16-de_en
 iwslt15-vi_en
