@@ -5,5 +5,5 @@ NMT Toolkit memory consumption.
 
 ## Acknowledgement
 
-Most works in this folder come from the research efforts made by **Abhishek Tiwari** in his 
-development of the MXNet memory profiler.
+Most works in this folder come from the research efforts made by **Abhishek Tiwari** from the 
+University of Toronto in his development of the MXNet memory profiler.
