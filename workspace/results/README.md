@@ -1,4 +1,4 @@
-# Memory Consumption Categorization
+# Sockeye Memory Profile
 
 This folder contains the analysis results of the [**Sockeye**](https://github.com/awslabs/sockeye) 
 NMT Toolkit memory consumption.
