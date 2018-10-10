@@ -5,11 +5,15 @@
                      developed by Abhishek Tiwari from the University of Toronto.
 """
 
-regex_dict = {
-    'rnn'               : 'RNN',
-    'embed'             : 'Embedding',
+
+operator_regex_dict = {
+    'encoder_birnn'     : 'Encoder RNN',
+    'decoder_rnn'       : 'Decoder RNN',
+    'source_embed'      : 'Source Embedding',
+    'target_embed'      : 'Target Embedding',
     'mul'               : 'Multiplication',
-    'rsqrt'             : 'Sqrt',
+    'rsqrt'             : 'Square Root',
+    'rminus'            : 'Minus',
     ':mean'             : 'Mean',
     'att'               : 'Attention',
     'split'             : 'Split',
@@ -41,23 +45,25 @@ regex_dict = {
     ':tile'             : 'Tile',
     ':id'               : 'Identity',
     ':fc'               : 'Fully Connected',
+    ':indexing'         : 'Indexing',
     '(data)'            : 'Data',
     '(source)'          : 'Source',
     '(target)'          : 'Target',
     '(target_label)'    : 'Target Label',
-    'workspace'         : 'Workspace',
+    # '_optimizer'        : 'Optimizer',
     'untagged'          : 'Unknown (From Python Side)',
     'warning!,ctx_source_unclear' : 'Unknown (From C++ side)',
 }
 
 
-def parse_memory_profile(memory_profile):
+def parse_memory_profile(memory_profile, regex_dict=operator_regex_dict):
     """
     Parse the memory profile
 
     :param memory_profile: Path to Memory Profile
+    :param regex_dict    : Dictionary of Regular Expression
     
-    :return None
+    :return Sorted Dictionary of Statistics
     """
     stats_dict = {}
 
@@ -83,7 +89,11 @@ def parse_memory_profile(memory_profile):
                             break
                 if regex_matched is False:
                     print("[INFO]: " "[Memory Profile Analyzer] " "Unknown Tag: %s" % words[6])
-    for regex in regex_dict:
-        if regex in stats_dict:
-            print("Regex: %15s\t,Memory Consumption: %7.2f\tMB, Entries: %5d" % \
-                (regex, stats_dict[regex][0] * 1.0 / 1e6, len(stats_dict[regex][1])))
+
+    sorted_stats_list = sorted(stats_dict.items(), key=lambda kv: kv[1][0], reverse=True)
+    
+    # for stats in sorted_stats_list:
+    #     print("Regex: %15s, Memory Consumption: %7.2f MB, Entries: %5d" % \
+    #         (stats[0], stats[1][0] * 1.0 / (1024 * 1024), len(stats[1][1])))
+
+    return sorted_stats_list
