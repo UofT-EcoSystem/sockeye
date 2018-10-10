@@ -10,7 +10,7 @@ regex_dict = {
     'embed'             : 'Embedding',
     'mul'               : 'Multiplication',
     'rsqrt'             : 'Sqrt',
-    'mean'              : 'Mean',
+    ':mean'             : 'Mean',
     'att'               : 'Attention',
     'split'             : 'Split',
     'logit'             : 'Logit',
@@ -23,8 +23,8 @@ regex_dict = {
     'zeros'             : 'Zero',
     'sum'               : 'Sum',
     'transpose'         : 'Transpose',
-    'dropout'           : 'Dropout',
-    'slice'             : 'Slice',
+    ':dropout'          : 'Dropout',
+    ':slice'            : 'Slice',
     'cnn'               : 'CNN Layer',
     'arange'            : 'Arange',
     'fullyconnected'    : 'FullyConnected',
@@ -38,8 +38,9 @@ regex_dict = {
     'conv'              : 'Convolutional Unit',
     'pool'              : 'Pooling',
     'bn'                : 'Batch Norm',
-    'id'                : 'Identity',
-    'fc'                : 'Fully Connected',
+    ':tile'             : 'Tile',
+    ':id'               : 'Identity',
+    ':fc'               : 'Fully Connected',
     '(data)'            : 'Data',
     '(source)'          : 'Source',
     '(target)'          : 'Target',
@@ -61,21 +62,28 @@ def parse_memory_profile(memory_profile):
     stats_dict = {}
 
     with open(memory_profile, 'r') as fin:
-        for line in fin.readline():
+        for line in fin:
+            line = line.rstrip()
             if 'Allocate' in line:
                 words = line.split(' ')
                 regex_matched = False
 
                 for regex in regex_dict:
                     if regex in words[6]:
+                        if regex_matched is True and 'workspace' not in words[6]:
+                            print("[WARNING]: " "%30s is considered match for another regex." % words[6])
+
                         regex_matched = True
 
                         if regex in stats_dict.keys():
                             stats_dict[regex][0] += float(words[2])
                             stats_dict[regex][1].append(words[6])
                         else:
-                            stats_dict[regex] = [ float(words[2]), [words[6]] ]
+                            stats_dict[regex] = [float(words[2]), [words[6]]]
                             break
-                    if regex_matched is False:
-                        print('UNKNOWN TAG:', words[6])    
-    print(stats_dict)
+                if regex_matched is False:
+                    print("[INFO]: " "[Memory Profile Analyzer] " "Unknown Tag: %s" % words[6])
+    for regex in regex_dict:
+        if regex in stats_dict:
+            print("Regex: %15s\t,Memory Consumption: %7.2f\tMB, Entries: %5d" % \
+                (regex, stats_dict[regex][0] * 1.0 / 1e6, len(stats_dict[regex][1])))

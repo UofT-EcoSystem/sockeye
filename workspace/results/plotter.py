@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """
     Author: Bojian Zheng (ArmageddonKnight@github)
     Description: This file plots the memory profile of the Sockeye NMT Toolkit.
@@ -7,9 +8,11 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
+from memory_profile_analysis import parse_memory_profile
+
 parser = argparse.ArgumentParser()
 
-parser.add_argument('memory_profile', help='Path to Memory Profile', type=str, default=None)
+parser.add_argument('--memory_profile', help='Path to Memory Profile', type=str, default=None)
 
 
 def plt_legend(handles, title, ncol=1):
@@ -87,8 +90,11 @@ def plt_breakdown(memory_profile, bar_width=0.3,
 
 if __name__ == "__main__":
     # setup the RC parameters
-    plt_rc_setup()
+    # plt_rc_setup()
 
-    plt_breakdown({'1' : 2, '3' : 4})
-    plt.tight_layout()
-    plt.savefig("sockeye-memory_profile-groundhog_iwslt15.png")
+    # plt_breakdown({'1' : 2, '3' : 4})
+    # plt.tight_layout()
+    # plt.savefig("sockeye-memory_profile-groundhog_iwslt15.png")
+    args = parser.parse_args()
+
+    parse_memory_profile(args.memory_profile)
