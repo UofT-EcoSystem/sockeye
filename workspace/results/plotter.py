@@ -3,16 +3,23 @@
     Description: This file plots the memory profile of the Sockeye NMT Toolkit.
 """
 
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('memory_profile', help='Path to Memory Profile', type=str, default=None)
 
 
 def plt_legend(handles, title, ncol=1):
     """
     Plot the legend in a separate figure.
+    
     :param handles: Legend Handles
     :param title  : Figure Title
     :param ncol   : Number of Columns (Default to 1)
+    
     :return: None
     """
     lgd_fig = plt.figure()
@@ -27,8 +34,10 @@ def plt_legend(handles, title, ncol=1):
 def plt_rc_setup(dpi=400, fontsize=24):
     """
     Setup the RC parameters of Pyplot.
+
     :param dpi     : Figure Resolution (Default to 400)
     :param fontsize: Font Size (Default to 24)
+    
     :return: None
     """
     plt.rc('figure', dpi=dpi)
@@ -38,19 +47,37 @@ def plt_rc_setup(dpi=400, fontsize=24):
     plt.rc('font', family='Times New Roman', size=fontsize)
 
 
-def plt_breakdown(memory_profile, bar_width=0.3):
+def plt_breakdown(memory_profile, bar_width=0.3,
+                  annotation_fontsize=24,
+                  annotation_length_ratio=0.8):
     """
     Plot the breakdown of memory consumption.
+    
     :param memory_profile: A Dictionary that maps Labels to Memory Consumptions
     :param bar_width     : Bar Width (Default to 0.3)
+    :param annotation_fontsize    : Fontsize of Annotation (Default to 24)
+    :param annotation_length_ratio: Ratio between the Annotation Line and Bar Length (Default to 0.445)
+    
+    :return None
     """
-    memory_consumption_array = np.array(memory_profile.values())
 
     for i, (label, memory_consumption) in enumerate(memory_profile.items()):
-        plt.bar(x=0, height=memory_consumption, bottom=np.sum(memory_consumption_array[i + 1:]),
+        plt.bar(x=0, height=memory_consumption, bottom=np.sum(memory_profile.values()[i+1:]),
                 width=bar_width, edgecolor='black', linewidth=3,
-                color=np.array([1, 1, 1]) * i * 1.0 / len(memory_consumption_array), label=label)
-    
+                color=np.array([1, 1, 1]) * i * 1.0 / (len(memory_profile.values()) - 1),
+                label=label)
+        middle_pos = memory_consumption / 2 + np.sum(memory_profile.values()[i+1:])
+        bar_length = memory_consumption
+        plt.annotate(label,
+                     xy    =(0.7*bar_width, middle_pos), 
+                     xytext=(1.1*bar_width, middle_pos), 
+                     fontsize=24,
+                     ha='left', 
+                     va='center', 
+                     bbox=dict(boxstyle='square', facecolor='white', linewidth=3),
+                     arrowprops=dict(arrowstyle="-[, widthB=%f, lengthB=0.3" % \
+                        (annotation_length_ratio * bar_length), linewidth=2))
+
     plt.xlim([-2*bar_width, 2*bar_width])
     plt.xticks([]) # remove the ticklabels on the x-axis
     plt.ylabel("Memory Consumption (MB)")
@@ -63,7 +90,5 @@ if __name__ == "__main__":
     plt_rc_setup()
 
     plt_breakdown({'1' : 2, '3' : 4})
-
     plt.tight_layout()
-
-    plt.savefig("sockeye_memory_profile-groundhog_iwslt15.png")
+    plt.savefig("sockeye-memory_profile-groundhog_iwslt15.png")
