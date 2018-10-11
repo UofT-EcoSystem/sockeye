@@ -58,7 +58,7 @@ def plt_memory_breakdown(sorted_stats_list,
                          bar_width=0.3,
                          annotation_top_k=3,
                          annotation_fontsize=24,
-                         annotation_length_ratio=0.0025):
+                         annotation_length_ratio=0.0015):
     """
     Plot the breakdown of memory consumption.
     
@@ -74,7 +74,7 @@ def plt_memory_breakdown(sorted_stats_list,
     
     :return None
     """
-    plt.figure(figsize=(6, 8))
+    plt.figure(figsize=(8, 6))
 
     sorted_stats_klist = [regex_dict[kv[0]]        for kv in sorted_stats_list[:top_k]]
     sorted_stats_vlist = [kv[1][0] / (1024 * 1024) for kv in sorted_stats_list[:top_k]]
@@ -99,8 +99,8 @@ def plt_memory_breakdown(sorted_stats_list,
         annotations.append(
             plt.annotate((sorted_stats_klist[i] + ' (%.2f%%)') % (sorted_stats_vlist[i] * 100.0 / expected_sum),
                          xy    =(0.6*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
-                         xytext=(0.9*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
-                         fontsize=18,
+                         xytext=(0.8*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
+                         fontsize=20,
                          ha='left' if switch_side_flag is True else 'right', 
                          va='center', 
                          bbox=dict(boxstyle='square', facecolor='white', linewidth=3),
