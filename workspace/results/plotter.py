@@ -8,7 +8,9 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
-from memory_profile_analysis import parse_memory_profile, OPERATOR_REGEX_DICT, FUNCTION_REGEX_DICT
+from memory_profile_analysis import parse_memory_profile, \
+                                    SOCKEYE_LAYER_REGEX_DICT, \
+                                    SOCKEYE_FUNCTION_REGEX_DICT
 
 parser = argparse.ArgumentParser()
 
@@ -51,51 +53,73 @@ def plt_rc_setup(dpi=400, fontsize=24):
 
 
 def plt_memory_breakdown(sorted_stats_list,
-                         regex_dict,
                          expected_sum,
                          fig_name,
-                         top_k=7,
                          bar_width=0.3,
-                         annotation_top_k=3,
-                         annotation_fontsize=24,
-                         annotation_length_ratio=0.0015):
+                         annotation_top_k=5,
+                         annotation_fontsize=18,
+                         annotation_length_ratio=0.00011):
     """
     Plot the breakdown of memory consumption.
     
     :param sorted_stats_list: A List that has Tuples of the form (Regex, [Memory Consumption, Labels])
-    :param regex_dict       : Regular Expression Dictionary
     :param expected_sum     : Expected Total Consumption (reported by `nvidia-smi`)
     :param fig_name         : Name of the Saved Figure
     :param bar_width        : Bar Width (Default to 0.3)
-    :param top_k            : The `top_k` Items to be Labeled
-    :param annotation_top_k       : The `top_k` annotations that are on the Right Hand Side
-    :param annotation_fontsize    : Fontsize of Annotation (Default to 24)
+    :param annotation_top_k       : The `top_k` Annotations that are to be plotted (Default to 3)
+    :param annotation_fontsize    : Fontsize of Annotations (Default to 24)
     :param annotation_length_ratio: Ratio between the Annotation Line and Bar Length (Default to 0.445)
     
     :return None
     """
     plt.figure(figsize=(8, 6))
 
-    sorted_stats_klist = [regex_dict[kv[0]]        for kv in sorted_stats_list[:top_k]]
-    sorted_stats_vlist = [kv[1][0] / (1024 * 1024) for kv in sorted_stats_list[:top_k]]
-    sorted_stats_klist.append('Others')
-    sorted_stats_vlist.append(np.sum([kv[1][0] / (1024 * 1024) for kv in sorted_stats_list[top_k:]]))
-    sorted_stats_klist.append('Unrecognized')
-    sorted_stats_vlist.append(expected_sum - np.sum([kv[1][0] / (1024 * 1024) for kv in sorted_stats_list[:]]))
+    sorted_stats_klist = [kv[0]                    for kv in sorted_stats_list[:]]
+    sorted_stats_vlist = [kv[1][0] / (1024 * 1024) for kv in sorted_stats_list[:]]
+    
+    if expected_sum is not None:
+        sorted_stats_klist.append('Untrackable')
+        sorted_stats_vlist.append(expected_sum - np.sum([kv[1][0] / (1024 * 1024) for kv in sorted_stats_list[:]]))
 
-    annotations = []
+    assert len(sorted_stats_klist) == len(sorted_stats_vlist)
 
-    for i in range(top_k + 2):
+    # annotations = []
+
+    sorted_stats_list_len = len(sorted_stats_klist)
+
+    for i in range(sorted_stats_list_len):
         plt.bar(x=0, height=sorted_stats_vlist[i], bottom=np.sum(sorted_stats_vlist[i+1:]),
                 width=bar_width, edgecolor='black', linewidth=3,
-                color=np.array([i * 1.0 / (top_k + 1), i * 1.0 / (top_k + 1), i * 1.0 / (top_k + 1)]),
-                hatch='//' if sorted_stats_klist[i] is 'Unrecognized' else '',
+                # color=np.array([1, 
+                #                 1 - sorted_stats_vlist[i] / expected_sum,
+                #                 1 - sorted_stats_vlist[i] / expected_sum]),
+                color=np.array([1, 
+                                i * 1.0 / (sorted_stats_list_len - 2), 
+                                i * 1.0 / (sorted_stats_list_len - 2)]) \
+                                    if 'Other'       not in sorted_stats_klist[i] and \
+                                       'Untrackable' not in sorted_stats_klist[i] else 'white',
+                hatch='//' if sorted_stats_klist[i] is 'Untrackable' else '',
                 label=sorted_stats_klist[i])
+                # label=(sorted_stats_klist[i] + ' (%.2f%%)') % (sorted_stats_vlist[i] * 100.0 / expected_sum))
+        if i < annotation_top_k:
+            middle_pos = sorted_stats_vlist[i] / 2 + np.sum(sorted_stats_vlist[i+1:])
+            bar_length = sorted_stats_vlist[i]
+            switch_side_flag = False if i >= 2 and i % 2 == 0 else True
+            
+            plt.annotate(('%.2f%%') % (sorted_stats_vlist[i] * 100.0 / expected_sum),
+                         xy    =(0.6*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
+                         xytext=(0.8*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
+                         fontsize=annotation_fontsize,
+                         ha='left' if switch_side_flag is True else 'right', 
+                         va='center', 
+                         bbox=dict(boxstyle='square', facecolor='white', linewidth=3),
+                         arrowprops=dict(arrowstyle="-[, widthB=%f, lengthB=0.3" % 
+                            (annotation_length_ratio * annotation_fontsize * bar_length), linewidth=2))
+        """
         middle_pos = sorted_stats_vlist[i] / 2 + np.sum(sorted_stats_vlist[i+1:])
         bar_length = sorted_stats_vlist[i]
-
         switch_side_flag = True if i < annotation_top_k or i % 2 == 0 else False
-
+        
         annotations.append(
             plt.annotate((sorted_stats_klist[i] + ' (%.2f%%)') % (sorted_stats_vlist[i] * 100.0 / expected_sum),
                          xy    =(0.6*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
@@ -106,18 +130,20 @@ def plt_memory_breakdown(sorted_stats_list,
                          bbox=dict(boxstyle='square', facecolor='white', linewidth=3),
                          arrowprops=dict(arrowstyle="-[, widthB=%f, lengthB=0.3" % 
                             (annotation_length_ratio * bar_length), linewidth=2)))
+        """
     # x- & y- axis
-    plt.xlim([-3*bar_width, 3*bar_width])
+    plt.xlim([-2*bar_width, 2*bar_width])
     plt.xticks([])
     plt.ylabel("Memory Consumption (MB)")
 
     # Grid & Legend
     plt.grid(linestyle='-.', linewidth=1, axis='y')
-    # plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=annotation_fontsize)
     
     # Tighten Layout and Savefig
-    # plt.tight_layout()
-    plt.savefig(fig_name, bbox_extra_artists=tuple(annotations), bbox_inches='tight')
+    plt.tight_layout()
+    plt.savefig(fig_name)
+    # plt.savefig(fig_name, bbox_extra_artists=tuple(annotations), bbox_inches='tight')
 
 
 if __name__ == "__main__":
@@ -127,10 +153,13 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     sorted_stats_list = parse_memory_profile(memory_profile=args.memory_profile, 
-                                             regex_dict=OPERATOR_REGEX_DICT)
+                                             regex_dict=SOCKEYE_LAYER_REGEX_DICT)
     plt_memory_breakdown(sorted_stats_list=sorted_stats_list, 
-                         regex_dict=OPERATOR_REGEX_DICT,
                          expected_sum=4477, 
-                         fig_name='sockeye-memory_profile-groundhog_iwslt15.png')
+                         fig_name='sockeye-memory_profile-groundhog_iwslt15-layer.png')
     sorted_stats_list = parse_memory_profile(memory_profile=args.memory_profile, 
-                                             regex_dict=FUNCTION_REGEX_DICT)
+                                             regex_dict=SOCKEYE_FUNCTION_REGEX_DICT)
+    plt_memory_breakdown(sorted_stats_list=sorted_stats_list, 
+                         expected_sum=4477, 
+                         fig_name='sockeye-memory_profile-groundhog_iwslt15-function.png',
+                         annotation_top_k=3)
