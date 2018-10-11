@@ -6,7 +6,22 @@
 """
 
 
-operator_regex_dict = {
+FUNCTION_REGEX_DICT = {
+    'forward_features'  : 'Feature Map',
+    'in_arg'            : 'Weight (Bias)',
+    'arg_grad'          : 'Weight (Bias) Gradient',
+    'aux_grad'          : 'Auxiliary State',
+    'workspace'         : 'Workspace',
+    'optimizer'         : 'Optimizer state',
+    '(source)'          : 'Placeholder (SRC)',
+    '(target)'          : 'Placeholder (TGT)',
+    '(target_label)'    : 'Placeholder (TGT Label)',
+    'untagged'          : 'Unknown (From Python Side)',
+    'warning!,ctx_source_unclear' : 'Unknown (From C++ side)',
+}
+
+
+OPERATOR_REGEX_DICT = {
     'encoder_birnn'     : 'Encoder RNN',
     'decoder_rnn'       : 'Decoder RNN',
     'source_embed'      : 'Source Embedding',
@@ -56,7 +71,7 @@ operator_regex_dict = {
 }
 
 
-def parse_memory_profile(memory_profile, regex_dict=operator_regex_dict):
+def parse_memory_profile(memory_profile, regex_dict=OPERATOR_REGEX_DICT):
     """
     Parse the memory profile
 
@@ -76,7 +91,7 @@ def parse_memory_profile(memory_profile, regex_dict=operator_regex_dict):
 
                 for regex in regex_dict:
                     if regex in words[6]:
-                        if regex_matched is True and 'workspace' not in words[6]:
+                        if regex_matched is True:
                             print("[WARNING]: " "%30s is considered match for another regex." % words[6])
 
                         regex_matched = True
@@ -92,8 +107,8 @@ def parse_memory_profile(memory_profile, regex_dict=operator_regex_dict):
 
     sorted_stats_list = sorted(stats_dict.items(), key=lambda kv: kv[1][0], reverse=True)
     
-    # for stats in sorted_stats_list:
-    #     print("Regex: %15s, Memory Consumption: %7.2f MB, Entries: %5d" % \
-    #         (stats[0], stats[1][0] * 1.0 / (1024 * 1024), len(stats[1][1])))
+    for stats in sorted_stats_list:
+        print("Regex: %20s, Memory Consumption: %7.2f MB, Entries: %5d" % \
+            (stats[0], stats[1][0] * 1.0 / (1024 * 1024), len(stats[1][1])))
 
     return sorted_stats_list

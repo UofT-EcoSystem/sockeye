@@ -8,7 +8,7 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
-from memory_profile_analysis import parse_memory_profile, operator_regex_dict
+from memory_profile_analysis import parse_memory_profile, OPERATOR_REGEX_DICT, FUNCTION_REGEX_DICT
 
 parser = argparse.ArgumentParser()
 
@@ -127,7 +127,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     sorted_stats_list = parse_memory_profile(memory_profile=args.memory_profile, 
-                                                 regex_dict=operator_regex_dict)
-
-    plt_memory_breakdown(sorted_stats_list=sorted_stats_list, regex_dict=operator_regex_dict,
-                         expected_sum=4477, fig_name='sockeye-memory_profile-groundhog_iwslt15.png')
+                                             regex_dict=OPERATOR_REGEX_DICT)
+    plt_memory_breakdown(sorted_stats_list=sorted_stats_list, 
+                         regex_dict=OPERATOR_REGEX_DICT,
+                         expected_sum=4477, 
+                         fig_name='sockeye-memory_profile-groundhog_iwslt15.png')
+    sorted_stats_list = parse_memory_profile(memory_profile=args.memory_profile, 
+                                             regex_dict=FUNCTION_REGEX_DICT)
