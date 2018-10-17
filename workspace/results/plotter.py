@@ -56,7 +56,7 @@ def plt_memory_breakdown(sorted_stats_list,
                          expected_sum,
                          fig_name,
                          bar_width=0.3,
-                         annotation_top_k=5,
+                         annotation_top_k=None,
                          annotation_fontsize=18,
                          annotation_length_ratio=0.00011):
     """
@@ -89,7 +89,7 @@ def plt_memory_breakdown(sorted_stats_list,
 
     for i in range(sorted_stats_list_len):
         plt.bar(x=0, height=sorted_stats_vlist[i], bottom=np.sum(sorted_stats_vlist[i+1:]),
-                width=bar_width, edgecolor='black', linewidth=3,
+                width=bar_width * 0.8, edgecolor='black', linewidth=3,
                 # color=np.array([1, 
                 #                 1 - sorted_stats_vlist[i] / expected_sum,
                 #                 1 - sorted_stats_vlist[i] / expected_sum]),
@@ -101,14 +101,14 @@ def plt_memory_breakdown(sorted_stats_list,
                 hatch='//' if sorted_stats_klist[i] is 'Untrackable' else '',
                 label=sorted_stats_klist[i])
                 # label=(sorted_stats_klist[i] + ' (%.2f%%)') % (sorted_stats_vlist[i] * 100.0 / expected_sum))
-        if i < annotation_top_k:
+        if annotation_top_k is None or i < annotation_top_k:
             middle_pos = sorted_stats_vlist[i] / 2 + np.sum(sorted_stats_vlist[i+1:])
             bar_length = sorted_stats_vlist[i]
             switch_side_flag = False if i >= 2 and i % 2 == 0 else True
             
             plt.annotate(('%.2f%%') % (sorted_stats_vlist[i] * 100.0 / expected_sum),
-                         xy    =(0.6*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
-                         xytext=(0.8*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
+                         xy    =(0.5*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
+                         xytext=(0.7*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
                          fontsize=annotation_fontsize,
                          ha='left' if switch_side_flag is True else 'right', 
                          va='center', 
@@ -138,7 +138,8 @@ def plt_memory_breakdown(sorted_stats_list,
 
     # Grid & Legend
     plt.grid(linestyle='-.', linewidth=1, axis='y')
-    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=annotation_fontsize)
+    plt.legend(loc=2, fontsize=18)
+    # plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=annotation_fontsize)
     
     # Tighten Layout and Savefig
     plt.tight_layout()
@@ -161,5 +162,4 @@ if __name__ == "__main__":
                                              regex_dict=SOCKEYE_FUNCTION_REGEX_DICT)
     plt_memory_breakdown(sorted_stats_list=sorted_stats_list, 
                          expected_sum=4477, 
-                         fig_name='sockeye-memory_profile-groundhog_iwslt15-function.png',
-                         annotation_top_k=3)
+                         fig_name='sockeye-memory_profile-groundhog_iwslt15-function.png')
