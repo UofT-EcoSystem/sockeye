@@ -90,10 +90,8 @@ def plt_memory_breakdown(sorted_stats_list,
     for i in range(sorted_stats_list_len):
         plt.bar(x=0, height=sorted_stats_vlist[i], bottom=np.sum(sorted_stats_vlist[i+1:]),
                 width=bar_width * 0.8, edgecolor='black', linewidth=3,
-                # color=np.array([1, 
-                #                 1 - sorted_stats_vlist[i] / expected_sum,
-                #                 1 - sorted_stats_vlist[i] / expected_sum]),
-                color=np.array([1, 
+                # color=np.array([1, i * 1.0 / 3, i * 1.0 / 3]) if i < 3 else 'white',
+                color=np.array([i * 1.0 / (sorted_stats_list_len - 2), 
                                 i * 1.0 / (sorted_stats_list_len - 2), 
                                 i * 1.0 / (sorted_stats_list_len - 2)]) \
                                     if 'Other'       not in sorted_stats_klist[i] and \
@@ -106,7 +104,7 @@ def plt_memory_breakdown(sorted_stats_list,
             bar_length = sorted_stats_vlist[i]
             switch_side_flag = False if i >= 2 and i % 2 == 0 else True
             
-            plt.annotate(('%.2f%%') % (sorted_stats_vlist[i] * 100.0 / expected_sum),
+            plt.annotate(('%2.0f%%') % (sorted_stats_vlist[i] * 100.0 / expected_sum),
                          xy    =(0.5*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
                          xytext=(0.7*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
                          fontsize=annotation_fontsize,
