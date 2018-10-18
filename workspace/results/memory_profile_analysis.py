@@ -130,6 +130,6 @@ def parse_memory_profile(memory_profile, regex_dict):
 
     for stats in sorted_stats_list:
         print("Keyword: %-30s, Memory Consumption: %7.2f MB, Entries: %5d" % \
-            (stats[0], stats[1][0] * 1.0 / (1024 * 1024), len(stats[1][1])))
+            (stats[0], stats[1][0] * 1.0 / (1024 * 1024 * 1024), len(stats[1][1])))
 
     return sorted_stats_list

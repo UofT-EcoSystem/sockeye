@@ -54,11 +54,12 @@ def plt_rc_setup(dpi=400, fontsize=24):
 
 def plt_memory_breakdown(sorted_stats_list,
                          expected_sum,
+                         xlabel,
                          fig_name,
                          bar_width=0.3,
                          annotation_top_k=None,
                          annotation_fontsize=18,
-                         annotation_length_ratio=0.00011):
+                         annotation_length_ratio=0.11):
     """
     Plot the breakdown of memory consumption.
     
@@ -74,12 +75,12 @@ def plt_memory_breakdown(sorted_stats_list,
     """
     plt.figure(figsize=(8, 6))
 
-    sorted_stats_klist = [kv[0]                    for kv in sorted_stats_list[:]]
-    sorted_stats_vlist = [kv[1][0] / (1024 * 1024) for kv in sorted_stats_list[:]]
+    sorted_stats_klist = [kv[0]                           for kv in sorted_stats_list[:]]
+    sorted_stats_vlist = [kv[1][0] / (1024 * 1024 * 1024) for kv in sorted_stats_list[:]]
     
     if expected_sum is not None:
         sorted_stats_klist.append('Untrackable')
-        sorted_stats_vlist.append(expected_sum - np.sum([kv[1][0] / (1024 * 1024) for kv in sorted_stats_list[:]]))
+        sorted_stats_vlist.append(expected_sum - np.sum([kv[1][0] / (1024 * 1024 * 1024) for kv in sorted_stats_list[:]]))
 
     assert len(sorted_stats_klist) == len(sorted_stats_vlist)
 
@@ -132,7 +133,8 @@ def plt_memory_breakdown(sorted_stats_list,
     # x- & y- axis
     plt.xlim([-2*bar_width, 2*bar_width])
     plt.xticks([])
-    plt.ylabel("Memory Consumption (MB)")
+    plt.xlabel(xlabel)
+    plt.ylabel("Memory Consumption (GB)")
 
     # Grid & Legend
     plt.grid(linestyle='-.', linewidth=1, axis='y')
@@ -154,10 +156,12 @@ if __name__ == "__main__":
     sorted_stats_list = parse_memory_profile(memory_profile=args.memory_profile, 
                                              regex_dict=SOCKEYE_LAYER_REGEX_DICT)
     plt_memory_breakdown(sorted_stats_list=sorted_stats_list, 
-                         expected_sum=4477, 
+                         expected_sum=4477.0 / 1024, 
+                         xlabel="Layer Type",
                          fig_name='sockeye-memory_profile-groundhog_iwslt15-layer.png')
     sorted_stats_list = parse_memory_profile(memory_profile=args.memory_profile, 
                                              regex_dict=SOCKEYE_FUNCTION_REGEX_DICT)
     plt_memory_breakdown(sorted_stats_list=sorted_stats_list, 
-                         expected_sum=4477, 
+                         expected_sum=4477.0 / 1024, 
+                         xlabel="Data Structure",
                          fig_name='sockeye-memory_profile-groundhog_iwslt15-function.png')
