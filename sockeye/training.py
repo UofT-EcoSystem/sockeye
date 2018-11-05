@@ -365,6 +365,14 @@ class TrainingModel(model.SockeyeModel):
                 logger.info("Maximum # of updates (%s) or epochs (%s) reached.", max_updates, max_num_epochs)
                 break
 
+            import numba.cuda as cuda 
+
+            # @ArmageddonKnight: Added the numba subroutine calls for profiling training iteration 101.
+            if train_state.updates == 100:
+                cuda.profile_start()
+            if train_state.updates == 101:
+                cuda.profile_stop()
+
             # process batch
             batch = next_data_batch
 
