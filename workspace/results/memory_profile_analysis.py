@@ -31,11 +31,14 @@ LAYER_REGEX_DICT maps Layer Descriptions to Regular Expressions.
 SOCKEYE_LAYER_REGEX_DICT = {
     # 'Embedding'          : ['target_embed',
     #                         'source_embed'],
-    'Attention'          : ['att'],
-    'RNN'                : ['encoder_rnn', 
-                            'encoder_birnn',
-                            'decoder_rnn', 
-                            'decoder_birnn'],
+    'Attention_Query_Plus_Input'    : ['att_query_plus_input'],
+    'Attention_NormInp_Minus_Mean'  : ['att_norminp_minus_mean'],
+    'Attention_NormInp_Norm_Scaled' : ['att_norminp_norm_scaled'],
+    'Attention_Hidden'              : ['att_hidden'],
+    # 'RNN'                : ['encoder_rnn', 
+    #                         'encoder_birnn',
+    #                         'decoder_rnn', 
+    #                         'decoder_birnn'],
     # 'Square'             : ['square'],
     'Loss'               : ['logit',
                             'softmax'],
@@ -117,7 +120,8 @@ def parse_memory_profile(memory_profile, regex_dict):
                                 stats_dict[key] = [float(words[2]), [words[6]]]
                                 break
                 if regex_matched is False:
-                    print("[WARNING]: " "[Memory Profile Analyzer] " "Unknown Tag: %s" % words[6])
+                    print("[WARNING]: " "[Memory Profile Analyzer] " "Unknown Tag: %s, " "Allocation Size: %5.2f" % \
+                        (words[6], float(words[2]) * 1.0 / (1024 * 1024)))
 
     sorted_stats_list = sorted(stats_dict.items(), key=lambda kv: kv[1][0], reverse=True)
     
@@ -129,7 +133,7 @@ def parse_memory_profile(memory_profile, regex_dict):
             break
 
     for stats in sorted_stats_list:
-        print("Keyword: %-30s, Memory Consumption: %7.2f MB, Entries: %5d" % \
+        print("Keyword: %-30s, Memory Consumption: %7.2f GB, Entries: %5d" % \
             (stats[0], stats[1][0] * 1.0 / (1024 * 1024 * 1024), len(stats[1][1])))
 
     return sorted_stats_list
