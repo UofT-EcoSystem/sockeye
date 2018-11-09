@@ -29,16 +29,16 @@ SOCKEYE_FUNCTION_REGEX_DICT = {
 LAYER_REGEX_DICT maps Layer Descriptions to Regular Expressions.
 """
 SOCKEYE_LAYER_REGEX_DICT = {
-    # 'Embedding'          : ['target_embed',
-    #                         'source_embed'],
+    'Embedding'          : ['target_embed',
+                            'source_embed'],
     'Attention_Query_Plus_Input'    : ['att_query_plus_input'],
     'Attention_NormInp_Minus_Mean'  : ['att_norminp_minus_mean'],
     'Attention_NormInp_Norm_Scaled' : ['att_norminp_norm_scaled'],
     'Attention_Hidden'              : ['att_hidden'],
-    # 'RNN'                : ['encoder_rnn', 
-    #                         'encoder_birnn',
-    #                         'decoder_rnn', 
-    #                         'decoder_birnn'],
+    'RNN'                : ['encoder_rnn', 
+                            'encoder_birnn',
+                            'decoder_rnn', 
+                            'decoder_birnn'],
     # 'Square'             : ['square'],
     'Loss'               : ['logit',
                             'softmax'],

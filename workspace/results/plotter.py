@@ -14,7 +14,7 @@ from memory_profile_analysis import parse_memory_profile, \
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--memory_profile', help='Path to Memory Profile', type=str, default=None)
+parser.add_argument('--memory-profile', help='Path to Memory Profile', type=str, default=None)
 
 
 def plt_legend(handles, title, ncol=1):
@@ -155,10 +155,10 @@ if __name__ == "__main__":
 
     sorted_stats_list = parse_memory_profile(memory_profile=args.memory_profile, 
                                              regex_dict=SOCKEYE_LAYER_REGEX_DICT)
-    # plt_memory_breakdown(sorted_stats_list=sorted_stats_list, 
-    #                      expected_sum=4477.0 / 1024, 
-    #                      xlabel="Layer Type",
-    #                      fig_name='sockeye-memory_profile-groundhog_iwslt15-layer.png')
+    plt_memory_breakdown(sorted_stats_list=sorted_stats_list, 
+                         expected_sum=4477.0 / 1024, 
+                         xlabel="Layer Type",
+                         fig_name='sockeye-memory_profile-groundhog_iwslt15-layer.png')
     sorted_stats_list = parse_memory_profile(memory_profile=args.memory_profile, 
                                              regex_dict=SOCKEYE_FUNCTION_REGEX_DICT)
     plt_memory_breakdown(sorted_stats_list=sorted_stats_list, 
