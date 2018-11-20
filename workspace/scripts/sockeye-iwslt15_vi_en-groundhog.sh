@@ -8,7 +8,7 @@ CONFERENCE_SRC_TGT=iwslt15-vi_en
 CONFERENCE_SRC_TGT_MODEL=${CONFERENCE_SRC_TGT}-groundhog
 
 # PARTIAL_FORWARD_PROP="--rnn-attention-partial-fw-prop"
-NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off"
+# NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off"
 
 cd ${SOCKEYE_ROOT} && rm -rf ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} && \
 PYTHONPATH=${SOCKEYE_ROOT} ${NVPROF_PREFIX} \

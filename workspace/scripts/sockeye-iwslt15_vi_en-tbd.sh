@@ -7,7 +7,7 @@ PROJECT_ROOT=${SOCKEYE_ROOT}/../..
 CONFERENCE_SRC_TGT=iwslt15-vi_en
 CONFERENCE_SRC_TGT_MODEL=${CONFERENCE_SRC_TGT}-tbd
 
-PARTIAL_FORWARD_PROP="--rnn-attention-partial-fw-prop"
+# PARTIAL_FORWARD_PROP="--rnn-attention-partial-fw-prop"
 # NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off"
 
 cd ${SOCKEYE_ROOT} && rm -rf ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} && \
