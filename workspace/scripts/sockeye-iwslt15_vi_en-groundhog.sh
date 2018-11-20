@@ -6,9 +6,6 @@ SOCKEYE_ROOT=$(cd $(dirname $0)/../.. && pwd)
 PROJECT_ROOT=${SOCKEYE_ROOT}/../..
 CONFERENCE_SRC_TGT=iwslt15-vi_en
 
-# Activate the virtual environment with MXNet and MXBoard.
-# cd ${PROJECT_ROOT}/virtualenv/bin && source activate
-
 # PARTIAL_FORWARD_PROP="--rnn-attention-partial-fw-prop"
 NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off"
 
