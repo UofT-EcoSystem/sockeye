@@ -40,6 +40,9 @@ class AttentionConfig(config.Config):
     :param layer_normalization: Apply layer normalization to MLP attention.
     :param config_coverage: Optional coverage configuration.
     :param num_heads: Number of attention heads. Only used for Multi-head dot attention.
+    @ArmageddonKnight Added the `partial_fw_prop` parameter to indicate whether to apply 
+    partial forward propagation during the backward pass.
+    :param partial_fw_prop: Whether to apply partial forward propagation.
     """
     def __init__(self,
                  type: str,
@@ -49,7 +52,8 @@ class AttentionConfig(config.Config):
                  query_num_hidden: int,
                  layer_normalization: bool,
                  config_coverage: Optional[coverage.CoverageConfig] = None,
-                 num_heads: Optional[int] = None) -> None:
+                 num_heads: Optional[int] = None,
+                 partial_fw_prop: Optional[bool] = False) -> None: # @ArmageddonKnight
         super().__init__()
         self.type = type
         self.num_hidden = num_hidden
@@ -59,6 +63,7 @@ class AttentionConfig(config.Config):
         self.layer_normalization = layer_normalization
         self.config_coverage = config_coverage
         self.num_heads = num_heads
+        self.partial_fw_prop = partial_fw_prop # @ArmageddonKnight
 
 
 def get_attention(config: AttentionConfig, max_seq_len: int) -> 'Attention':
@@ -91,12 +96,14 @@ def get_attention(config: AttentionConfig, max_seq_len: int) -> 'Attention':
     elif config.type == C.ATT_MLP:
         return MlpAttention(input_previous_word=config.input_previous_word,
                             attention_num_hidden=config.num_hidden,
-                            layer_normalization=config.layer_normalization)
+                            layer_normalization=config.layer_normalization,
+                            partial_fw_prop=config.partial_fw_prop) # @ArmageddonKnight
     elif config.type == C.ATT_COV:
         return MlpAttention(input_previous_word=config.input_previous_word,
                             attention_num_hidden=config.num_hidden,
                             layer_normalization=config.layer_normalization,
-                            config_coverage=config.config_coverage)
+                            config_coverage=config.config_coverage,
+                            partial_fw_prop=config.partial_fw_prop) # @ArmageddonKnight
     else:
         raise ValueError("Unknown attention type %s" % config.type)
 
@@ -571,13 +578,17 @@ class MlpAttention(Attention):
     :param attention_num_hidden: Number of hidden units.
     :param layer_normalization: If true, normalizes hidden layer outputs before tanh activation.
     :param config_coverage: Optional coverage config.
+    @ArmageddonKnight Added the `partial_fw_prop` parameter to indicate whether to apply 
+    partial forward propagation during the backward pass.
+    :param partial_fw_prop: Whether to apply partial forward propagation.
     """
 
     def __init__(self,
                  input_previous_word: bool,
                  attention_num_hidden: int,
                  layer_normalization: bool = False,
-                 config_coverage: Optional[coverage.CoverageConfig] = None) -> None:
+                 config_coverage: Optional[coverage.CoverageConfig] = None,
+                 partial_fw_prop: Optional[bool] = False) -> None:
         dynamic_source_num_hidden = 1 if config_coverage is None else config_coverage.num_hidden
         super().__init__(input_previous_word=input_previous_word,
                          dynamic_source_num_hidden=dynamic_source_num_hidden)
@@ -596,6 +607,10 @@ class MlpAttention(Attention):
         # layer normalization
         self._ln = layers.LayerNormalization(num_hidden=attention_num_hidden,
                                              prefix="%snorm" % self.prefix) if layer_normalization else None
+        self.partial_fw_prop = partial_fw_prop # @ArmageddonKnight
+
+        if self.partial_fw_prop:
+            logging.info("!Important: Partial Forward Propagation will be applied during the Backward Pass.")
 
     def on(self, source: mx.sym.Symbol, source_length: mx.sym.Symbol, source_seq_len: int) -> Callable:
         """
@@ -635,11 +650,6 @@ class MlpAttention(Attention):
                                                  no_bias=True,
                                                  name="%squery_hidden" % self.prefix)
 
-            # (batch_size, 1, attention_num_hidden)
-            query_hidden = mx.sym.expand_dims(data=query_hidden,
-                                              axis=1,
-                                              name="%squery_hidden_expanded" % self.prefix)
-
             attention_hidden_lhs = source_hidden
             if self.coverage:
                 # (batch_size, seq_len, attention_num_hidden)
@@ -653,24 +663,37 @@ class MlpAttention(Attention):
                 # (batch_size, seq_len, attention_num_hidden
                 attention_hidden_lhs = dynamic_hidden + source_hidden
 
-            # (batch_size, seq_len, attention_num_hidden)
-            attention_hidden = mx.sym.broadcast_add(lhs=attention_hidden_lhs, rhs=query_hidden,
-                                                    name="%squery_plus_input" % self.prefix)
+            # @ArmageddonKnight Switch between the Partial Forward Propagation and the Legacy approach.
+            if self.partial_fw_prop:
+                attention_scores = mx.sym.MlpAttScoringFunc(QryHidden =query_hidden,
+                                                            SrcHidden =attention_hidden_lhs,
+                                                            H2SWeight =self.att_h2s_weight,
+                                                            layer_norm=True if self._ln is not None else False,
+                                                            name="%smlp_scoring_func" % self.prefix)
+            else:
+                # (batch_size, 1, attention_num_hidden)
+                query_hidden = mx.sym.expand_dims(data=query_hidden,
+                                                axis=1,
+                                                name="%squery_hidden_expanded" % self.prefix)
 
-            if self._ln is not None:
-                attention_hidden = self._ln.normalize(attention_hidden)
+                # (batch_size, seq_len, attention_num_hidden)
+                attention_hidden = mx.sym.broadcast_add(lhs=attention_hidden_lhs, rhs=query_hidden,
+                                                        name="%squery_plus_input" % self.prefix)
 
-            # (batch_size, seq_len, attention_num_hidden)
-            attention_hidden = mx.sym.Activation(attention_hidden, act_type="tanh",
-                                                 name="%shidden" % self.prefix)
+                if self._ln is not None:
+                    attention_hidden = self._ln.normalize(attention_hidden)
 
-            # (batch_size, seq_len, 1)
-            attention_scores = mx.sym.FullyConnected(data=attention_hidden,
-                                                     weight=self.att_h2s_weight,
-                                                     num_hidden=1,
-                                                     no_bias=True,
-                                                     flatten=False,
-                                                     name="%sraw_att_score_fc" % self.prefix)
+                # (batch_size, seq_len, attention_num_hidden)
+                attention_hidden = mx.sym.Activation(attention_hidden, act_type="tanh",
+                                                    name="%shidden" % self.prefix)
+
+                # (batch_size, seq_len, 1)
+                attention_scores = mx.sym.FullyConnected(data=attention_hidden,
+                                                        weight=self.att_h2s_weight,
+                                                        num_hidden=1,
+                                                        no_bias=True,
+                                                        flatten=False,
+                                                        name="%sraw_att_score_fc" % self.prefix)
 
             context, attention_probs = get_context_and_attention_probs(source, source_length, attention_scores)
 

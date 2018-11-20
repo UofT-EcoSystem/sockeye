@@ -423,7 +423,8 @@ def create_decoder_config(args: argparse.Namespace, vocab_target_size: int, enco
                                                          query_num_hidden=args.rnn_num_hidden,
                                                          layer_normalization=args.layer_normalization,
                                                          config_coverage=config_coverage,
-                                                         num_heads=args.rnn_attention_mhdot_heads)
+                                                         num_heads=args.rnn_attention_mhdot_heads,
+                                                         partial_fw_prop=args.rnn_attention_partial_fw_prop)
 
         _, decoder_rnn_dropout_inputs = args.rnn_dropout_inputs
         _, decoder_rnn_dropout_states = args.rnn_dropout_states

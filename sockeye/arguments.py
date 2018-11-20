@@ -494,6 +494,9 @@ def add_model_parameters(params):
     model_params.add_argument('--rnn-attention-mhdot-heads',
                               type=int, default=None,
                               help='Number of heads for Multi-head dot attention. Default: %(default)s.')
+    model_params.add_argument('--rnn-attention-partial-fw-prop',
+                              action="store_true",
+                              help="Whether to apply partial forward propagation in the backward pass.")    
 
     model_params.add_argument('--lexical-bias',
                               default=None,
