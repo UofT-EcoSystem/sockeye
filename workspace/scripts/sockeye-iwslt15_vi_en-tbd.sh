@@ -7,8 +7,28 @@ PROJECT_ROOT=${SOCKEYE_ROOT}/../..
 CONFERENCE_SRC_TGT=iwslt15-vi_en
 CONFERENCE_SRC_TGT_MODEL=${CONFERENCE_SRC_TGT}-tbd
 
-# PARTIAL_FORWARD_PROP="--rnn-attention-partial-fw-prop"
-# NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off"
+PARTIAL_FORWARD_PROP=
+COMPUTE_APPROACH=legacy
+
+NVPROF_PREFIX=
+
+if [ "$1" == "--legacy" ]
+then
+	echo "Backpropagation will be done using Legacy approach."
+elif [ "$1" == "--partial-fw-prop" ]
+then
+	echo "Backpropagation will be done using Partial Forward Propagation."
+	PARTIAL_FORWARD_PROP="--rnn-attention-partial-fw-prop"
+	COMPUTE_APPROACH="partial_fw_prop"
+else
+	echo "Backpropagation will be done using Legacy approach."
+fi
+
+if [ "$1" == "--nvprof" ] || [ "$2" == "--nvprof" ]
+then
+	echo "nvprof is enabled to profile the application."
+	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off"
+fi
 
 cd ${SOCKEYE_ROOT} && rm -rf ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} && \
 PYTHONPATH=${SOCKEYE_ROOT} ${NVPROF_PREFIX} \
@@ -35,4 +55,4 @@ python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SR
 			 --weight-init uniform --weight-init-scale 0.1 \
 			 --learning-rate-reduce-factor 1.0 \
 			 --monitor-bleu -1 --use-tensorboard \
-			 --max-updates=500 ${PARTIAL_FORWARD_PROP} 2>&1 | tee ${SOCKEYE_ROOT}/workspace/results/profile/sockeye-${CONFERENCE_SRC_TGT_MODEL}.log
+			 --max-updates=500 ${PARTIAL_FORWARD_PROP} 2>&1 | tee ${SOCKEYE_ROOT}/workspace/results/log/sockeye-${CONFERENCE_SRC_TGT_MODEL}.log
