@@ -28,28 +28,28 @@ def gen_from_txt(fname):
     return data
 
 
-def plt_legacy_vs_partial_fw_prop(csv_prefix, metric, metric_unit=None, ymin=None, ymax=None,
+def plt_default_vs_econmt(csv_prefix, metric, metric_unit=None, ymin=None, ymax=None,
                                   xlabel='Global Step', 
                                   xlabel_unit='Number of Training Batches', title=None):
     """
     Plot the comparison between legacy backpropagation and partial forward propagation.
     """
     ylabel = metric.title().replace('_', ' ')
-    title ='%s-legacy_vs_partial_fw_prop-%s' % (csv_prefix, metric)
+    title ='%s-default_vs_econmt-%s' % (csv_prefix, metric)
 
-    legacy  = gen_from_txt(fname='%s-legacy/csv/%s.csv' % (csv_prefix, metric))
-    partial = gen_from_txt(fname='%s-partial_fw_prop/csv/%s.csv' % (csv_prefix, metric))
+    default = gen_from_txt(fname='%s-default/csv/%s.csv' % (csv_prefix, metric))
+    econmt  = gen_from_txt(fname= '%s-econmt/csv/%s.csv' % (csv_prefix, metric))
 
     if metric == 'memory_usage' and metric_unit == 'GB':
-        legacy [:,2] = legacy [:,2] / 1000
-        partial[:,2] = partial[:,2] / 1000
+        default[:,2] = default[:,2] / 1000
+        econmt [:,2] = econmt [:,2] / 1000
     
     plt.figure()
 
-    plt.plot(legacy [:,1], legacy [:,2], linewidth=2, linestyle='--', 
-             color='black', label='Legacy')
-    plt.plot(partial[:,1], partial[:,2], linewidth=2, linestyle='-',
-             color='black', label='Partial FW Prop')
+    plt.plot(default[:,1], default[:,2], linewidth=2, linestyle='--', 
+             color='black', label='Default')
+    plt.plot(econmt [:,1], econmt [:,2], linewidth=2, linestyle='-',
+             color='black', label='EcoNMT')
 
     plt.xlabel("%s (%s)" % (xlabel, xlabel_unit))
     plt.ylabel("%s (%s)" % (ylabel, metric_unit) if metric_unit is not None else ylabel)
@@ -72,9 +72,9 @@ if __name__ == "__main__":
     # setup the RC parameters
     plt_rc_setup()
 
-    plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-groundhog-500', metric='speed', metric_unit='Samples/s')
-    plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='speed', metric_unit='Samples/s')
-    plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-groundhog-500', metric='perplexity')
-    plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='perplexity')
-    plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-groundhog-500', metric='memory_usage', metric_unit='GB')
-    plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='memory_usage', metric_unit='GB')
+    plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-groundhog-500', metric='speed', metric_unit='Samples/s')
+    plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='speed', metric_unit='Samples/s')
+    plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-groundhog-500', metric='perplexity')
+    plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='perplexity')
+    plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-groundhog-500', metric='memory_usage', metric_unit='GB')
+    plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='memory_usage', metric_unit='GB')

@@ -8,7 +8,6 @@ CONFERENCE_SRC_TGT=iwslt15-vi_en
 CONFERENCE_SRC_TGT_MODEL=${CONFERENCE_SRC_TGT}-tbd
 
 PARTIAL_FORWARD_PROP=
-COMPUTE_APPROACH=legacy
 
 NVPROF_PREFIX=
 
@@ -19,7 +18,6 @@ elif [ "$1" == "--partial-fw-prop" ]
 then
 	echo "Backpropagation will be done using Partial Forward Propagation."
 	PARTIAL_FORWARD_PROP="--rnn-attention-partial-fw-prop"
-	COMPUTE_APPROACH="partial_fw_prop"
 else
 	echo "Backpropagation will be done using Legacy approach."
 fi

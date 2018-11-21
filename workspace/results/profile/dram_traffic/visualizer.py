@@ -42,8 +42,8 @@ def parse_dram_traffic_profile(fname):
         
 
 if __name__ == "__main__":
-    dram_read_legacy , dram_write_legacy  = parse_dram_traffic_profile("iwslt15-vi_en-groundhog-legacy.csv")
-    dram_read_partial, dram_write_partial = parse_dram_traffic_profile("iwslt15-vi_en-groundhog-partial_fw_prop.csv")
+    dram_read_default, dram_write_default = parse_dram_traffic_profile("iwslt15-vi_en-groundhog-default.csv")
+    dram_read_econmt , dram_write_econmt  = parse_dram_traffic_profile("iwslt15-vi_en-groundhog-econmt.csv")
     
     plt_rc_setup()
 
@@ -51,16 +51,16 @@ if __name__ == "__main__":
 
     plt.figure()
 
-    plt.bar(x=0, height=dram_read_legacy, bottom=dram_write_legacy,
+    plt.bar(x=0, height=dram_read_default, bottom=dram_write_default,
             width=bar_width, edgecolor='black', linewidth=3, 
             color='white', label='DRAM Read')
-    plt.bar(x=0, height=dram_write_legacy, bottom=0,
+    plt.bar(x=0, height=dram_write_default, bottom=0,
             width=bar_width, edgecolor='black', linewidth=3, 
             color='black', label='DRAM Write')
-    plt.bar(x=1, height=dram_write_partial, bottom=0,
+    plt.bar(x=1, height=dram_write_econmt, bottom=0,
             width=bar_width, edgecolor='black', linewidth=3, 
             color='black')
-    plt.bar(x=1, height=dram_read_partial, bottom=dram_write_partial,
+    plt.bar(x=1, height=dram_read_econmt, bottom=dram_write_econmt,
             width=bar_width, edgecolor='black', linewidth=3, 
             color='white')
     
@@ -68,13 +68,13 @@ if __name__ == "__main__":
 
     plt.xlim  ([-2*bar_width, 1+2*bar_width])
     plt.xticks(range(len(xticklabels)), xticklabels)
-    plt.yticks(np.arange(0, 900, 225), fontsize=20)
+#     plt.yticks(np.arange(0, 900, 225), fontsize=20)
 
     plt.ylabel(r"DRAM Transactions ($10^6$)")
 
-    plt.legend()
+    plt.legend(loc=(0, 1.05), ncol=2, fontsize=18)
     plt.grid(linestyle='-.', linewidth=1, axis='y')
 
     plt.tight_layout()
-    plt.savefig("DRAM_Traffic_Comparison-Default_vs_EcoNMT.png")
+    plt.savefig("iwslt15-vi_en-groundhog-dram_traffic-default_vs_econmt.png")
 
