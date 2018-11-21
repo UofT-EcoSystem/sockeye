@@ -1,9 +1,3 @@
-# Sockeye Memory Profile
+# Results
 
-This folder contains the analysis results of the [**Sockeye**](https://github.com/awslabs/sockeye) 
-NMT Toolkit memory consumption.
-
-## Acknowledgement
-
-Most works in this folder come from the research efforts made by **Abhishek Tiwari** from the 
-University of Toronto in his development of the MXNet memory profiler.
+This folder contains results that are obtained from logging and/or profiling Sockeye **TRAINING**.
