@@ -10,10 +10,12 @@ import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--csv-prefix', help='Prefix of CSV Files'
+parser.add_argument('--csv-prefix', help='Prefix of CSV Files',
                     type=str, default=None)
-parser.add_argument('--metric', help='Metric to be Plotted', type=str, default=None)
-
+parser.add_argument('--metric', help='Metric to be Plotted', 
+                    type=str, default=None)
+parser.add_argument('--metric-unit', help='Metric Unit', 
+                    type=str, default=None)
 
 def plt_rc_setup(dpi=400, fontsize=24):
     """
@@ -29,37 +31,34 @@ def plt_rc_setup(dpi=400, fontsize=24):
     plt.rc('font', family='Times New Roman', size=fontsize)
 
 
-def plt_legacy_vs_partial_fw_prop(csv_prefix, csv_suffix, metric,
+def plt_legacy_vs_partial_fw_prop(csv_prefix, metric, metric_unit, ymin=None,
                                   xlabel='Global Step', 
-                                  ylabel=None, title=None):
+                                  xlabel_unit='Number of Training Batches', title=None):
     """
     Plot the comparison between legacy backpropagation and partial forward propagation.
-
-    :param prefix: FileName Prefix
-    :param metric: Metric recorded on Tensorboard
     """
-    if ylabel is None:
-        ylabel = metric.title().replace('_', ' ')
-    if title is None:
-        title ='%s-%s-legacy_vs_partial_fw_prop' % (csv_prefix, csv_suffix)
+    ylabel = metric.title().replace('_', ' ')
+    title ='%s-legacy_vs_partial_fw_prop-%s' % (csv_prefix, metric)
 
-    legacy  = np.genfromtxt(fname='%s-legacy-%s/csv/%s.csv' % (csv_prefix, csv_suffix, metric),
-                                    delimiter=',').astype(np.float64)[1:,:]
-    partial = np.genfromtxt(fname='%s-partial_fw_prop-%s/csv/%s.csv' % \
-                                          (csv_prefix, csv_suffix, metric),
-                                    delimiter=',').astype(np.float64)[1:,:]
+    legacy  = np.genfromtxt(fname='%s-legacy/csv/%s.csv' % (csv_prefix, metric),
+                            delimiter=',').astype(np.float64)[1:,:]
+    partial = np.genfromtxt(fname='%s-partial_fw_prop/csv/%s.csv' % \
+                                  (csv_prefix, metric),
+                            delimiter=',').astype(np.float64)[1:,:]
     
     plt.Figure()
 
     ax = plt.axes()
-    ax.plot(legacy [0], legacy [1], linewidth=1, linestyle='--', 
+    ax.plot(legacy [:,1], legacy [:,2], linewidth=2, linestyle='--', 
             color='black', label='Legacy')
-    ax.plot(partial[0], partial[1], linewidth=1, linestype='-',
+    ax.plot(partial[:,1], partial[:,2], linewidth=2, linestyle='-',
             color='black', label='Partial FW Prop')
 
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.legend()
+    plt.xlabel("%s (%s)" % (xlabel, xlabel_unit))
+    plt.ylabel("%s (%s)" % (ylabel, metric_unit) if metric_unit is not None else ylabel)
+
+    plt.legend(fontsize=20)
+    plt.grid(linestyle='-.', linewidth=1)
 
     plt.tight_layout()
     plt.savefig(title + ".png")
@@ -71,3 +70,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    plt_legacy_vs_partial_fw_prop(csv_prefix=args.csv_prefix,
+                                  metric=args.metric, 
+                                  metric_unit=args.metric_unit)
