@@ -4,18 +4,8 @@
     Description: This file plots the memory profile of the Sockeye NMT Toolkit.
 """
 
-import argparse
 import numpy as np
 import matplotlib.pyplot as plt
-
-parser = argparse.ArgumentParser()
-
-parser.add_argument('--csv-prefix', help='Prefix of CSV Files',
-                    type=str, default=None)
-parser.add_argument('--metric', help='Metric to be Plotted', 
-                    type=str, default=None)
-parser.add_argument('--metric-unit', help='Metric Unit', 
-                    type=str, default=None)
 
 def plt_rc_setup(dpi=400, fontsize=24):
     """
@@ -31,7 +21,14 @@ def plt_rc_setup(dpi=400, fontsize=24):
     plt.rc('font', family='Times New Roman', size=fontsize)
 
 
-def plt_legacy_vs_partial_fw_prop(csv_prefix, metric, metric_unit, ymin=None,
+def gen_from_txt(fname):
+    data = np.genfromtxt(fname=fname, delimiter=',').astype(np.float64)[1:,:]
+    data[:, 0] = (data[:, 0] - data[0, 0]) / 60.0
+
+    return data
+
+
+def plt_legacy_vs_partial_fw_prop(csv_prefix, metric, metric_unit=None, ymin=None, ymax=None,
                                   xlabel='Global Step', 
                                   xlabel_unit='Number of Training Batches', title=None):
     """
@@ -40,22 +37,29 @@ def plt_legacy_vs_partial_fw_prop(csv_prefix, metric, metric_unit, ymin=None,
     ylabel = metric.title().replace('_', ' ')
     title ='%s-legacy_vs_partial_fw_prop-%s' % (csv_prefix, metric)
 
-    legacy  = np.genfromtxt(fname='%s-legacy/csv/%s.csv' % (csv_prefix, metric),
-                            delimiter=',').astype(np.float64)[1:,:]
-    partial = np.genfromtxt(fname='%s-partial_fw_prop/csv/%s.csv' % \
-                                  (csv_prefix, metric),
-                            delimiter=',').astype(np.float64)[1:,:]
-    
-    plt.Figure()
+    legacy  = gen_from_txt(fname='%s-legacy/csv/%s.csv' % (csv_prefix, metric))
+    partial = gen_from_txt(fname='%s-partial_fw_prop/csv/%s.csv' % (csv_prefix, metric))
 
-    ax = plt.axes()
-    ax.plot(legacy [:,1], legacy [:,2], linewidth=2, linestyle='--', 
-            color='black', label='Legacy')
-    ax.plot(partial[:,1], partial[:,2], linewidth=2, linestyle='-',
-            color='black', label='Partial FW Prop')
+    if metric == 'memory_usage' and metric_unit == 'GB':
+        legacy [:,2] = legacy [:,2] / 1024
+        partial[:,2] = partial[:,2] / 1024
+    
+    plt.figure()
+
+    plt.plot(legacy [:,1], legacy [:,2], linewidth=2, linestyle='--', 
+             color='black', label='Legacy')
+    plt.plot(partial[:,1], partial[:,2], linewidth=2, linestyle='-',
+             color='black', label='Partial FW Prop')
 
     plt.xlabel("%s (%s)" % (xlabel, xlabel_unit))
     plt.ylabel("%s (%s)" % (ylabel, metric_unit) if metric_unit is not None else ylabel)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+
+    if metric == 'memory_usage':
+        plt.yticks(np.arange(0, 13, 4))
+    if metric == 'perplexity':
+        plt.yticks(np.arange(0, 1300, 400))
 
     plt.legend(fontsize=20)
     plt.grid(linestyle='-.', linewidth=1)
@@ -68,8 +72,8 @@ if __name__ == "__main__":
     # setup the RC parameters
     plt_rc_setup()
 
-    args = parser.parse_args()
-
-    plt_legacy_vs_partial_fw_prop(csv_prefix=args.csv_prefix,
-                                  metric=args.metric, 
-                                  metric_unit=args.metric_unit)
+    plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-groundhog-500', metric='speed', 
+                                  metric_unit='Samples/s')
+    plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-groundhog-500', metric='perplexity')
+    plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-groundhog-500', metric='memory_usage',
+                                  metric_unit='GB')
