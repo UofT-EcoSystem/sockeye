@@ -30,6 +30,14 @@ then
 	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off"
 fi
 
+if [ "$1" == "--nvprof-dram" ] || [ "$2" == "--nvprof-dram" ]
+then
+	echo "nvprof is enabled to profile the DRAM traffic."
+	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off \
+                --metrics dram_read_transactions,dram_write_transactions \
+                --csv --log-file ${SOCKEYE_ROOT}/workspace/results/profile/${CONFERENCE_SRC_TGT_MODEL}.csv"
+fi
+
 cd ${SOCKEYE_ROOT} && rm -rf ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} && \
 PYTHONPATH=${SOCKEYE_ROOT} ${NVPROF_PREFIX} \
 python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SRC_TGT}/train-preproc.vi \
