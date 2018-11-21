@@ -72,8 +72,9 @@ if __name__ == "__main__":
     # setup the RC parameters
     plt_rc_setup()
 
-    plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-groundhog-500', metric='speed', 
-                                  metric_unit='Samples/s')
+    plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-groundhog-500', metric='speed', metric_unit='Samples/s')
+    plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='speed', metric_unit='Samples/s')
     plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-groundhog-500', metric='perplexity')
-    plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-groundhog-500', metric='memory_usage',
-                                  metric_unit='GB')
+    plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='perplexity')
+    plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-groundhog-500', metric='memory_usage', metric_unit='GB')
+    plt_legacy_vs_partial_fw_prop(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='memory_usage', metric_unit='GB')
