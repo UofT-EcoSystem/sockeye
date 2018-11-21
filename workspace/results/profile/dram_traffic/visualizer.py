@@ -65,14 +65,15 @@ if __name__ == "__main__":
             color='white')
     
     xticklabels = ['Default', 'EcoNMT']
-
-    plt.xlim  ([-2*bar_width, 1+2*bar_width])
+ 
+    plt.xlim([-2*bar_width, 1+2*bar_width])
+    plt.ylim([0, 550]) 
     plt.xticks(range(len(xticklabels)), xticklabels)
-#     plt.yticks(np.arange(0, 900, 225), fontsize=20)
+    #plt.yticks(np.arange(0, 601, 150), fontsize=20)
 
     plt.ylabel(r"DRAM Transactions ($10^6$)")
 
-    plt.legend(loc=(0, 1.05), ncol=2, fontsize=18)
+    plt.legend(loc=0, ncol=2, fontsize=16)
     plt.grid(linestyle='-.', linewidth=1, axis='y')
 
     plt.tight_layout()
