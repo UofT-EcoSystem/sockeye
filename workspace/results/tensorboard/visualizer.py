@@ -41,8 +41,8 @@ def plt_legacy_vs_partial_fw_prop(csv_prefix, metric, metric_unit=None, ymin=Non
     partial = gen_from_txt(fname='%s-partial_fw_prop/csv/%s.csv' % (csv_prefix, metric))
 
     if metric == 'memory_usage' and metric_unit == 'GB':
-        legacy [:,2] = legacy [:,2] / 1024
-        partial[:,2] = partial[:,2] / 1024
+        legacy [:,2] = legacy [:,2] / 1000
+        partial[:,2] = partial[:,2] / 1000
     
     plt.figure()
 
