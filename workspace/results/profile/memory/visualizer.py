@@ -42,8 +42,6 @@ def plt_rc_setup(dpi=400, fontsize=24):
 
     :param dpi     : Figure Resolution (Default to 400)
     :param fontsize: Font Size (Default to 24)
-    
-    :return: None
     """
     plt.rc('figure', dpi=dpi)
     plt.rc('axes', axisbelow=True)
