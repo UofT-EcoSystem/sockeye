@@ -17,11 +17,11 @@ then
 	echo "Backpropagation will be done using Legacy approach."
 elif [ "$1" == "--partial-fw-prop" ]
 then
-	echo "Backpropagation will be done using partial forward propagation."
+	echo "Backpropagation will be done using Partial Forward Propagation."
 	PARTIAL_FORWARD_PROP="--rnn-attention-partial-fw-prop"
 	COMPUTE_APPROACH="partial_fw_prop"
 else
-	
+	echo "Backpropagation will be done using Legacy approach."
 fi
 
 if [ "$1" == "--nvprof" ] || [ "$2" == "--nvprof" ]
