@@ -30,8 +30,8 @@ def gen_from_txt(fname):
 
 
 def plt_default_vs_econmt(csv_prefix, metric, metric_unit=None, ymin=None, ymax=None,
-                                  xlabel='Global Step', 
-                                  xlabel_unit='Number of Training Batches', title=None):
+                          xlabel='Global Step', 
+                          xlabel_unit='Number of Training Batches'):
     """
     Plot the comparison between legacy backpropagation and partial forward propagation.
     """
@@ -72,20 +72,43 @@ def plt_default_vs_econmt(csv_prefix, metric, metric_unit=None, ymin=None, ymax=
 def plt_throughput_vs_batch():
     B = [4, 8, 16, 32, 64, 128]
 
-    resnet50_throughput = [99.36, 137.38, 172.26, 197.28, 200.02, 206.91]
+    resnet50_throughput, sockeye_throughput = [99.36, 137.38, 172.26, 197.28, 200.02, 206.91], []
 
+    for batch_size in B:
+        sockeye_throughput.append(gen_from_txt("iwslt15-vi_en-tbd-500-default-B_%d/csv/throughput.csv" % batch_size)[0, 2])
+    print(sockeye_throughput)
+
+    def _plt_throughput_vs_batch(batch, throughput, title):
+        plt.figure()
+
+
+        plt.plot(B, throughput, linewidth=2, linestyle='--', 
+                 color='black', marker='X')
+
+        plt.xlabel("Batch Size")
+        plt.ylabel("Throughput (Samples/s)")
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
+
+        # plt.legend(fontsize=20)
+        plt.grid(linestyle='-.', linewidth=1)
+
+        plt.tight_layout()
+        plt.savefig("throughput_vs_batch-" + title + ".png")
     
+    _plt_throughput_vs_batch(B, resnet50_throughput, "resnet_50")
+    _plt_throughput_vs_batch(B,  sockeye_throughput, "sockeye")
 
 
 if __name__ == "__main__":
     # setup the RC parameters
     plt_rc_setup()
 
-    plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-groundhog-500', metric='perplexity')
-    plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='perplexity')
-    plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-groundhog-500', metric='memory_usage', metric_unit='GB')
-    plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='memory_usage', metric_unit='GB')
-    plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-groundhog-500', metric='throughput', metric_unit='Samples/s')
-    plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='throughput', metric_unit='Samples/s')
+    # plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-groundhog-500', metric='perplexity')
+    # plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='perplexity')
+    # plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-groundhog-500', metric='memory_usage', metric_unit='GB')
+    # plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='memory_usage', metric_unit='GB')
+    # plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-groundhog-500', metric='throughput', metric_unit='Samples/s')
+    # plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='throughput', metric_unit='Samples/s')
 
     plt_throughput_vs_batch()
