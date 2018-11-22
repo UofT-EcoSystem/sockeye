@@ -23,6 +23,7 @@ def plt_rc_setup(dpi=400, fontsize=24):
 
 def gen_from_txt(fname):
     data = np.genfromtxt(fname=fname, delimiter=',').astype(np.float64)[1:,:]
+    # normalize the time axis to minutes
     data[:, 0] = (data[:, 0] - data[0, 0]) / 60.0
 
     return data
@@ -68,6 +69,14 @@ def plt_default_vs_econmt(csv_prefix, metric, metric_unit=None, ymin=None, ymax=
     plt.savefig(title + ".png")
 
 
+def plt_throughput_vs_batch():
+    B = [4, 8, 16, 32, 64, 128]
+
+    resnet50_throughput = [99.36, 137.38, 172.26, 197.28, 200.02, 206.91]
+
+    
+
+
 if __name__ == "__main__":
     # setup the RC parameters
     plt_rc_setup()
@@ -78,3 +87,5 @@ if __name__ == "__main__":
     plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='memory_usage', metric_unit='GB')
     plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-groundhog-500', metric='throughput', metric_unit='Samples/s')
     plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='throughput', metric_unit='Samples/s')
+
+    plt_throughput_vs_batch()
