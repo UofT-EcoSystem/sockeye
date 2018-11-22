@@ -69,34 +69,70 @@ def plt_default_vs_econmt(csv_prefix, metric, metric_unit=None, ymin=None, ymax=
     plt.savefig(title + ".png")
 
 
-def plt_throughput_vs_batch():
+def plt_throughput_vs_batch_size():
     B = [4, 8, 16, 32, 64, 128]
 
-    resnet50_throughput, sockeye_throughput = [99.36, 137.38, 172.26, 197.28, 200.02, 206.91], []
+    resnet50_throughput = [99.36, 137.38, 172.26, 197.28, 200.02, 206.91]
+
+    sockeye_throughput   = []
+    sockeye_memory_usage = []
 
     for batch_size in B:
-        sockeye_throughput.append(gen_from_txt("iwslt15-vi_en-tbd-500-default-B_%d/csv/throughput.csv" % batch_size)[0, 2])
+        sockeye_throughput  .append(gen_from_txt("iwslt15-vi_en-tbd-500-default-B_%d/csv/throughput.csv"   % batch_size)[0, 2])
+        sockeye_memory_usage.append(gen_from_txt("iwslt15-vi_en-tbd-500-default-B_%d/csv/memory_usage.csv" % batch_size)[-1, 2])
 
-    def _plt_throughput_vs_batch(batch, throughput, title):
-        plt.figure()
+    sockeye_memory_usage = [memory_usage / 1000 for memory_usage in sockeye_memory_usage]
 
+    plt.figure()
 
-        plt.plot(B, throughput, linewidth=2, linestyle='--', 
-                 color='black', marker='o')
+    plt.plot(B, resnet50_throughput, linewidth=2, linestyle='-', 
+             color='black', marker='o', markersize=5)
 
-        plt.xlabel("Batch Size")
-        plt.ylabel("Throughput (Samples/s)")
-        plt.xticks(fontsize=20)
-        plt.yticks(fontsize=20)
+    plt.xlabel("Batch Size")
+    plt.xlim(xmin=0, xmax=140)
+    plt.xticks(B, ['%d' % batch_size if batch_size != 8 else '' \
+        for batch_size in B], fontsize=20)
+    plt.ylabel("Throughput (Samples/s)")
+    plt.yticks(np.arange(0, 251, 50), fontsize=20)
 
-        # plt.legend(fontsize=20)
-        plt.grid(linestyle='-.', linewidth=1)
+    plt.grid(linestyle='-.', linewidth=1)
 
-        plt.tight_layout()
-        plt.savefig("throughput_vs_batch-" + title + ".png")
+    plt.tight_layout()
+    plt.savefig("throughput_vs_batch_size-resnet_50.png")
+
+    # ==============================================================================================
+
+    fig, axes = plt.subplots()
+
+    throughput_plot = axes.plot(B, sockeye_throughput, linewidth=2, linestyle='-',
+                                color='black', marker='o', markersize=5, label="Throughput")
+    axes.set_xlabel("Batch Size")
+    axes.set_xlim(xmin=0, xmax=140)
+    axes.set_xticks(B)
+    axes.set_xticklabels(['%d' % batch_size if batch_size != 8 else '' \
+        for batch_size in B])
+    axes.set_ylabel("Throughput (Samples/s)")
+    axes.set_yticks(np.arange(0, 501, 100))
     
-    _plt_throughput_vs_batch(B, resnet50_throughput, "resnet_50")
-    _plt_throughput_vs_batch(B,  sockeye_throughput, "sockeye")
+    for ticklabel in axes.get_xticklabels() + axes.get_yticklabels():
+        ticklabel.set_fontsize(20)
+
+    axes.grid(linestyle='-.', linewidth=1)
+
+    axes = axes.twinx()
+
+    memory_usage_plot = axes.plot(B, sockeye_memory_usage, linewidth=2, linestyle='--',
+                                  color='black', marker='X', markersize=5, label="Memory Usage")
+    
+    axes.set_ylabel("Memory Usage (GB)")
+    axes.set_yticks(np.arange(0, 11, 2))
+
+    legends = throughput_plot + memory_usage_plot
+    axes.legend(legends, [legend.get_label() for legend in legends], fontsize=20)
+
+    plt.tight_layout()
+    plt.savefig("throughput_and_memory_usage_vs_batch_size-sockeye.png")
+
 
 
 if __name__ == "__main__":
@@ -110,4 +146,4 @@ if __name__ == "__main__":
     # plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-groundhog-500', metric='throughput', metric_unit='Samples/s')
     # plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='throughput', metric_unit='Samples/s')
 
-    plt_throughput_vs_batch()
+    plt_throughput_vs_batch_size()

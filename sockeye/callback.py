@@ -304,5 +304,5 @@ def write_tensorboard(summary_writer,
         #                           global_step=checkpoint)
         summary_writer.add_summary(tf.Summary(value=[tf.Summary.Value(tag=name,
                                                                       simple_value=value)]),
-                                   global_step=self.global_step)
+                                   global_step=checkpoint)
 

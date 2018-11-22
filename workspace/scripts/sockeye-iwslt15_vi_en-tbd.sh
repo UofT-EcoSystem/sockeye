@@ -59,5 +59,5 @@ python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SR
 			 --max-num-checkpoint-not-improved 5 \
 			 --weight-init uniform --weight-init-scale 0.1 \
 			 --learning-rate-reduce-factor 1.0 \
-			 --monitor-bleu -1 --use-tensorboard \
-			 --max-updates=500 ${PARTIAL_FORWARD_PROP} 2>&1 | tee ${SOCKEYE_ROOT}/workspace/results/log/sockeye-${CONFERENCE_SRC_TGT_MODEL}.log
+			 --monitor-bleu 500 --use-tensorboard \
+			 ${PARTIAL_FORWARD_PROP} 2>&1 | tee ${SOCKEYE_ROOT}/workspace/results/log/sockeye-${CONFERENCE_SRC_TGT_MODEL}.log
