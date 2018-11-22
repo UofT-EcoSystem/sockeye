@@ -156,10 +156,10 @@ if __name__ == "__main__":
     plt_memory_breakdown(sorted_stats_list=sorted_stats_list, 
                          expected_sum=4477.0 / 1024, 
                          xlabel="Layer Type",
-                         fig_name='sockeye-iwslt15-vi_en-groundhog-memory_profile-layer.png')
+                         fig_name='iwslt15-vi_en-groundhog-memory_profile-layer.png')
     sorted_stats_list = parse_memory_profile(memory_profile=args.memory_profile, 
                                              regex_dict=SOCKEYE_FUNCTION_REGEX_DICT)
     plt_memory_breakdown(sorted_stats_list=sorted_stats_list, 
                          expected_sum=4477.0 / 1024, 
                          xlabel="Data Structure",
-                         fig_name='sockeye-iwslt15-vi_en-groundhog-memory_profile-function.png')
+                         fig_name='iwslt15-vi_en-groundhog-memory_profile-function.png')

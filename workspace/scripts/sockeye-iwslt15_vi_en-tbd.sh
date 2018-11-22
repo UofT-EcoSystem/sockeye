@@ -28,6 +28,13 @@ then
 	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off"
 fi
 
+if [ "$1" == "--nvprof-runtime" ] || [ "$2" == "--nvprof-runtime" ]
+then
+	echo "nvprof is enabled to profile the runtime."
+	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off \
+                --csv --log-file ${SOCKEYE_ROOT}/workspace/results/profile/runtime/${CONFERENCE_SRC_TGT_MODEL}.csv"
+fi
+
 cd ${SOCKEYE_ROOT} && rm -rf ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} && \
 PYTHONPATH=${SOCKEYE_ROOT} ${NVPROF_PREFIX} \
 python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SRC_TGT}/train-preproc.en \
