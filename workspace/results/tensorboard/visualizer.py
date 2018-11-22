@@ -76,14 +76,13 @@ def plt_throughput_vs_batch():
 
     for batch_size in B:
         sockeye_throughput.append(gen_from_txt("iwslt15-vi_en-tbd-500-default-B_%d/csv/throughput.csv" % batch_size)[0, 2])
-    print(sockeye_throughput)
 
     def _plt_throughput_vs_batch(batch, throughput, title):
         plt.figure()
 
 
         plt.plot(B, throughput, linewidth=2, linestyle='--', 
-                 color='black', marker='X')
+                 color='black', marker='o')
 
         plt.xlabel("Batch Size")
         plt.ylabel("Throughput (Samples/s)")
