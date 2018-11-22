@@ -76,6 +76,5 @@ if __name__ == "__main__":
     plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='perplexity')
     plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-groundhog-500', metric='memory_usage', metric_unit='GB')
     plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='memory_usage', metric_unit='GB')
-    plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-groundhog-500', metric='speed', metric_unit='Samples/s')
-    plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='speed', metric_unit='Samples/s')
-
+    plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-groundhog-500', metric='throughput', metric_unit='Samples/s')
+    plt_default_vs_econmt(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='throughput', metric_unit='Samples/s')
