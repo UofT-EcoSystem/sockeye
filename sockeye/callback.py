@@ -302,7 +302,7 @@ def write_tensorboard(summary_writer,
 
         # summary_writer.add_scalar(tag=name, value=value,
         #                           global_step=checkpoint)
-        self.summary_writer.add_summary(tf.Summary(value=[tf.Summary.Value(tag=name,
-                                                                           simple_value=value)]),
-                                        global_step=self.global_step)
+        summary_writer.add_summary(tf.Summary(value=[tf.Summary.Value(tag=name,
+                                                                      simple_value=value)]),
+                                   global_step=self.global_step)
 
