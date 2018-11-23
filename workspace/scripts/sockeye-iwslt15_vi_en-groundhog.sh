@@ -8,9 +8,6 @@ CONFERENCE_SRC_TGT=iwslt15-vi_en
 CONFERENCE_SRC_TGT_MODEL=${CONFERENCE_SRC_TGT}-groundhog
 
 PARTIAL_FORWARD_PROP=
-
-NVPROF_PREFIX=
-
 if [ "$1" == "--legacy" ]
 then
 	echo "Backpropagation will be done using Legacy approach."
@@ -21,19 +18,28 @@ then
 else
 	echo "Backpropagation will be done using Legacy approach."
 fi
-
+# ==================================================================================================
+NVPROF_PREFIX=
 if [ "$1" == "--nvprof" ] || [ "$2" == "--nvprof" ]
 then
 	echo "nvprof is enabled to profile the application."
 	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off"
 fi
-
 if [ "$1" == "--nvprof-dram" ] || [ "$2" == "--nvprof-dram" ]
 then
 	echo "nvprof is enabled to profile the DRAM traffic."
 	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off \
                 --metrics dram_read_transactions,dram_write_transactions \
                 --csv --log-file ${SOCKEYE_ROOT}/workspace/results/profile/dram_traffic/${CONFERENCE_SRC_TGT_MODEL}.csv"
+fi
+# ==================================================================================================
+MAX_UPDATES=500
+if [ "$1" == "--full-run" ] || [ "$2" == "--full-run" ]
+then
+        echo "Training will run until completion."
+	MAX_UPDATES=10000
+else
+        echo "Training will stop after 500 updates."
 fi
 
 cd ${SOCKEYE_ROOT} && rm -rf ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} && \

@@ -8,9 +8,6 @@ CONFERENCE_SRC_TGT=iwslt15-vi_en
 CONFERENCE_SRC_TGT_MODEL=${CONFERENCE_SRC_TGT}-tbd
 
 PARTIAL_FORWARD_PROP=
-
-NVPROF_PREFIX=
-
 if [ "$1" == "--legacy" ]
 then
 	echo "Backpropagation will be done using Legacy approach."
@@ -21,18 +18,27 @@ then
 else
 	echo "Backpropagation will be done using Legacy approach."
 fi
-
+# ==================================================================================================
+NVPROF_PREFIX=
 if [ "$1" == "--nvprof" ] || [ "$2" == "--nvprof" ]
 then
 	echo "nvprof is enabled to profile the application."
 	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off"
 fi
-
 if [ "$1" == "--nvprof-runtime" ] || [ "$2" == "--nvprof-runtime" ]
 then
 	echo "nvprof is enabled to profile the runtime."
 	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off \
                 --csv --log-file ${SOCKEYE_ROOT}/workspace/results/profile/runtime/${CONFERENCE_SRC_TGT_MODEL}.csv"
+fi
+# ==================================================================================================
+MAX_UPDATES=500
+if [ "$1" == "--full-run" ] || [ "$2" == "--full-run" ]
+then
+	echo "Training will run until completion."
+	MAX_UPDATES=10000
+else
+        echo "Training will stop after 500 updates."
 fi
 
 cd ${SOCKEYE_ROOT} && rm -rf ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} && \
@@ -60,4 +66,4 @@ python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SR
 			 --weight-init uniform --weight-init-scale 0.1 \
 			 --learning-rate-reduce-factor 1.0 \
 			 --monitor-bleu 500 --use-tensorboard \
-			 ${PARTIAL_FORWARD_PROP} 2>&1 | tee ${SOCKEYE_ROOT}/workspace/results/log/sockeye-${CONFERENCE_SRC_TGT_MODEL}.log
+			 --max-updates ${MAX_UPDATES} ${PARTIAL_FORWARD_PROP} 2>&1 | tee ${SOCKEYE_ROOT}/workspace/results/log/sockeye-${CONFERENCE_SRC_TGT_MODEL}.log
