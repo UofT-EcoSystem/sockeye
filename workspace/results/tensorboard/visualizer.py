@@ -34,8 +34,6 @@ def plt_default_vs_econmt_preliminary(csv_prefix, metric, metric_unit=None):
     Plot the comparison between legacy backpropagation and 
     partial forward propagation (First 500 Updates, Preliminary Ver.).
     """
-    xlabel = 'Global Step (Number of Training Batches)'
-
     ylabel = metric.title().replace('_', ' ')
     title ='%s-default_vs_econmt-preliminary-%s' % (csv_prefix, metric)
 
@@ -55,7 +53,7 @@ def plt_default_vs_econmt_preliminary(csv_prefix, metric, metric_unit=None):
     plt.plot(econmt [:,1], econmt [:,2], linewidth=2, linestyle='-',
              color='black', label='EcoNMT')
 
-    plt.xlabel(xlabel)
+    plt.xlabel('Global Step (Number of Training Batches)')
     plt.ylabel("%s (%s)" % (ylabel, metric_unit) if metric_unit is not None else ylabel)
     plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
@@ -146,15 +144,11 @@ def plt_default_vs_econmt_full_training(csv_prefix, xscale, metric, metric_unit=
     Plot the comparison between legacy backpropagation and 
     partial forward propagation (Full Training Ver.).
     """
-    if xscale == 'N':
-        xlabel = 'Global Step (Number of Training Batches)'
-    elif xscale == 'T':
-        xlabel = r'Time ($\text{ms}$)'
-    else:
+    if xscale != 'N' and xscale != 'T':
         assert False, "Invalid xlabel %s. It must be either \'N\' or \'T\'."
     
     ylabel = metric.title().replace('_', ' ')
-    title ='%s-default_vs_econmt-full_training-%s' % (csv_prefix, metric)
+    title ='%s-default_vs_econmt-full_training-%s-%s' % (csv_prefix, xscale, metric)
 
     default_128_metric = gen_from_txt("%s-default-B_128/csv/%s.csv" % (csv_prefix, metric))
     econmt_128_metric  = gen_from_txt( "%s-econmt-B_128/csv/%s.csv" % (csv_prefix, metric))
@@ -174,12 +168,12 @@ def plt_default_vs_econmt_full_training(csv_prefix, xscale, metric, metric_unit=
              color='black', label='Default')
     plt.plot(econmt_128_metric [:,1] if xscale == 'N' else econmt_128_metric [:,0], 
              econmt_128_metric [:,2], linewidth=2, linestyle='-',
-             color='black', label='EcoNMT')
+             color='black', label='EcoNMT-B=128')
     plt.plot(econmt_256_metric [:,1] if xscale == 'N' else econmt_256_metric [:,0], 
              econmt_256_metric [:,2], linewidth=2, linestyle='-',
-             color='green', label='EcoNMT')
+             color='green', label='EcoNMT-B=256')
 
-    plt.xlabel(r'Time (min)')
+    plt.xlabel(r'Time (min)' if xscale == 'T' else 'Global Step (Number of Training Batches)')
     plt.ylabel("%s (%s)" % (ylabel, metric_unit) if metric_unit is not None else ylabel)
     plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
@@ -209,7 +203,11 @@ if __name__ == "__main__":
 
     # plt_throughput_vs_batch_size()
 
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='N', metric='perplexity')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='N', metric='memory_usage', metric_unit='GB')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='N', metric='throughput', metric_unit='Samples/s')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='N', metric='validation_bleu')
     plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='T', metric='perplexity')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='T', metric='memory_usage')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='T', metric='throughput')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='T', metric='memory_usage', metric_unit='GB')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='T', metric='throughput', metric_unit='Samples/s')
     plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='T', metric='validation_bleu')
