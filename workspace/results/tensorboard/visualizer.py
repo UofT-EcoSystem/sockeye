@@ -158,6 +158,10 @@ def plt_default_vs_econmt_full_training(csv_prefix, xscale, metric, metric_unit=
         default_128_metric[:,2] = default_128_metric[:,2] / 1000
         econmt_128_metric [:,2] = econmt_128_metric [:,2] / 1000
         econmt_256_metric [:,2] = econmt_256_metric [:,2] / 1000
+    if metric == 'validation_bleu':
+        default_128_metric[:,2] = default_128_metric[:,2] * 100
+        econmt_128_metric [:,2] = econmt_128_metric [:,2] * 100
+        econmt_256_metric [:,2] = econmt_256_metric [:,2] * 100
 
     # ==============================================================================================
 
@@ -173,8 +177,11 @@ def plt_default_vs_econmt_full_training(csv_prefix, xscale, metric, metric_unit=
              econmt_256_metric [:,2], linewidth=2, linestyle='-',
              color='green', label='EcoNMT-B=256')
 
-    plt.xlabel(r'Time (min)' if xscale == 'T' else 'Global Step (Number of Training Batches)')
-    plt.ylabel("%s (%s)" % (ylabel, metric_unit) if metric_unit is not None else ylabel)
+    plt.xlabel(r'Time (min)' if xscale == 'T' else \
+               'Training Checkpoint Number' if metric == 'validation_bleu' else \
+               'Global Step (Number of Training Batches)')
+    plt.ylabel("Validation BLEU" if metric == 'validation_bleu' else \
+               "%s (%s)" % (ylabel, metric_unit) if metric_unit is not None else ylabel)
     plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
 
