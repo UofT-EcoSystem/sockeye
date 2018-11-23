@@ -673,8 +673,8 @@ class MlpAttention(Attention):
             else:
                 # (batch_size, 1, attention_num_hidden)
                 query_hidden = mx.sym.expand_dims(data=query_hidden,
-                                                axis=1,
-                                                name="%squery_hidden_expanded" % self.prefix)
+                                                  axis=1,
+                                                  name="%squery_hidden_expanded" % self.prefix)
 
                 # (batch_size, seq_len, attention_num_hidden)
                 attention_hidden = mx.sym.broadcast_add(lhs=attention_hidden_lhs, rhs=query_hidden,
@@ -685,15 +685,15 @@ class MlpAttention(Attention):
 
                 # (batch_size, seq_len, attention_num_hidden)
                 attention_hidden = mx.sym.Activation(attention_hidden, act_type="tanh",
-                                                    name="%shidden" % self.prefix)
+                                                     name="%shidden" % self.prefix)
 
                 # (batch_size, seq_len, 1)
                 attention_scores = mx.sym.FullyConnected(data=attention_hidden,
-                                                        weight=self.att_h2s_weight,
-                                                        num_hidden=1,
-                                                        no_bias=True,
-                                                        flatten=False,
-                                                        name="%sraw_att_score_fc" % self.prefix)
+                                                         weight=self.att_h2s_weight,
+                                                         num_hidden=1,
+                                                         no_bias=True,
+                                                         flatten=False,
+                                                         name="%sraw_att_score_fc" % self.prefix)
 
             context, attention_probs = get_context_and_attention_probs(source, source_length, attention_scores)
 
