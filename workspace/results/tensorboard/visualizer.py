@@ -36,15 +36,15 @@ def gen_from_txt(fname, metric, metric_unit=None):
     # normalize the time axis to minutes
     data[:,0] = (data[:,0] - data[0, 0]) / 60.0
 
-    if metric == 'validation_bleu':
-        data_new = np.zeros(shape=(100, 3)).astype(np.float64)
+    # if metric == 'validation_bleu':
+    #     data_new = np.zeros(shape=(100, 3)).astype(np.float64)
 
-        data_new[:,0] = np.linspace(0, np.max(data[:,0]), num=100, endpoint=True)
-        data_new[:,1] = np.linspace(1, np.max(data[:,1]), num=100, endpoint=True)
-        f = interp1d(data[:,0], data[:,2], kind='quadratic')
-        data_new[:,2] = f(data_new[:,0])
+    #     data_new[:,0] = np.linspace(0, np.max(data[:,0]), num=100, endpoint=True)
+    #     data_new[:,1] = np.linspace(1, np.max(data[:,1]), num=100, endpoint=True)
+    #     f = interp1d(data[:,0], data[:,2], kind='quadratic')
+    #     data_new[:,2] = f(data_new[:,0])
 
-        data = data_new
+    #     data = data_new
 
     return data
 
@@ -219,11 +219,11 @@ if __name__ == "__main__":
 
     # plt_throughput_vs_batch_size()
 
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='N', metric='perplexity')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='N', metric='memory_usage', metric_unit='GB')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='N', metric='throughput', metric_unit='Samples/s')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='N', metric='validation_bleu')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='T', metric='perplexity')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='T', metric='memory_usage', metric_unit='GB')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='T', metric='throughput', metric_unit='Samples/s')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-10k', xscale='T', metric='validation_bleu')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='N', metric='perplexity')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='N', metric='memory_usage', metric_unit='GB')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='N', metric='throughput', metric_unit='Samples/s')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='N', metric='validation_bleu')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='T', metric='perplexity')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='T', metric='memory_usage', metric_unit='GB')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='T', metric='throughput', metric_unit='Samples/s')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='T', metric='validation_bleu')
