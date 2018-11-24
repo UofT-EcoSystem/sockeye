@@ -6,6 +6,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.interpolate import interp1d
 
 def plt_rc_setup(dpi=400, fontsize=24):
     """
@@ -21,10 +22,29 @@ def plt_rc_setup(dpi=400, fontsize=24):
     plt.rc('font', family='Times New Roman', size=fontsize)
 
 
-def gen_from_txt(fname):
+def gen_from_txt(fname, metric, metric_unit=None):
     data = np.genfromtxt(fname=fname, delimiter=',').astype(np.float64)[1:,:]
+
+    if metric == 'memory_usage' and metric_unit == 'GB':
+        data[:,2] = data[:,2] / 1000
+    if metric == 'validation_bleu':
+        data[:,2] = data[:,2] * 100
+        starting_walltime = np.genfromtxt(fname=fname.replace(metric, 'perplexity'), 
+                                          delimiter=',').astype(np.float64)[1,0]
+        data = np.insert(data, 0, [starting_walltime, 0, 0], axis=0)
+
     # normalize the time axis to minutes
-    data[:, 0] = (data[:, 0] - data[0, 0]) / 60.0
+    data[:,0] = (data[:,0] - data[0, 0]) / 60.0
+
+    if metric == 'validation_bleu':
+        data_new = np.zeros(shape=(100, 3)).astype(np.float64)
+
+        data_new[:,0] = np.linspace(0, np.max(data[:,0]), num=100, endpoint=True)
+        data_new[:,1] = np.linspace(1, np.max(data[:,1]), num=100, endpoint=True)
+        f = interp1d(data[:,0], data[:,2], kind='quadratic')
+        data_new[:,2] = f(data_new[:,0])
+
+        data = data_new
 
     return data
 
@@ -37,12 +57,10 @@ def plt_default_vs_econmt_preliminary(csv_prefix, metric, metric_unit=None):
     ylabel = metric.title().replace('_', ' ')
     title ='%s-default_vs_econmt-preliminary-%s' % (csv_prefix, metric)
 
-    default = gen_from_txt(fname='%s-default/csv/%s.csv' % (csv_prefix, metric))
-    econmt  = gen_from_txt(fname= '%s-econmt/csv/%s.csv' % (csv_prefix, metric))
-
-    if metric == 'memory_usage' and metric_unit == 'GB':
-        default[:,2] = default[:,2] / 1000
-        econmt [:,2] = econmt [:,2] / 1000
+    default = gen_from_txt(fname='%s-default/csv/%s.csv' % (csv_prefix, metric),
+                           metric=metric, metric_unit=metric_unit)
+    econmt  = gen_from_txt(fname= '%s-econmt/csv/%s.csv' % (csv_prefix, metric),
+                           metric=metric, metric_unit=metric_unit)
     
     # ==============================================================================================
 
@@ -79,10 +97,10 @@ def plt_throughput_vs_batch_size():
     sockeye_memory_usage = []
 
     for batch_size in B:
-        sockeye_throughput  .append(gen_from_txt("iwslt15-vi_en-tbd-500-default-B_%d/csv/throughput.csv"   % batch_size)[0, 2])
-        sockeye_memory_usage.append(gen_from_txt("iwslt15-vi_en-tbd-500-default-B_%d/csv/memory_usage.csv" % batch_size)[-1, 2])
-
-    sockeye_memory_usage = [memory_usage / 1000 for memory_usage in sockeye_memory_usage]
+        sockeye_throughput  .append(gen_from_txt("iwslt15-vi_en-tbd-500-default-B_%d/csv/throughput.csv"   % batch_size,
+                                    metric="throughput")[0, 2])
+        sockeye_memory_usage.append(gen_from_txt("iwslt15-vi_en-tbd-500-default-B_%d/csv/memory_usage.csv" % batch_size,
+                                    metric="memory_usage", metric_unit="GB")[-1, 2])
 
     # ==============================================================================================
 
@@ -150,18 +168,9 @@ def plt_default_vs_econmt_full_training(csv_prefix, xscale, metric, metric_unit=
     ylabel = metric.title().replace('_', ' ')
     title ='%s-default_vs_econmt-full_training-%s-%s' % (csv_prefix, xscale, metric)
 
-    default_128_metric = gen_from_txt("%s-default-B_128/csv/%s.csv" % (csv_prefix, metric))
-    econmt_128_metric  = gen_from_txt( "%s-econmt-B_128/csv/%s.csv" % (csv_prefix, metric))
-    econmt_256_metric  = gen_from_txt( "%s-econmt-B_256/csv/%s.csv" % (csv_prefix, metric))
-
-    if metric == 'memory_usage' and metric_unit == 'GB':
-        default_128_metric[:,2] = default_128_metric[:,2] / 1000
-        econmt_128_metric [:,2] = econmt_128_metric [:,2] / 1000
-        econmt_256_metric [:,2] = econmt_256_metric [:,2] / 1000
-    if metric == 'validation_bleu':
-        default_128_metric[:,2] = default_128_metric[:,2] * 100
-        econmt_128_metric [:,2] = econmt_128_metric [:,2] * 100
-        econmt_256_metric [:,2] = econmt_256_metric [:,2] * 100
+    default_128_metric = gen_from_txt("%s-default-B_128/csv/%s.csv" % (csv_prefix, metric), metric, metric_unit)
+    econmt_128_metric  = gen_from_txt( "%s-econmt-B_128/csv/%s.csv" % (csv_prefix, metric), metric, metric_unit)
+    econmt_256_metric  = gen_from_txt( "%s-econmt-B_256/csv/%s.csv" % (csv_prefix, metric), metric, metric_unit)
 
     # ==============================================================================================
 
@@ -169,7 +178,7 @@ def plt_default_vs_econmt_full_training(csv_prefix, xscale, metric, metric_unit=
 
     plt.plot(default_128_metric[:,1] if xscale == 'N' else default_128_metric[:,0], 
              default_128_metric[:,2], linewidth=2, linestyle='--', 
-             color='black', label='Default')
+             color='black', label='Default-B=128')
     plt.plot(econmt_128_metric [:,1] if xscale == 'N' else econmt_128_metric [:,0], 
              econmt_128_metric [:,2], linewidth=2, linestyle='-',
              color='black', label='EcoNMT-B=128')

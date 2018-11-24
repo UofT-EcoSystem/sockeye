@@ -36,7 +36,7 @@ MAX_UPDATES=500
 if [ "$1" == "--full-run" ] || [ "$2" == "--full-run" ]
 then
 	echo "Training will run until completion."
-	MAX_UPDATES=10000
+	MAX_UPDATES=15000
 else
         echo "Training will stop after 500 updates."
 fi
@@ -57,7 +57,7 @@ python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SR
 			 --rnn-encoder-reverse-input \
 			 --num-embed 512:512 \
 			 --rnn-attention-type mlp --rnn-attention-num-hidden 512 \
-			 --batch-size 256 --initial-learning-rate 0.0006 \
+			 --batch-size 256 --initial-learning-rate 0.0012 \
 			 --bucket-width 10 \
 			 --metrics perplexity \
 			 --optimized-metric bleu \
