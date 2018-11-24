@@ -57,7 +57,7 @@ python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SR
 			 --rnn-encoder-reverse-input \
 			 --num-embed 512:512 \
 			 --rnn-attention-type mlp --rnn-attention-num-hidden 512 \
-			 --batch-size 128 \
+			 --batch-size 256 --initial-learning-rate 0.0006 \
 			 --bucket-width 10 \
 			 --metrics perplexity \
 			 --optimized-metric bleu \
