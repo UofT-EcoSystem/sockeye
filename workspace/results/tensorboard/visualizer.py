@@ -6,7 +6,6 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.interpolate import interp1d
 
 def plt_rc_setup(dpi=400, fontsize=24):
     """
@@ -35,16 +34,6 @@ def gen_from_txt(fname, metric, metric_unit=None):
 
     # normalize the time axis to minutes
     data[:,0] = (data[:,0] - data[0, 0]) / 60.0
-
-    # if metric == 'validation_bleu':
-    #     data_new = np.zeros(shape=(100, 3)).astype(np.float64)
-
-    #     data_new[:,0] = np.linspace(0, np.max(data[:,0]), num=100, endpoint=True)
-    #     data_new[:,1] = np.linspace(1, np.max(data[:,1]), num=100, endpoint=True)
-    #     f = interp1d(data[:,0], data[:,2], kind='quadratic')
-    #     data_new[:,2] = f(data_new[:,0])
-
-    #     data = data_new
 
     return data
 
