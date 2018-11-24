@@ -32,14 +32,9 @@ then
                 --csv --log-file ${SOCKEYE_ROOT}/workspace/results/profile/runtime/${CONFERENCE_SRC_TGT_MODEL}.csv"
 fi
 # ==================================================================================================
-MAX_UPDATES=500
-if [ "$1" == "--full-run" ] || [ "$2" == "--full-run" ]
-then
-	echo "Training will run until completion."
-	MAX_UPDATES=15000
-else
-        echo "Training will stop after 500 updates."
-fi
+BATCH_SIZE=64
+INITIAL_LEARNING_RATE=0.00015
+MAX_UPDATES=20000
 
 cd ${SOCKEYE_ROOT} && rm -rf ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} && \
 PYTHONPATH=${SOCKEYE_ROOT} ${NVPROF_PREFIX} \
@@ -57,7 +52,7 @@ python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SR
 			 --rnn-encoder-reverse-input \
 			 --num-embed 512:512 \
 			 --rnn-attention-type mlp --rnn-attention-num-hidden 512 \
-			 --batch-size 256 --initial-learning-rate 0.0012 \
+			 --batch-size ${BATCH_SIZE} --initial-learning-rate ${INITIAL_LEARNING_RATE} \
 			 --bucket-width 10 \
 			 --metrics perplexity \
 			 --optimized-metric bleu \
