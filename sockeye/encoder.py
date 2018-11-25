@@ -290,6 +290,7 @@ class ReverseSequence(Encoder):
                data: mx.sym.Symbol,
                data_length: mx.sym.Symbol,
                seq_len: int) -> Tuple[mx.sym.Symbol, mx.sym.Symbol, int]:
+        # @ArmageddonKnight Fixed the inefficiency of `SequenceReverse`.
         # data = mx.sym.SequenceReverse(data=data, sequence_length=data_length, use_sequence_length=True)
         data = mx.sym.ParSequenceReverse(IData=data, SequenceLength=data_length, use_sequence_length=True)
         return data, data_length, seq_len
@@ -735,6 +736,7 @@ class BiDirectionalRNNEncoder(Encoder):
         """
         Bidirectionally encodes time-major data.
         """
+        # @ArmageddonKnight Fixed the inefficiency of `SequenceReverse`.
         # (seq_len, batch_size, num_embed)
         # data_reverse = mx.sym.SequenceReverse(data=data, sequence_length=data_length,
         #                                       use_sequence_length=True)
