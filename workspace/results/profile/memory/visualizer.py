@@ -168,7 +168,7 @@ if __name__ == "__main__":
                          expected_sum=args.expected_sum / 1e3, 
                          xlabel="Layer Type",
                          fig_name=args.memory_profile.replace('.log', '-layer.png'),
-                         annotation_top_k=3,
+                         annotation_top_k=4,
                          annotation_length_ratio=args.annotation_length_ratio)
     sorted_stats_list = parse_memory_profile(memory_profile=args.memory_profile, 
                                              regex_dict=SOCKEYE_FUNCTION_REGEX_DICT)

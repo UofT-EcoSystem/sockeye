@@ -10,7 +10,7 @@ FUNCTION_REGEX_DICT maps Function Descriptions to List of Regular Expressions.
 """
 SOCKEYE_FUNCTION_REGEX_DICT = {
     'Feature Maps'       : ['forward_features'],
-    'Weights$'           : ['in_arg', 'arg_grad', 'optimizer'],
+    'Weights'            : ['in_arg', 'arg_grad', 'optimizer'],
     'Others'             : ['aux_state',
                             'workspace',
                             '(data)', '(label)',
