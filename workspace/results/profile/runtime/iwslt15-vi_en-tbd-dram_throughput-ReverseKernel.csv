@@ -1,0 +1,7 @@
+==31586== NVPROF is profiling process 31586, command: python3 -m sockeye.train --source /home/armageddonknight/Workspace/EcoRNN/EcoNMT/benchmarks/sockeye/workspace/data/iwslt15-vi_en/train-preproc.en --target /home/armageddonknight/Workspace/EcoRNN/EcoNMT/benchmarks/sockeye/workspace/data/iwslt15-vi_en/train
+==31586== Profiling application: python3 -m sockeye.train --source /home/armageddonknight/Workspace/EcoRNN/EcoNMT/benchmarks/sockeye/workspace/data/iwslt15-vi_en/train-preproc.en --target /home/armageddonknight/Workspace/EcoRNN/EcoNMT/benchmarks/sockeye/workspace/data/iwslt15-vi_en/train
+==31586== Profiling result:
+==31586== Metric result:
+"Device","Kernel","Invocations","Metric Name","Metric Description","Min","Max","Avg"
+"TITAN Xp (0)","_ZN5mxnet2op8mxnet_op20mxnet_generic_kernelINS0_13ReverseKernelEJPfS4_NS_9OpReqTypeEjjjjPKfEEEviDpT0_",6,"dram_read_throughput","Device Memory Read Throughput",1.020198GB/s,1.140055GB/s,1.094314GB/s
+"TITAN Xp (0)","_ZN5mxnet2op8mxnet_op20mxnet_generic_kernelINS0_13ReverseKernelEJPfS4_NS_9OpReqTypeEjjjjPKfEEEviDpT0_",6,"dram_write_throughput","Device Memory Write Throughput",142.160629MB/s,149.020173MB/s,146.287479MB/s

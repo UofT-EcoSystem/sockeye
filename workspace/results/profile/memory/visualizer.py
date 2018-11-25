@@ -2,6 +2,10 @@
 """
     Author: Bojian Zheng (ArmageddonKnight@github)
     Description: This file plots the memory profile of the Sockeye NMT Toolkit.
+    ```Bash
+    ./visualizer.py --memory-profile iwslt15-vi_en-groundhog-memory_profile.log --expected-sum 4477 --annotation-length-ratio=0.11
+    ./visualizer.py --memory-profile iwslt15-vi_en-tbd-memory_profile.log --expected-sum 9077 --annotation-length-ratio=0.056
+    ```
 """
 
 import argparse
@@ -14,8 +18,15 @@ from memory_profile_analysis import parse_memory_profile, \
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--memory-profile', help='Path to Memory Profile', type=str, default=None)
-
+parser.add_argument('--memory-profile',
+                    help='Path to Memory Profile', 
+                    type=str, default=None)
+parser.add_argument('--expected-sum',
+                    help='Expected Sum by nvidia-smi', 
+                    type=int, default=None)
+parser.add_argument('--annotation-length-ratio',
+                    help='Length Ratio of Annotation', 
+                    type=float, default=None)
 
 def plt_legend(handles, title, ncol=1):
     """
@@ -57,7 +68,7 @@ def plt_memory_breakdown(sorted_stats_list,
                          bar_width=0.3,
                          annotation_top_k=None,
                          annotation_fontsize=18,
-                         annotation_length_ratio=0.11):
+                         annotation_length_ratio=0.011):
     """
     Plot the breakdown of memory consumption.
     
@@ -73,12 +84,12 @@ def plt_memory_breakdown(sorted_stats_list,
     """
     plt.figure(figsize=(8, 6))
 
-    sorted_stats_klist = [kv[0]                           for kv in sorted_stats_list[:]]
-    sorted_stats_vlist = [kv[1][0] / (1024 * 1024 * 1024) for kv in sorted_stats_list[:]]
+    sorted_stats_klist = [kv[0]          for kv in sorted_stats_list[:]]
+    sorted_stats_vlist = [kv[1][0] / 1e9 for kv in sorted_stats_list[:]]
     
     if expected_sum is not None:
         sorted_stats_klist.append('Untrackable')
-        sorted_stats_vlist.append(expected_sum - np.sum([kv[1][0] / (1024 * 1024 * 1024) for kv in sorted_stats_list[:]]))
+        sorted_stats_vlist.append(expected_sum - np.sum([kv[1][0] / 1e9 for kv in sorted_stats_list[:]]))
 
     assert len(sorted_stats_klist) == len(sorted_stats_vlist)
 
@@ -90,9 +101,10 @@ def plt_memory_breakdown(sorted_stats_list,
         plt.bar(x=0, height=sorted_stats_vlist[i], bottom=np.sum(sorted_stats_vlist[i+1:]),
                 width=bar_width * 0.8, edgecolor='black', linewidth=3,
                 # color=np.array([1, i * 1.0 / 3, i * 1.0 / 3]) if i < 3 else 'white',
-                color=np.array([i * 1.0 / (sorted_stats_list_len - 2), 
-                                i * 1.0 / (sorted_stats_list_len - 2), 
-                                i * 1.0 / (sorted_stats_list_len - 2)]) \
+                color=np.array([1, 0, 0]) if i == 0 else \
+                      np.array([(i-1) * 1.0 / (sorted_stats_list_len - 3), 
+                                (i-1) * 1.0 / (sorted_stats_list_len - 3), 
+                                (i-1) * 1.0 / (sorted_stats_list_len - 3)]) \
                                     if 'Other'       not in sorted_stats_klist[i] and \
                                        'Untrackable' not in sorted_stats_klist[i] else 'white',
                 hatch='//' if sorted_stats_klist[i] is 'Untrackable' else '',
@@ -103,31 +115,15 @@ def plt_memory_breakdown(sorted_stats_list,
             bar_length = sorted_stats_vlist[i]
             switch_side_flag = False if i >= 2 and i % 2 == 0 else True
             
-            plt.annotate(('%2.0f%%') % (sorted_stats_vlist[i] * 100.0 / expected_sum),
-                         xy    =(0.5*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
-                         xytext=(0.7*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
+            plt.annotate(('%.0f%%') % (sorted_stats_vlist[i] * 100.0 / expected_sum),
+                         xy    =(0.45*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
+                         xytext=(0.55*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
                          fontsize=annotation_fontsize,
                          ha='left' if switch_side_flag is True else 'right', 
                          va='center', 
                          bbox=dict(boxstyle='square', facecolor='white', linewidth=3),
                          arrowprops=dict(arrowstyle="-[, widthB=%f, lengthB=0.3" % 
                             (annotation_length_ratio * annotation_fontsize * bar_length), linewidth=2))
-        """
-        middle_pos = sorted_stats_vlist[i] / 2 + np.sum(sorted_stats_vlist[i+1:])
-        bar_length = sorted_stats_vlist[i]
-        switch_side_flag = True if i < annotation_top_k or i % 2 == 0 else False
-        
-        annotations.append(
-            plt.annotate((sorted_stats_klist[i] + ' (%.2f%%)') % (sorted_stats_vlist[i] * 100.0 / expected_sum),
-                         xy    =(0.6*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
-                         xytext=(0.8*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
-                         fontsize=20,
-                         ha='left' if switch_side_flag is True else 'right', 
-                         va='center', 
-                         bbox=dict(boxstyle='square', facecolor='white', linewidth=3),
-                         arrowprops=dict(arrowstyle="-[, widthB=%f, lengthB=0.3" % 
-                            (annotation_length_ratio * bar_length), linewidth=2)))
-        """
     # x- & y- axis
     plt.xlim([-2*bar_width, 2*bar_width])
     plt.xticks([])
@@ -154,12 +150,16 @@ if __name__ == "__main__":
     sorted_stats_list = parse_memory_profile(memory_profile=args.memory_profile, 
                                              regex_dict=SOCKEYE_LAYER_REGEX_DICT)
     plt_memory_breakdown(sorted_stats_list=sorted_stats_list, 
-                         expected_sum=4477.0 / 1024, 
+                         expected_sum=args.expected_sum / 1e3, 
                          xlabel="Layer Type",
-                         fig_name='iwslt15-vi_en-groundhog-memory_profile-layer.png')
+                         fig_name=args.memory_profile.replace('.log', '-layer.png'),
+                         annotation_top_k=4,
+                         annotation_length_ratio=args.annotation_length_ratio)
     sorted_stats_list = parse_memory_profile(memory_profile=args.memory_profile, 
                                              regex_dict=SOCKEYE_FUNCTION_REGEX_DICT)
     plt_memory_breakdown(sorted_stats_list=sorted_stats_list, 
-                         expected_sum=4477.0 / 1024, 
+                         expected_sum=args.expected_sum / 1e3, 
                          xlabel="Data Structure",
-                         fig_name='iwslt15-vi_en-groundhog-memory_profile-function.png')
+                         fig_name=args.memory_profile.replace('.log', '-function.png'),
+                         annotation_top_k=3,
+                         annotation_length_ratio=args.annotation_length_ratio)

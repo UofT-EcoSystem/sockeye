@@ -10,14 +10,14 @@ FUNCTION_REGEX_DICT maps Function Descriptions to List of Regular Expressions.
 """
 SOCKEYE_FUNCTION_REGEX_DICT = {
     'Feature Maps'       : ['forward_features'],
-    r'$W, B, dW, dB$'    : ['in_arg', 'arg_grad', 'optimizer'],
+    'Weights'            : ['in_arg', 'arg_grad', 'optimizer'],
     'Others'             : ['aux_state',
                             'workspace',
                             '(data)', '(label)',
                             '(source)', 
-                            '(target)', 
+                            '(target)',
+                            '(sum)', 
                             '(target_label)',
-                            'sum',
                             '_equal_scalar', 
                             '_rminus_scalar',
                              'untagged', 
@@ -29,8 +29,8 @@ SOCKEYE_FUNCTION_REGEX_DICT = {
 LAYER_REGEX_DICT maps Layer Descriptions to Regular Expressions.
 """
 SOCKEYE_LAYER_REGEX_DICT = {
-    'Embedding'          : ['target_embed',
-                            'source_embed'],
+    # 'Embedding'          : ['target_embed',
+    #                         'source_embed'],
     'Attention'          : ['att'],
     # 'Attention_Query_Plus_Input'    : ['att_query_plus_input'],
     # 'Attention_NormInp_Minus_Mean'  : ['att_norminp_minus_mean'],
@@ -122,7 +122,7 @@ def parse_memory_profile(memory_profile, regex_dict):
                                 break
                 if regex_matched is False:
                     print("[WARNING]: " "[Memory Profile Analyzer] " "Unknown Tag: %s, " "Allocation Size: %5.2f" % \
-                        (words[6], float(words[2]) * 1.0 / (1024 * 1024)))
+                        (words[6], float(words[2]) * 1.0 / 1e6))
 
     sorted_stats_list = sorted(stats_dict.items(), key=lambda kv: kv[1][0], reverse=True)
     
@@ -135,6 +135,6 @@ def parse_memory_profile(memory_profile, regex_dict):
 
     for stats in sorted_stats_list:
         print("Keyword: %-30s, Memory Consumption: %7.2f GB, Entries: %5d" % \
-            (stats[0], stats[1][0] * 1.0 / (1024 * 1024 * 1024), len(stats[1][1])))
+            (stats[0], stats[1][0] * 1.0 / 1e9, len(stats[1][1])))
 
     return sorted_stats_list
