@@ -32,9 +32,9 @@ then
                 --csv --log-file ${SOCKEYE_ROOT}/workspace/results/profile/runtime/${CONFERENCE_SRC_TGT_MODEL}.csv"
 fi
 # ==================================================================================================
-BATCH_SIZE=64
-INITIAL_LEARNING_RATE=0.00015
-MAX_UPDATES=20000
+BATCH_SIZE=128
+INITIAL_LEARNING_RATE=0.0003
+MAX_UPDATES=15000
 
 cd ${SOCKEYE_ROOT} && rm -rf ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} && \
 PYTHONPATH=${SOCKEYE_ROOT} ${NVPROF_PREFIX} \
@@ -61,4 +61,4 @@ python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SR
 			 --weight-init uniform --weight-init-scale 0.1 \
 			 --learning-rate-reduce-factor 1.0 \
 			 --monitor-bleu 500 --use-tensorboard \
-			 --max-updates ${MAX_UPDATES} ${PARTIAL_FORWARD_PROP} 2>&1 | tee ${SOCKEYE_ROOT}/workspace/results/log/sockeye-${CONFERENCE_SRC_TGT_MODEL}.log
+			 --max-updates ${MAX_UPDATES} ${PARTIAL_FORWARD_PROP} 2>&1 | tee ${SOCKEYE_ROOT}/workspace/results/log/${CONFERENCE_SRC_TGT_MODEL}.log
