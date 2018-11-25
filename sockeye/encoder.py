@@ -290,7 +290,8 @@ class ReverseSequence(Encoder):
                data: mx.sym.Symbol,
                data_length: mx.sym.Symbol,
                seq_len: int) -> Tuple[mx.sym.Symbol, mx.sym.Symbol, int]:
-        data = mx.sym.SequenceReverse(data=data, sequence_length=data_length, use_sequence_length=True)
+        # data = mx.sym.SequenceReverse(data=data, sequence_length=data_length, use_sequence_length=True)
+        data = mx.sym.ParSequenceReverse(IData=data, SequenceLength=data_length, use_sequence_length=True)
         return data, data_length, seq_len
 
 
@@ -735,15 +736,19 @@ class BiDirectionalRNNEncoder(Encoder):
         Bidirectionally encodes time-major data.
         """
         # (seq_len, batch_size, num_embed)
-        data_reverse = mx.sym.SequenceReverse(data=data, sequence_length=data_length,
-                                              use_sequence_length=True)
+        # data_reverse = mx.sym.SequenceReverse(data=data, sequence_length=data_length,
+        #                                       use_sequence_length=True)
+        data_reverse = mx.sym.ParSequenceReverse(IData=data, SequenceLength=data_length,
+                                                 use_sequence_length=True)
         # (seq_length, batch, cell_num_hidden)
         hidden_forward, _, _ = self.forward_rnn.encode(data, data_length, seq_len)
         # (seq_length, batch, cell_num_hidden)
         hidden_reverse, _, _ = self.reverse_rnn.encode(data_reverse, data_length, seq_len)
         # (seq_length, batch, cell_num_hidden)
-        hidden_reverse = mx.sym.SequenceReverse(data=hidden_reverse, sequence_length=data_length,
-                                                use_sequence_length=True)
+        # hidden_reverse = mx.sym.SequenceReverse(data=hidden_reverse, sequence_length=data_length,
+        #                                         use_sequence_length=True)
+        hidden_reverse = mx.sym.ParSequenceReverse(IData=hidden_reverse, SequenceLength=data_length,
+                                                   use_sequence_length=True)
         # (seq_length, batch, 2 * cell_num_hidden)
         hidden_concat = mx.sym.concat(hidden_forward, hidden_reverse, dim=2, name="%s_rnn" % self.prefix)
 
