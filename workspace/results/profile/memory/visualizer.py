@@ -101,9 +101,10 @@ def plt_memory_breakdown(sorted_stats_list,
         plt.bar(x=0, height=sorted_stats_vlist[i], bottom=np.sum(sorted_stats_vlist[i+1:]),
                 width=bar_width * 0.8, edgecolor='black', linewidth=3,
                 # color=np.array([1, i * 1.0 / 3, i * 1.0 / 3]) if i < 3 else 'white',
-                color=np.array([i * 1.0 / (sorted_stats_list_len - 2), 
-                                i * 1.0 / (sorted_stats_list_len - 2), 
-                                i * 1.0 / (sorted_stats_list_len - 2)]) \
+                color=np.array([1, 0, 0]) if i == 0 else \
+                      np.array([(i-1) * 1.0 / (sorted_stats_list_len - 3), 
+                                (i-1) * 1.0 / (sorted_stats_list_len - 3), 
+                                (i-1) * 1.0 / (sorted_stats_list_len - 3)]) \
                                     if 'Other'       not in sorted_stats_klist[i] and \
                                        'Untrackable' not in sorted_stats_klist[i] else 'white',
                 hatch='//' if sorted_stats_klist[i] is 'Untrackable' else '',
@@ -114,7 +115,7 @@ def plt_memory_breakdown(sorted_stats_list,
             bar_length = sorted_stats_vlist[i]
             switch_side_flag = False if i >= 2 and i % 2 == 0 else True
             
-            plt.annotate(('%2.0f%%') % (sorted_stats_vlist[i] * 100.0 / expected_sum),
+            plt.annotate(('%.0f%%') % (sorted_stats_vlist[i] * 100.0 / expected_sum),
                          xy    =(0.45*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
                          xytext=(0.55*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
                          fontsize=annotation_fontsize,
@@ -123,22 +124,6 @@ def plt_memory_breakdown(sorted_stats_list,
                          bbox=dict(boxstyle='square', facecolor='white', linewidth=3),
                          arrowprops=dict(arrowstyle="-[, widthB=%f, lengthB=0.3" % 
                             (annotation_length_ratio * annotation_fontsize * bar_length), linewidth=2))
-        """
-        middle_pos = sorted_stats_vlist[i] / 2 + np.sum(sorted_stats_vlist[i+1:])
-        bar_length = sorted_stats_vlist[i]
-        switch_side_flag = True if i < annotation_top_k or i % 2 == 0 else False
-        
-        annotations.append(
-            plt.annotate((sorted_stats_klist[i] + ' (%.2f%%)') % (sorted_stats_vlist[i] * 100.0 / expected_sum),
-                         xy    =(0.6*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
-                         xytext=(0.8*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
-                         fontsize=20,
-                         ha='left' if switch_side_flag is True else 'right', 
-                         va='center', 
-                         bbox=dict(boxstyle='square', facecolor='white', linewidth=3),
-                         arrowprops=dict(arrowstyle="-[, widthB=%f, lengthB=0.3" % 
-                            (annotation_length_ratio * bar_length), linewidth=2)))
-        """
     # x- & y- axis
     plt.xlim([-2*bar_width, 2*bar_width])
     plt.xticks([])
