@@ -48,7 +48,7 @@ def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev):
 
     plt.axhline(y=22.6, color='r', linewidth=2, linestyle='-.')
 
-    plt.xlabel('Training Checkpoint Number' if xscale == 'N' else r'Time (min)')
+    plt.xlabel('Training Checkpoint Number' if xscale == 'N' else 'Time (min)')
     plt.ylabel("Validation BLEU Score")
     if xscale == 'N':
         plt.xticks(np.arange(0, 9, 2), fontsize=20)
@@ -62,8 +62,45 @@ def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev):
     plt.tight_layout()
     plt.savefig(title + ".png")
 
+def plt_default_vs_econmt_full_training_end2end():
+    metric, metric_unit = 'validation_bleu', None
+    
+    title ='default_vs_econmt-end2end-%s' % metric
+
+    default_128_metric = gen_from_txt(       "default-B_128/csv/%s.csv" % metric, metric, metric_unit)
+    econmt_256_metric  = gen_from_txt("econmt-B_256-par_rev/csv/%s.csv" % metric, metric, metric_unit)
+
+    # ==============================================================================================
+
+    plt.figure()
+
+    plt.plot(default_128_metric[:9,0],
+             default_128_metric[:9,2], linewidth=2, linestyle='-', 
+             marker='x', markersize=10,
+             color='black', label=r'Default$_{B=128}$')
+    plt.plot(econmt_256_metric [:6,0], 
+             econmt_256_metric [:6,2], linewidth=2, linestyle='-', 
+             marker='+', markersize=10,
+             color='black', label= r'EcoNMT$_{B=256}^{\mathrm{par\_rev}}$')
+
+    plt.axhline(y=22.6, color='r', linewidth=2, linestyle='-.')
+
+    plt.xlabel('Time (min)')
+    plt.ylabel("Validation BLEU Score")
+    plt.yticks(fontsize=20)
+    plt.xlim(xmin=0)
+    plt.ylim(ymin=0)
+
+    plt.legend(fontsize=20)
+    plt.grid(linestyle='-.', linewidth=1)
+
+    plt.tight_layout()
+    plt.savefig(title + ".png")
+
+
 plt_default_vs_econmt_full_training_validation_bleu('N', False)
 plt_default_vs_econmt_full_training_validation_bleu('T', False)
 plt_default_vs_econmt_full_training_validation_bleu('N', True)
 plt_default_vs_econmt_full_training_validation_bleu('T', True)
 
+plt_default_vs_econmt_full_training_end2end()
