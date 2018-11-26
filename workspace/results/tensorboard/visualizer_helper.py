@@ -143,7 +143,7 @@ def plt_throughput_vs_batch_size():
     axes.legend(legends, [legend.get_label() for legend in legends], fontsize=20)
 
     plt.tight_layout()
-    plt.savefig("throughput_and_memory_usage_vs_batch_size-sockeye.png")
+    plt.savefig("throughput_vs_batch_size-sockeye.png")
 
 
 def plt_default_vs_econmt_full_training(csv_prefix, xscale, metric, metric_unit=None):
@@ -200,26 +200,12 @@ def plt_default_vs_econmt_full_training(csv_prefix, xscale, metric, metric_unit=
     plt.tight_layout()
     plt.savefig(title + ".png")
 
-
-if __name__ == "__main__":
-    # setup the RC parameters
-    plt_rc_setup()
-
     # plt_throughput_vs_batch_size()
-
-    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='N', metric='perplexity')
-    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='N', metric='memory_usage', metric_unit='GB')
-    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='N', metric='throughput', metric_unit='Samples/s')
-    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='N', metric='validation_bleu')
-    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='T', metric='perplexity')
-    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='T', metric='memory_usage', metric_unit='GB')
-    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='T', metric='throughput', metric_unit='Samples/s')
-    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='T', metric='validation_bleu')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='N', metric='perplexity')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='N', metric='memory_usage', metric_unit='GB')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='N', metric='throughput', metric_unit='Samples/s')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='N', metric='validation_bleu')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='T', metric='perplexity')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='T', metric='memory_usage', metric_unit='GB')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='T', metric='throughput', metric_unit='Samples/s')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='T', metric='validation_bleu')
+    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='N', metric='perplexity')
+    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='N', metric='memory_usage', metric_unit='GB')
+    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='N', metric='throughput', metric_unit='Samples/s')
+    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='N', metric='validation_bleu')
+    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='T', metric='perplexity')
+    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='T', metric='memory_usage', metric_unit='GB')
+    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='T', metric='throughput', metric_unit='Samples/s')
+    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='T', metric='validation_bleu')
