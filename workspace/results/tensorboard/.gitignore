@@ -1,4 +1,9 @@
-*/*
-!.gitignore
-!*/csv
-!*/tensorboard
+args.json
+config
+decode.*
+log
+metrics
+params.*
+symbol.json
+version
+vocab.*
