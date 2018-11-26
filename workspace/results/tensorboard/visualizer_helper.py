@@ -1,4 +1,4 @@
-#!/usr/bin/python
+
 """
     Author: Bojian Zheng (ArmageddonKnight@github)
     Description: This file plots the memory profile of the Sockeye NMT Toolkit.
@@ -38,17 +38,17 @@ def gen_from_txt(fname, metric, metric_unit=None):
     return data
 
 
-def plt_default_vs_econmt_preliminary(csv_prefix, metric, metric_unit=None):
+def plt_default_vs_econmt_preliminary(metric, metric_unit=None):
     """
     Plot the comparison between legacy backpropagation and 
     partial forward propagation (First 500 Updates, Preliminary Ver.).
     """
     ylabel = metric.title().replace('_', ' ')
-    title ='%s-default_vs_econmt-preliminary-%s' % (csv_prefix, metric)
+    title ='default_vs_econmt-%s' % metric
 
-    default = gen_from_txt(fname='%s-default/csv/%s.csv' % (csv_prefix, metric),
+    default = gen_from_txt(fname='default/csv/%s.csv' % metric,
                            metric=metric, metric_unit=metric_unit)
-    econmt  = gen_from_txt(fname= '%s-econmt/csv/%s.csv' % (csv_prefix, metric),
+    econmt  = gen_from_txt(fname= 'econmt/csv/%s.csv' % metric,
                            metric=metric, metric_unit=metric_unit)
     
     # ==============================================================================================
@@ -204,13 +204,6 @@ def plt_default_vs_econmt_full_training(csv_prefix, xscale, metric, metric_unit=
 if __name__ == "__main__":
     # setup the RC parameters
     plt_rc_setup()
-
-    # plt_default_vs_econmt_preliminary(csv_prefix='iwslt15-vi_en-groundhog-500', metric='perplexity')
-    # plt_default_vs_econmt_preliminary(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='perplexity')
-    # plt_default_vs_econmt_preliminary(csv_prefix='iwslt15-vi_en-groundhog-500', metric='memory_usage', metric_unit='GB')
-    # plt_default_vs_econmt_preliminary(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='memory_usage', metric_unit='GB')
-    # plt_default_vs_econmt_preliminary(csv_prefix='iwslt15-vi_en-groundhog-500', metric='throughput', metric_unit='Samples/s')
-    # plt_default_vs_econmt_preliminary(csv_prefix='iwslt15-vi_en-tbd-500'      , metric='throughput', metric_unit='Samples/s')
 
     # plt_throughput_vs_batch_size()
 
