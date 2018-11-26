@@ -158,7 +158,7 @@ def plt_default_vs_econmt_full_training(csv_prefix, xscale, metric, metric_unit=
     title ='%s-default_vs_econmt-full_training-%s-%s' % (csv_prefix, xscale, metric)
 
     default_128_metric = gen_from_txt("%s-default-B_128/csv/%s.csv" % (csv_prefix, metric), metric, metric_unit)
-    # econmt_128_metric  = gen_from_txt( "%s-econmt-B_128/csv/%s.csv" % (csv_prefix, metric), metric, metric_unit)
+    econmt_128_metric  = gen_from_txt( "%s-econmt-B_128/csv/%s.csv" % (csv_prefix, metric), metric, metric_unit)
     econmt_256_metric  = gen_from_txt( "%s-econmt-B_256/csv/%s.csv" % (csv_prefix, metric), metric, metric_unit)
 
     # ==============================================================================================
@@ -168,12 +168,15 @@ def plt_default_vs_econmt_full_training(csv_prefix, xscale, metric, metric_unit=
     plt.plot(default_128_metric[:,1] if xscale == 'N' else default_128_metric[:,0], 
              default_128_metric[:,2], linewidth=2, linestyle='--', 
              color='black', label='Default-B=128')
-    # plt.plot(econmt_128_metric [:,1] if xscale == 'N' else econmt_128_metric [:,0], 
-    #          econmt_128_metric [:,2], linewidth=2, linestyle='-',
-    #          color='black', label='EcoNMT-B=128')
+    plt.plot(econmt_128_metric [:,1] if xscale == 'N' else econmt_128_metric [:,0], 
+             econmt_128_metric [:,2], linewidth=2, linestyle='-',
+             color='black', label='EcoNMT-B=128')
     plt.plot(econmt_256_metric [:,1] if xscale == 'N' else econmt_256_metric [:,0], 
              econmt_256_metric [:,2], linewidth=2, linestyle='-',
              color='green', label='EcoNMT-B=256')
+
+    if metric == 'validation_bleu':
+        plt.axhline(y=22.7, color='r', linewidth=2, linestyle='-.')
 
     plt.xlabel(r'Time (min)' if xscale == 'T' else \
                'Training Checkpoint Number' if metric == 'validation_bleu' else \
@@ -183,6 +186,8 @@ def plt_default_vs_econmt_full_training(csv_prefix, xscale, metric, metric_unit=
                "%s (%s)" % (ylabel, metric_unit) if metric_unit is not None else ylabel)
     plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
+    plt.xlim(xmin=0)
+    plt.ylim(ymin=0)
 
     if metric == 'memory_usage':
         plt.yticks(np.arange(0, 13, 4))
@@ -209,11 +214,19 @@ if __name__ == "__main__":
 
     # plt_throughput_vs_batch_size()
 
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='N', metric='perplexity')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='N', metric='memory_usage', metric_unit='GB')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='N', metric='throughput', metric_unit='Samples/s')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='N', metric='validation_bleu')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='T', metric='perplexity')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='T', metric='memory_usage', metric_unit='GB')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='T', metric='throughput', metric_unit='Samples/s')
-    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='T', metric='validation_bleu')
+    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='N', metric='perplexity')
+    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='N', metric='memory_usage', metric_unit='GB')
+    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='N', metric='throughput', metric_unit='Samples/s')
+    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='N', metric='validation_bleu')
+    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='T', metric='perplexity')
+    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='T', metric='memory_usage', metric_unit='GB')
+    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='T', metric='throughput', metric_unit='Samples/s')
+    # plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-full_training', xscale='T', metric='validation_bleu')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='N', metric='perplexity')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='N', metric='memory_usage', metric_unit='GB')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='N', metric='throughput', metric_unit='Samples/s')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='N', metric='validation_bleu')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='T', metric='perplexity')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='T', metric='memory_usage', metric_unit='GB')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='T', metric='throughput', metric_unit='Samples/s')
+    plt_default_vs_econmt_full_training(csv_prefix='iwslt15-vi_en-tbd-par_rev-full_training', xscale='T', metric='validation_bleu')
