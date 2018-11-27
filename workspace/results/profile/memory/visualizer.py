@@ -1,8 +1,4 @@
 #!/usr/bin/python
-"""
-    Author: Bojian Zheng (ArmageddonKnight@github)
-    Description: This file plots the memory profile of the Sockeye NMT Toolkit.
-"""
 
 from memory_profile_analysis import parse_memory_profile, \
                                     SOCKEYE_LAYER_REGEX_DICT, \
@@ -23,6 +19,7 @@ def plt_memory_breakdown(memory_profile, expected_sum, annotation_length_ratio):
     plt_breakdown(sorted_stats_list=sorted_stats_list, 
                   expected_sum=expected_sum / 1e3, 
                   xlabel="Layer Type",
+                  ylabel="Memory Consumption (GB)"
                   fig_name=memory_profile.replace('.log', '-layer.png'),
                   annotation_top_k=4,
                   annotation_length_ratio=annotation_length_ratio)
@@ -31,6 +28,7 @@ def plt_memory_breakdown(memory_profile, expected_sum, annotation_length_ratio):
     plt_breakdown(sorted_stats_list=sorted_stats_list, 
                   expected_sum=expected_sum / 1e3, 
                   xlabel="Data Structure",
+                  ylabel="Memory Consumption (GB)",
                   fig_name=memory_profile.replace('.log', '-function.png'),
                   annotation_top_k=3,
                   annotation_length_ratio=annotation_length_ratio)

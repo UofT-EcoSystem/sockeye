@@ -83,7 +83,7 @@ def plt_throughput_vs_batch_size():
     plt.xlim(xmin=0, xmax=140)
     plt.xticks(B, ['%d' % batch_size if batch_size != 8 else '' \
         for batch_size in B], fontsize=20)
-    plt.ylabel("Throughput (Samples/s)")
+    plt.ylabel("Throughput (samples/s)")
     plt.yticks(np.arange(0, 251, 50), fontsize=20)
 
     plt.grid(linestyle='-.', linewidth=1)
@@ -102,7 +102,7 @@ def plt_throughput_vs_batch_size():
     axes.set_xticks(B)
     axes.set_xticklabels(['%d' % batch_size if batch_size != 8 else '' \
         for batch_size in B])
-    axes.set_ylabel("Throughput (Samples/s)")
+    axes.set_ylabel("Throughput (samples/s)")
     axes.set_yticks(np.arange(0, 501, 100))
     
     for ticklabel in axes.get_xticklabels() + axes.get_yticklabels():

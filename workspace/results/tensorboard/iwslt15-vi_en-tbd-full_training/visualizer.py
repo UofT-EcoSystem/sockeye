@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
-import os, sys
 import numpy as np
 import matplotlib.pyplot as plt
+
+import os, sys
 
 sys.path.append(
     os.path.dirname(
@@ -13,11 +14,6 @@ sys.path.append(
 
 from visualizer_helper import plt_rc_setup
 from tensorboard_visualizer_helper import gen_from_txt
-
-
-plt_rc_setup()
-
-# ==================================================================================================
 
 
 def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev):
@@ -103,6 +99,37 @@ def plt_default_vs_econmt_full_training_end2end():
     plt.tight_layout()
     plt.savefig(title + ".png")
 
+
+def plt_default_vs_econmt_full_training_throughput():
+
+    metric, metric_unit = 'throughput', None
+
+    title ='default_vs_econmt-throughput'
+
+    default_128_metric         = gen_from_txt("default-B_128/csv/throughput.csv")
+    default_128_par_rev_metric = gen_from_txt("default-B_128-par_rev/csv/throughput.csv")
+    econmt_128_metric          = gen_from_txt( "econmt-B_128/csv/throughput.csv")
+    econmt_128_par_rev_metric  = gen_from_txt( "econmt-B_128-par_rev/csv/throughput.csv")
+    econmt_256_metric          = gen_from_txt( "econmt-B_256/csv/throughput.csv")
+    econmt_256_par_rev_metric  = gen_from_txt( "econmt-B_256-par_rev/csv/throughput.csv")
+
+    # ==============================================================================================
+
+    plt.figure()
+
+    
+    plt.xlabel('Training Checkpoint Number' if xscale == 'N' else 'Time (min)')
+    plt.ylabel("Throughput (samples/s)")
+    plt.yticks(fontsize=20)
+
+    plt.legend(fontsize=20)
+    plt.grid(linestyle='-.', linewidth=1)
+
+    plt.tight_layout()
+    plt.savefig(title + ".png")
+
+
+plt_rc_setup()
 
 plt_default_vs_econmt_full_training_validation_bleu('N', False)
 plt_default_vs_econmt_full_training_validation_bleu('T', False)

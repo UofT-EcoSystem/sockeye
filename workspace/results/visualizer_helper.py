@@ -35,7 +35,7 @@ def plt_rc_setup(dpi=400, fontsize=24):
 
 def plt_breakdown(sorted_stats_list,
                   expected_sum,
-                  xlabel,
+                  xlabel, ylabel,
                   fig_name,
                   bar_width=0.3,
                   annotation_top_k=None,
@@ -87,7 +87,7 @@ def plt_breakdown(sorted_stats_list,
     plt.xlim([-2*bar_width, 2*bar_width])
     plt.xticks([])
     plt.xlabel(xlabel)
-    plt.ylabel("Memory Consumption (GB)")
+    plt.ylabel(ylabel)
 
     # Grid & Legend
     plt.grid(linestyle='-.', linewidth=1, axis='y')
