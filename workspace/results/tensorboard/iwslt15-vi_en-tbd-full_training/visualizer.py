@@ -33,17 +33,19 @@ def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev):
 
     plt.figure()
 
-    plt.plot(default_128_metric[:9,1] if xscale == 'N' else default_128_metric[:9,0], 
-             default_128_metric[:9,2], linewidth=2, linestyle='-', 
-             marker='x', markersize=10,
+    first_k_ckpts = 7 if par_rev else 8
+
+    plt.plot(default_128_metric[:first_k_ckpts,1] if xscale == 'N' else default_128_metric[:first_k_ckpts,0], 
+             default_128_metric[:first_k_ckpts,2], linewidth=2, linestyle='-', 
+             marker='X', markersize=10,
              color='black', label=r'Default$_{B=128}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
-    plt.plot(econmt_128_metric [:7,1] if xscale == 'N' else econmt_128_metric [:7,0], 
-             econmt_128_metric [:7,2], linewidth=2, linestyle='-', 
+    plt.plot(econmt_128_metric [:first_k_ckpts,1] if xscale == 'N' else econmt_128_metric [:first_k_ckpts,0], 
+             econmt_128_metric [:first_k_ckpts,2], linewidth=2, linestyle='--', 
              marker='.', markersize=10,
              color='black', label= r'EcoNMT$_{B=128}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
     plt.plot(econmt_256_metric [:6,1] if xscale == 'N' else econmt_256_metric [:6,0], 
              econmt_256_metric [:6,2], linewidth=2, linestyle='-', 
-             marker='+', markersize=10,
+             marker='^', markersize=10,
              color='black', label= r'EcoNMT$_{B=256}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
 
     plt.axhline(y=22.6, color='r', linewidth=2, linestyle='-.')
@@ -74,13 +76,13 @@ def plt_default_vs_econmt_full_training_end2end():
 
     plt.figure()
 
-    plt.plot(default_128_metric[:9,0],
-             default_128_metric[:9,2], linewidth=2, linestyle='-', 
-             marker='x', markersize=10,
+    plt.plot(default_128_metric[:7,0],
+             default_128_metric[:7,2], linewidth=2, linestyle='-', 
+             marker='X', markersize=10,
              color='black', label=r'Default$_{B=128}$')
     plt.plot(econmt_256_metric [:6,0], 
              econmt_256_metric [:6,2], linewidth=2, linestyle='-', 
-             marker='+', markersize=10,
+             marker='^', markersize=10,
              color='black', label= r'EcoNMT$_{B=256}^{\mathrm{par\_rev}}$')
 
     plt.axhline(y=22.6, color='r', linewidth=2, linestyle='-.')
