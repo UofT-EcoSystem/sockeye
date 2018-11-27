@@ -7,8 +7,12 @@ import matplotlib.pyplot as plt
 sys.path.append(
     os.path.dirname(
         os.path.abspath(__file__)) + "/..")
+sys.path.append(
+    os.path.dirname(
+        os.path.abspath(__file__)) + "/../..")
 
-from visualizer_helper import plt_rc_setup, gen_from_txt
+from visualizer_helper import plt_rc_setup
+from tensorboard_visualizer_helper import gen_from_txt
 
 
 plt_rc_setup()
