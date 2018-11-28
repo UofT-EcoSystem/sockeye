@@ -20,11 +20,6 @@ else
 fi
 # ==================================================================================================
 NVPROF_PREFIX=
-if [ "$1" == "--nvprof" ] || [ "$2" == "--nvprof" ]
-then
-	echo "nvprof is enabled to profile the application."
-	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off"
-fi
 if [ "$1" == "--nvprof-runtime" ] || [ "$2" == "--nvprof-runtime" ]
 then
 	echo "nvprof is enabled to profile the runtime."
@@ -34,7 +29,7 @@ fi
 # ==================================================================================================
 BATCH_SIZE=128
 INITIAL_LEARNING_RATE=0.0003
-MAX_UPDATES=20000
+MAX_UPDATES=200
 CHECKPOINT_FREQUENCY=2000
 
 cd ${SOCKEYE_ROOT} && rm -rf ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} && \

@@ -20,10 +20,11 @@ else
 fi
 # ==================================================================================================
 NVPROF_PREFIX=
-if [ "$1" == "--nvprof" ] || [ "$2" == "--nvprof" ]
+if [ "$1" == "--nvprof-runtime" ] || [ "$2" == "--nvprof-runtime" ]
 then
-	echo "nvprof is enabled to profile the application."
-	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off"
+	echo "nvprof is enabled to profile the runtime."
+	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off \
+                --csv --log-file ${SOCKEYE_ROOT}/workspace/results/profile/runtime/${CONFERENCE_SRC_TGT_MODEL}.csv"
 fi
 if [ "$1" == "--nvprof-dram" ] || [ "$2" == "--nvprof-dram" ]
 then

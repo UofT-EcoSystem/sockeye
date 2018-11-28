@@ -100,33 +100,42 @@ def plt_default_vs_econmt_full_training_end2end():
     plt.savefig(title + ".png")
 
 
-def plt_default_vs_econmt_full_training_throughput():
+def plt_default_vs_econmt_full_training_throughput(bar_width=0.3):
 
     metric, metric_unit = 'throughput', None
 
     title ='default_vs_econmt-throughput'
 
-    default_128_metric         = gen_from_txt("default-B_128/csv/throughput.csv")
-    default_128_par_rev_metric = gen_from_txt("default-B_128-par_rev/csv/throughput.csv")
-    econmt_128_metric          = gen_from_txt( "econmt-B_128/csv/throughput.csv")
-    econmt_128_par_rev_metric  = gen_from_txt( "econmt-B_128-par_rev/csv/throughput.csv")
-    econmt_256_metric          = gen_from_txt( "econmt-B_256/csv/throughput.csv")
-    econmt_256_par_rev_metric  = gen_from_txt( "econmt-B_256-par_rev/csv/throughput.csv")
+    default_128_metric         = gen_from_txt("default-B_128/csv/throughput.csv", metric='throughput', skip=40)
+    default_128_par_rev_metric = gen_from_txt("default-B_128-par_rev/csv/throughput.csv", metric='throughput', skip=40)
+    econmt_128_metric          = gen_from_txt( "econmt-B_128/csv/throughput.csv", metric='throughput', skip=40)
+    econmt_128_par_rev_metric  = gen_from_txt( "econmt-B_128-par_rev/csv/throughput.csv", metric='throughput', skip=40)
+    econmt_256_metric          = gen_from_txt( "econmt-B_256/csv/throughput.csv", metric='throughput', skip=20)
+    econmt_256_par_rev_metric  = gen_from_txt( "econmt-B_256-par_rev/csv/throughput.csv", metric='throughput', skip=20)
 
     # ==============================================================================================
 
-    plt.figure()
-
+    # default_128_avg_throughput         = np.average(default_128_metric[:,2])
+    # default_128_par_rev_avg_throughput = np.average(default_128_par_rev_metric[:,2])
+    # econmt_128_avg_throughput          = np.average( econmt_128_metric[:,2])
+    # econmt_128_par_rev_avg_throughput  = np.average( econmt_128_par_rev_metric[:,2])
+    # econmt_256_avg_throughput          = np.average( econmt_256_metric[:,2])
+    # econmt_256_par_rev_avg_throughput  = np.average( econmt_256_par_rev_metric[:,2])
     
-    plt.xlabel('Training Checkpoint Number' if xscale == 'N' else 'Time (min)')
-    plt.ylabel("Throughput (samples/s)")
-    plt.yticks(fontsize=20)
+    # print(default_128_metric)
 
-    plt.legend(fontsize=20)
-    plt.grid(linestyle='-.', linewidth=1)
+    # plt.figure()
 
-    plt.tight_layout()
-    plt.savefig(title + ".png")
+    # plt.bar(x=-2.5*bar_width, height=np.average(default_128_metric[:,2]))
+
+    # plt.xticks()
+    # plt.yticks(fontsize=20)
+
+    # plt.legend(fontsize=20)
+    # plt.grid(linestyle='-.', linewidth=1)
+
+    # plt.tight_layout()
+    # plt.savefig(title + ".png")
 
 
 plt_rc_setup()
@@ -137,3 +146,5 @@ plt_default_vs_econmt_full_training_validation_bleu('N', True)
 plt_default_vs_econmt_full_training_validation_bleu('T', True)
 
 plt_default_vs_econmt_full_training_end2end()
+
+plt_default_vs_econmt_full_training_throughput()
