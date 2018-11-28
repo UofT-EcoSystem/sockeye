@@ -12,8 +12,8 @@ from visualizer_helper import plt_rc_setup, plt_breakdown
 plt_rc_setup()
 
 sorted_stats_list = [
-    ("SeqRev", [62.587]),
-    ("FC"    , [17.417 + 12.912 + 8.2582 + \
+    ("Sequence\nReverse", [62.587]),
+    ("Fully-\nConnected"    , [17.417 + 12.912 + 8.2582 + \
                5.3654 + 4.2895 + 2.4036 + 1.4046])
 ]
 
