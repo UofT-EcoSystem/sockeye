@@ -44,7 +44,7 @@ def plt_breakdown(sorted_stats_list,
                   annotation_fontsize=18):
     plt.figure(figsize=(8, 6))
 
-    sorted_stats_klist = [kv[0]          for kv in sorted_stats_list[:]]
+    sorted_stats_klist = [kv[0] for kv in sorted_stats_list[:]]
 
     if 'memory_profile' in fig_name:
         sorted_stats_vlist = [kv[1][0] / 1e9 for kv in sorted_stats_list[:]]
@@ -64,7 +64,7 @@ def plt_breakdown(sorted_stats_list,
 
     for i in range(sorted_stats_list_len):
         plt.bar(x=0, height=sorted_stats_vlist[i], bottom=np.sum(sorted_stats_vlist[i+1:]),
-                width=bar_width * 0.8, edgecolor='black', linewidth=3,
+                width=0.8*bar_width, edgecolor='black', linewidth=3,
                 # color=np.array([1, i * 1.0 / 3, i * 1.0 / 3]) if i < 3 else 'white',
                 color=np.array([1, 0, 0]) if i == 0 else \
                       'white' if 'Other'       in sorted_stats_klist[i] or \
