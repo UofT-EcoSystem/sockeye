@@ -13,6 +13,10 @@ plt_rc_setup()
 
 gpu_kernel_sum, cuda_api_sum = 119.647957 / 0.69479557, 1624.542834 / 0.49061146 - 1534.320709 - 1532.120223
 
+print("GPU Kernel: %f, CUDA API: %f, Total: %f" % (gpu_kernel_sum, 
+                                                   cuda_api_sum, 
+                                                   gpu_kernel_sum + cuda_api_sum))
+
 sorted_stats_list = [
     ("Sequence\nReverse", [119.647957]),
     ("Fully-\nConnected", [8.194789 + 6.616071 + 5.485084 + \
