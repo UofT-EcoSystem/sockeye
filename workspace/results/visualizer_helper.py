@@ -38,6 +38,7 @@ def plt_breakdown(sorted_stats_list,
                   xlabel, ylabel,
                   fig_name,
                   ymax=None,
+                  extra_sum=0.0,
                   bar_width=0.3,
                   annotation_top_k=None,
                   annotation_fontsize=18):
@@ -80,7 +81,7 @@ def plt_breakdown(sorted_stats_list,
             bar_length = sorted_stats_vlist[i]
             switch_side_flag = False if i >= 2 and i % 2 == 0 else True
             
-            plt.annotate(('%.0f%%') % (sorted_stats_vlist[i] * 100.0 / expected_sum),
+            plt.annotate(('%.0f%%') % (sorted_stats_vlist[i] * 100.0 / (expected_sum + extra_sum)),
                          xy    =(0.45*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
                          xytext=(0.55*bar_width * (1 if switch_side_flag is True else -1), middle_pos), 
                          fontsize=annotation_fontsize,
