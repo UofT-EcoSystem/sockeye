@@ -12,7 +12,7 @@ sys.path.append(
     os.path.dirname(
         os.path.abspath(__file__)) + "/../..")
 
-from visualizer_helper import plt_rc_setup
+from visualizer_helper import plt_rc_setup, plt_legend
 from tensorboard_visualizer_helper import gen_from_txt
 
 
@@ -136,30 +136,32 @@ def plt_default_vs_econmt_full_training_throughput(metric, metric_unit, measurer
                  fontsize=17, ha='center', va='center', 
                  bbox=dict(boxstyle='square', facecolor='white', linewidth=3))
 
-    plt.bar(x=-2.5*bar_width, height=default_128_metric,
+    handles = []
+
+    handles.append(plt.bar(x=-2.5*bar_width, height=default_128_metric,
             width=bar_width, edgecolor='black', linewidth=3,
             color= 'grey',
-            label=r"Default$_{B=128}$")
-    plt.bar(x=-1.5*bar_width, height= econmt_128_metric,
+            label=r"Default$_{B=128}$"))
+    handles.append(plt.bar(x=-1.5*bar_width, height= econmt_128_metric,
             width=bar_width, edgecolor='black', linewidth=3,
             color='white',
-            label= r"EcoRNN$_{B=128}$")
-    plt.bar(x=-0.5*bar_width, height= econmt_256_metric,
+            label= r"EcoRNN$_{B=128}$"))
+    handles.append(plt.bar(x=-0.5*bar_width, height= econmt_256_metric,
             width=bar_width, edgecolor='black', linewidth=3,
             color='green',
-            label= r"EcoRNN$_{B=128}$")
-    plt.bar(x= 0.5*bar_width, height=default_128_par_rev_metric,
+            label= r"EcoRNN$_{B=128}$"))
+    handles.append(plt.bar(x= 0.5*bar_width, height=default_128_par_rev_metric,
             width=bar_width, edgecolor='black', linewidth=3,
             color= 'grey', hatch='/',
-            label=r"Default$_{B=128}^\mathrm{par\_rev}$")
-    plt.bar(x= 1.5*bar_width, height= econmt_128_par_rev_metric,
+            label=r"Default$_{B=128}^\mathrm{par\_rev}$"))
+    handles.append(plt.bar(x= 1.5*bar_width, height= econmt_128_par_rev_metric,
             width=bar_width, edgecolor='black', linewidth=3,
             color='white', hatch='/',
-            label= r"EcoRNN$_{B=128}^\mathrm{par\_rev}$")
-    plt.bar(x= 2.5*bar_width, height= econmt_256_par_rev_metric,
+            label= r"EcoRNN$_{B=128}^\mathrm{par\_rev}$"))
+    handles.append(plt.bar(x= 2.5*bar_width, height= econmt_256_par_rev_metric,
             width=bar_width, edgecolor='black', linewidth=3,
             color='green', hatch='/',
-            label= r"EcoRNN$_{B=256}^\mathrm{par\_rev}$")
+            label= r"EcoRNN$_{B=256}^\mathrm{par\_rev}$"))
 
     _annotate(x=-2.5*bar_width, metric=default_128_metric)
     _annotate(x=-1.5*bar_width, metric= econmt_128_metric)
@@ -177,6 +179,7 @@ def plt_default_vs_econmt_full_training_throughput(metric, metric_unit, measurer
 
     plt.tight_layout()
     plt.savefig(title + ".png")
+    plt_legend(handles, "default_vs_econmt-legend")
 
 
 plt_rc_setup()
