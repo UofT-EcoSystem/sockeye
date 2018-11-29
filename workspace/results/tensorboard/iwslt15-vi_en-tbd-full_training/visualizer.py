@@ -193,7 +193,7 @@ plt_default_vs_econmt_full_training_end2end()
 
 plt_default_vs_econmt_full_training_throughput(metric='throughput', metric_unit='samples/s', 
                                                measurer=np.average,
-                                               ylabel='Average Training Throughput (samples/s)')
+                                               ylabel='Training Throughput (samples/s)')
 plt_default_vs_econmt_full_training_throughput(metric='memory_usage', metric_unit='GB', 
                                                measurer=np.max, 
-                                               ylabel='Maximum Memory Consumption (GB)',)
+                                               ylabel='Memory Consumption (GB)',)
