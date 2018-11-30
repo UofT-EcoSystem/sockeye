@@ -13,13 +13,8 @@ from visualizer_helper import plt_legend
 def gen_from_txt(fname, metric, metric_unit=None, skip=None):
     data = np.genfromtxt(fname=fname, delimiter=',').astype(np.float64)[1:,:]
 
-    if metric == 'throughput' and skip != None:
-        data_filter = np.mod(np.arange(data.shape[0])+1,skip)!=0
-        data_filter = np.mod(data_filter,skip)!=1
-        data_filter = np.mod(data_filter,skip)!=2
-        data_filter = np.mod(data_filter,skip)!=3
-
-        data = data[data_filter,:]
+    if metric == 'throughput' and skip is not None:
+        data = data[np.mod(np.arange(data.shape[0])+1,skip)!=0,:]
     if metric == 'memory_usage' and metric_unit == 'GB':
         data[:,2] = data[:,2] / 1000
     if metric == 'validation_bleu':
@@ -27,6 +22,8 @@ def gen_from_txt(fname, metric, metric_unit=None, skip=None):
         starting_walltime = np.genfromtxt(fname=fname.replace(metric, 'perplexity'), 
                                           delimiter=',').astype(np.float64)[1,0]
         data = np.insert(data, 0, [starting_walltime, 0, 0], axis=0)
+        if skip is not None:
+            data = data[np.arange(data.shape[0])!=skip,:]
 
     # normalize the time axis to minutes
     data[:,0] = (data[:,0] - data[0, 0]) / 60.0
@@ -142,7 +139,7 @@ def plt_throughput_vs_batch_size():
     plt.savefig("throughput_vs_batch_size-sockeye.png")
 
 
-def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev):
+def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev, first_k_ckpts, discard=None):
 
     metric, metric_unit = 'validation_bleu', None
 
@@ -151,33 +148,33 @@ def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev):
     
     title ='default_vs_econmt%s-%s-%s' % ('-par_rev' if par_rev else '', xscale, metric)
 
-    default_128_metric = gen_from_txt("default-B_128%s/csv/%s.csv" % ('-par_rev' if par_rev else '', metric), metric, metric_unit)
-    econmt_128_metric  = gen_from_txt( "econmt-B_128%s/csv/%s.csv" % ('-par_rev' if par_rev else '', metric), metric, metric_unit)
-    econmt_256_metric  = gen_from_txt( "econmt-B_256%s/csv/%s.csv" % ('-par_rev' if par_rev else '', metric), metric, metric_unit)
+    default_128_metric = gen_from_txt("default-B_128%s/csv/%s.csv" % ('-par_rev' if par_rev else '', metric), metric, metric_unit, 
+                                      discard[0] if discard is not None else None)
+    econmt_128_metric  = gen_from_txt( "econmt-B_128%s/csv/%s.csv" % ('-par_rev' if par_rev else '', metric), metric, metric_unit,
+                                      discard[0] if discard is not None else None)
+    econmt_256_metric  = gen_from_txt( "econmt-B_256%s/csv/%s.csv" % ('-par_rev' if par_rev else '', metric), metric, metric_unit,
+                                      discard[1] if discard is not None else None)
 
     # ==============================================================================================
 
     plt.figure()
 
-    first_k_ckpts = 7 if par_rev else 8
-
     if par_rev:
-        default_128_raw_metric = gen_from_txt("default-B_128/csv/%s.csv" % metric, 
-                                              metric, metric_unit)
-        plt.plot(default_128_raw_metric[:first_k_ckpts,1] if xscale == 'N' else default_128_raw_metric[:first_k_ckpts,0], 
-                 default_128_raw_metric[:first_k_ckpts,2], linewidth=2, linestyle='-', 
+        default_128_raw_metric = gen_from_txt("default-B_128/csv/%s.csv" % metric, metric, metric_unit)
+        plt.plot(default_128_raw_metric[:first_k_ckpts[0],1] if xscale == 'N' else default_128_raw_metric[:first_k_ckpts[0],0], 
+                 default_128_raw_metric[:first_k_ckpts[0],2], linewidth=2, linestyle='-', 
                  marker='v', markersize=10,
                  color='black', label=r'Default$_{B=128}$')
-    plt.plot(default_128_metric[:first_k_ckpts,1] if xscale == 'N' else default_128_metric[:first_k_ckpts,0], 
-             default_128_metric[:first_k_ckpts,2], linewidth=2, linestyle='-', 
+    plt.plot(default_128_metric[:first_k_ckpts[0],1] if xscale == 'N' else default_128_metric[:first_k_ckpts[0],0], 
+             default_128_metric[:first_k_ckpts[0],2], linewidth=2, linestyle='-', 
              marker='X', markersize=10,
              color='black', label=r'Default$_{B=128}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
-    plt.plot(econmt_128_metric [:first_k_ckpts,1] if xscale == 'N' else econmt_128_metric [:first_k_ckpts,0], 
-             econmt_128_metric [:first_k_ckpts,2], linewidth=2, linestyle='-', 
+    plt.plot(econmt_128_metric [:first_k_ckpts[0],1] if xscale == 'N' else econmt_128_metric [:first_k_ckpts[0],0], 
+             econmt_128_metric [:first_k_ckpts[0],2], linewidth=2, linestyle='-', 
              marker='.', markersize=10,
              color='black', label= r'EcoNMT$_{B=128}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
-    plt.plot(econmt_256_metric [:6,1] if xscale == 'N' else econmt_256_metric [:6,0], 
-             econmt_256_metric [:6,2], linewidth=2, linestyle='-', 
+    plt.plot(econmt_256_metric [:first_k_ckpts[1],1] if xscale == 'N' else econmt_256_metric [:first_k_ckpts[1],0], 
+             econmt_256_metric [:first_k_ckpts[1],2], linewidth=2, linestyle='-', 
              marker='^', markersize=10,
              color='black', label= r'EcoNMT$_{B=256}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
 
