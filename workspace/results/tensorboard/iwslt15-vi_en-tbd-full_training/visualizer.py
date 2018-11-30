@@ -54,6 +54,8 @@ def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev):
     plt.ylabel("Validation BLEU Score")
     if xscale == 'N':
         plt.xticks(np.arange(0, 9, 2), fontsize=20)
+    else:
+        plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
     plt.xlim(xmin=0)
     plt.ylim(ymin=0)
@@ -63,6 +65,55 @@ def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev):
 
     plt.tight_layout()
     plt.savefig(title + ".png")
+
+
+def plt_default_vs_econmt_full_training_perplexity(xscale, par_rev):
+
+    metric, metric_unit = 'perplexity', None
+
+    if xscale != 'N' and xscale != 'T':
+        assert False, "Invalid xlabel %s. It must be either \'N\' or \'T\'."
+    
+    title ='default_vs_econmt%s-%s-%s' % ('-par_rev' if par_rev else '', xscale, metric)
+
+    default_128_metric = gen_from_txt("default-B_128%s/csv/%s.csv" % ('-par_rev' if par_rev else '', metric), metric, metric_unit)
+    econmt_128_metric  = gen_from_txt( "econmt-B_128%s/csv/%s.csv" % ('-par_rev' if par_rev else '', metric), metric, metric_unit)
+    econmt_256_metric  = gen_from_txt( "econmt-B_256%s/csv/%s.csv" % ('-par_rev' if par_rev else '', metric), metric, metric_unit)
+
+    # ==============================================================================================
+
+    plt.figure()
+
+    first_k_ckpts = 100
+
+    if par_rev
+
+    plt.plot(default_128_metric[:first_k_ckpts,1] if xscale == 'N' else default_128_metric[:first_k_ckpts,0], 
+             default_128_metric[:first_k_ckpts,2], linewidth=2, linestyle='-', 
+             marker='X', markersize=10, markevery=10,
+             color='black', label=r'Default$_{B=128}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
+    plt.plot(econmt_128_metric [:first_k_ckpts,1] if xscale == 'N' else econmt_128_metric [:first_k_ckpts,0], 
+             econmt_128_metric [:first_k_ckpts,2], linewidth=2, linestyle='--', 
+             marker='.', markersize=10, markevery=10,
+             color='black', label= r'EcoNMT$_{B=128}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
+    plt.plot(econmt_256_metric [:first_k_ckpts,1] if xscale == 'N' else econmt_256_metric [:first_k_ckpts,0], 
+             econmt_256_metric [:first_k_ckpts,2], linewidth=2, linestyle='-', 
+             marker='^', markersize=10, markevery=10,
+             color='black', label= r'EcoNMT$_{B=256}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
+
+    plt.xlabel('Global Step' if xscale == 'N' else 'Time (min)')
+    plt.ylabel("Perplexity")
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.xlim(xmin=0)
+    plt.ylim(ymin=0)
+
+    plt.legend(fontsize=20)
+    plt.grid(linestyle='-.', linewidth=1)
+
+    plt.tight_layout()
+    plt.savefig(title + ".png")
+
 
 def plt_default_vs_econmt_full_training_end2end():
     metric, metric_unit = 'validation_bleu', None
@@ -185,6 +236,10 @@ def plt_default_vs_econmt_full_training_throughput(metric, metric_unit, measurer
 
 plt_rc_setup()
 
+plt_default_vs_econmt_full_training_perplexity('N', False)
+plt_default_vs_econmt_full_training_perplexity('T', False)
+plt_default_vs_econmt_full_training_perplexity('N', True)
+plt_default_vs_econmt_full_training_perplexity('T', True)
 plt_default_vs_econmt_full_training_validation_bleu('N', False)
 plt_default_vs_econmt_full_training_validation_bleu('T', False)
 plt_default_vs_econmt_full_training_validation_bleu('N', True)
