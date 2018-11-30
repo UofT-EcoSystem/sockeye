@@ -21,7 +21,7 @@ plt_rc_setup()
 
 plt_default_vs_econmt_full_training_perplexity('N', True)
 plt_default_vs_econmt_full_training_perplexity('T', True)
-plt_default_vs_econmt_full_training_validation_bleu('T', True , first_k_ckpts=(8, 6))
+plt_default_vs_econmt_full_training_validation_bleu('T', True , first_k_ckpts=(8, 8, 6))
 
 plt_default_vs_econmt_full_training_metrics(metric='throughput', metric_unit='samples/s', 
                                             measurer=np.average,

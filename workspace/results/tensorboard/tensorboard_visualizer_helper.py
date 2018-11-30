@@ -165,18 +165,18 @@ def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev, first_k
                  default_128_raw_metric[:first_k_ckpts[0],2], linewidth=2, linestyle='-', 
                  marker='v', markersize=10,
                  color='black', label=r'Default$_{B=128}$')
-    plt.plot(default_128_metric[:first_k_ckpts[0],1] if xscale == 'N' else default_128_metric[:first_k_ckpts[0],0], 
-             default_128_metric[:first_k_ckpts[0],2], linewidth=2, linestyle='-', 
+    plt.plot(default_128_metric[:first_k_ckpts[1],1] if xscale == 'N' else default_128_metric[:first_k_ckpts[1],0], 
+             default_128_metric[:first_k_ckpts[1],2], linewidth=2, linestyle='-', 
              marker='X', markersize=10,
              color='black', label=r'Default$_{B=128}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
-    plt.plot(econmt_128_metric [:first_k_ckpts[0],1] if xscale == 'N' else econmt_128_metric [:first_k_ckpts[0],0], 
-             econmt_128_metric [:first_k_ckpts[0],2], linewidth=2, linestyle='-', 
+    plt.plot(econmt_128_metric [:first_k_ckpts[1],1] if xscale == 'N' else econmt_128_metric [:first_k_ckpts[1],0], 
+             econmt_128_metric [:first_k_ckpts[1],2], linewidth=2, linestyle='-', 
              marker='.', markersize=10,
-             color='black', label= r'EcoNMT$_{B=128}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
-    plt.plot(econmt_256_metric [:first_k_ckpts[1],1] if xscale == 'N' else econmt_256_metric [:first_k_ckpts[1],0], 
-             econmt_256_metric [:first_k_ckpts[1],2], linewidth=2, linestyle='-', 
+             color='black', label= r'EcoRNN$_{B=128}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
+    plt.plot(econmt_256_metric [:first_k_ckpts[2],1] if xscale == 'N' else econmt_256_metric [:first_k_ckpts[2],0], 
+             econmt_256_metric [:first_k_ckpts[2],2], linewidth=2, linestyle='-', 
              marker='^', markersize=10,
-             color='black', label= r'EcoNMT$_{B=256}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
+             color='black', label= r'EcoRNN$_{B=256}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
 
     plt.axhline(y=22.6, color='r', linewidth=2, linestyle='-.')
 
@@ -230,11 +230,11 @@ def plt_default_vs_econmt_full_training_perplexity(xscale, par_rev, suffix=''):
     plt.plot(econmt_128_metric [:first_k_ckpts,1] if xscale == 'N' else econmt_128_metric [:first_k_ckpts,0], 
              econmt_128_metric [:first_k_ckpts,2], linewidth=2, linestyle='-', 
              marker='.', markersize=10, markevery=(5, 10),
-             color='black', label= r'EcoNMT$_{B=128}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
+             color='black', label= r'EcoRNN$_{B=128}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
     plt.plot(econmt_256_metric [:first_k_ckpts,1] if xscale == 'N' else econmt_256_metric [:first_k_ckpts,0], 
              econmt_256_metric [:first_k_ckpts,2], linewidth=2, linestyle='-', 
              marker='^', markersize=10, markevery=(7, 10),
-             color='black', label= r'EcoNMT$_{B=256}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
+             color='black', label= r'EcoRNN$_{B=256}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
 
     plt.xlabel('Global Step' if xscale == 'N' else 'Time (min)')
     plt.ylabel("Perplexity")
@@ -257,10 +257,6 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
 
     default_128_metric = gen_from_txt("default-B_128/csv/%s.csv" % metric,
                                       metric=metric, metric_unit=metric_unit, skip=40)
-    # econmt_128_metric  = gen_from_txt( "econmt-B_128/csv/%s.csv" % metric, 
-    #                                   metric=metric, metric_unit=metric_unit, skip=40)
-    # econmt_256_metric  = gen_from_txt( "econmt-B_256/csv/%s.csv" % metric, 
-    #                                   metric=metric, metric_unit=metric_unit, skip=20)
     default_128_par_rev_metric = gen_from_txt("default-B_128-par_rev/csv/%s.csv" % metric,
                                               metric=metric, metric_unit=metric_unit, skip=40)
     econmt_128_par_rev_metric  = gen_from_txt( "econmt-B_128-par_rev/csv/%s.csv" % metric,
@@ -271,8 +267,6 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
     # ==============================================================================================
 
     default_128_metric = measurer(default_128_metric[:,2])
-    # econmt_128_metric  = measurer( econmt_128_metric[:,2])
-    # econmt_256_metric  = measurer( econmt_256_metric[:,2])
     default_128_par_rev_metric = measurer(default_128_par_rev_metric[:,2])
     econmt_128_par_rev_metric  = measurer( econmt_128_par_rev_metric[:,2])
     econmt_256_par_rev_metric  = measurer( econmt_256_par_rev_metric[:,2])
@@ -281,7 +275,7 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
     # plt.figure()
 
     def _annotate(x, metric):
-        plt.annotate((r'$%.1f\times$') % (metric / default_128_par_rev_metric),
+        plt.annotate((r'$%.2f\times$') % (metric / default_128_par_rev_metric),
                  xy    =(x, metric + 0.04*plt.ylim()[1]), 
                  xytext=(x, metric + 0.04*plt.ylim()[1]), 
                  fontsize=20, ha='center', va='center', 
@@ -291,16 +285,8 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
 
     handles.append(plt.bar(x=-1.5*bar_width, height=default_128_metric,
             width=bar_width, edgecolor='black', linewidth=3,
-            color= 'grey', hatch='/',
+            color='black',
             label=r"Default$_{B=128}$"))
-    # handles.append(plt.bar(x=-1.5*bar_width, height= econmt_128_metric,
-    #         width=bar_width, edgecolor='black', linewidth=3,
-    #         color='white',
-    #         label= r"EcoRNN$_{B=128}$"))
-    # handles.append(plt.bar(x=-0.5*bar_width, height= econmt_256_metric,
-    #         width=bar_width, edgecolor='black', linewidth=3,
-    #         color='green',
-    #         label= r"EcoRNN$_{B=128}$"))
     handles.append(plt.bar(x=-0.5*bar_width, height=default_128_par_rev_metric,
             width=bar_width, edgecolor='black', linewidth=3,
             color= 'grey', 
@@ -315,8 +301,6 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
             label= r"EcoRNN$_{B=256}^\mathrm{par\_rev}$"))
 
     _annotate(x=-1.5*bar_width, metric=default_128_metric)
-    # _annotate(x=-1.5*bar_width, metric= econmt_128_metric)
-    # _annotate(x=-0.5*bar_width, metric= econmt_256_metric)
     _annotate(x=-0.5*bar_width, metric=default_128_par_rev_metric)
     _annotate(x= 0.5*bar_width, metric= econmt_128_par_rev_metric)
     _annotate(x= 1.5*bar_width, metric= econmt_256_par_rev_metric)
