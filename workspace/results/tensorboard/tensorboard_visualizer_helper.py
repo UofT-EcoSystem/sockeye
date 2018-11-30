@@ -139,14 +139,15 @@ def plt_throughput_vs_batch_size():
     plt.savefig("throughput_vs_batch_size-sockeye.png")
 
 
-def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev, first_k_ckpts, suffix='', discard=None):
+def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev, first_k_ckpts, 
+                                                        prefix='', suffix='', discard=None):
 
     metric, metric_unit = 'validation_bleu', None
 
     if xscale != 'N' and xscale != 'T':
         assert False, "Invalid xlabel %s. It must be either \'N\' or \'T\'."
     
-    title ='default_vs_econmt%s%s-%s-%s' % (suffix, '-par_rev' if par_rev else '', xscale, metric)
+    title ='%sdefault_vs_econmt%s%s-%s-%s' % (prefix, suffix, '-par_rev' if par_rev else '', xscale, metric)
 
     default_128_metric = gen_from_txt("default-B_128%s/csv/%s.csv" % ('-par_rev' if par_rev else '', metric), metric, metric_unit, 
                                       discard[0] if discard is not None else None)
@@ -197,14 +198,14 @@ def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev, first_k
     plt.savefig(title + ".png")
 
 
-def plt_default_vs_econmt_full_training_perplexity(xscale, par_rev, suffix=''):
+def plt_default_vs_econmt_full_training_perplexity(xscale, par_rev, prefix='', suffix=''):
 
     metric, metric_unit = 'perplexity', None
 
     if xscale != 'N' and xscale != 'T':
         assert False, "Invalid xlabel %s. It must be either \'N\' or \'T\'."
     
-    title ='default_vs_econmt%s%s-%s-%s' % (suffix, '-par_rev' if par_rev else '', xscale, metric)
+    title ='%sdefault_vs_econmt%s%s-%s-%s' % (prefix, suffix, '-par_rev' if par_rev else '', xscale, metric)
 
     default_128_metric = gen_from_txt("default-B_128%s/csv/%s.csv" % ('-par_rev' if par_rev else '', metric), metric, metric_unit)
     econmt_128_metric  = gen_from_txt( "econmt-B_128%s/csv/%s.csv" % ('-par_rev' if par_rev else '', metric), metric, metric_unit)
@@ -251,9 +252,9 @@ def plt_default_vs_econmt_full_training_perplexity(xscale, par_rev, suffix=''):
 
 
 def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, ylabel,
-                                                suffix='', bar_width=0.3):
+                                                prefix='', suffix='', bar_width=0.3):
 
-    title ='default_vs_econmt%s-%s' % (suffix, metric)
+    title ='%sdefault_vs_econmt%s-%s' % (prefix, suffix, metric)
 
     default_128_metric = gen_from_txt("default-B_128/csv/%s.csv" % metric,
                                       metric=metric, metric_unit=metric_unit, skip=40)

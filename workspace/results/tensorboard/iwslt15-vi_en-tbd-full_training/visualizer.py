@@ -19,13 +19,15 @@ from tensorboard_visualizer_helper import gen_from_txt, plt_default_vs_econmt_fu
 
 plt_rc_setup()
 
-plt_default_vs_econmt_full_training_perplexity('N', True)
-plt_default_vs_econmt_full_training_perplexity('T', True)
-plt_default_vs_econmt_full_training_validation_bleu('T', True , first_k_ckpts=(8, 8, 6))
+plt_default_vs_econmt_full_training_perplexity('N', True, prefix='iwslt15-vi_en-tbd-')
+plt_default_vs_econmt_full_training_perplexity('T', True, prefix='iwslt15-vi_en-tbd-')
+plt_default_vs_econmt_full_training_validation_bleu('T', True, first_k_ckpts=(8, 8, 6), prefix='iwslt15-vi_en-tbd-')
 
 plt_default_vs_econmt_full_training_metrics(metric='throughput', metric_unit='samples/s', 
                                             measurer=np.average,
+                                            prefix='iwslt15-vi_en-tbd-',
                                             ylabel='Avg Throughput (samples/s)')
 plt_default_vs_econmt_full_training_metrics(metric='memory_usage', metric_unit='GB', 
-                                            measurer=np.max, 
+                                            measurer=np.max,
+                                            prefix='iwslt15-vi_en-tbd-',
                                             ylabel='Max Memory Consumption (GB)',)
