@@ -19,16 +19,9 @@ from tensorboard_visualizer_helper import gen_from_txt, plt_default_vs_econmt_fu
 
 plt_rc_setup()
 
-plt_default_vs_econmt_full_training_perplexity('N', False)
-plt_default_vs_econmt_full_training_perplexity('T', False)
 plt_default_vs_econmt_full_training_perplexity('N', True)
 plt_default_vs_econmt_full_training_perplexity('T', True)
-plt_default_vs_econmt_full_training_validation_bleu('N', False)
-plt_default_vs_econmt_full_training_validation_bleu('T', False)
-plt_default_vs_econmt_full_training_validation_bleu('N', True)
-plt_default_vs_econmt_full_training_validation_bleu('T', True)
-
-# plt_default_vs_econmt_full_training_end2end()
+plt_default_vs_econmt_full_training_validation_bleu('T', True , first_k_ckpts=(8, 6))
 
 plt_default_vs_econmt_full_training_metrics(metric='throughput', metric_unit='samples/s', 
                                             measurer=np.average,
