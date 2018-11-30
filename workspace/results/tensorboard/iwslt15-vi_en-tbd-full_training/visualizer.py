@@ -127,7 +127,8 @@ def plt_default_vs_econmt_full_training_throughput(metric, metric_unit, measurer
     econmt_128_par_rev_metric  = measurer( econmt_128_par_rev_metric[:,2])
     econmt_256_par_rev_metric  = measurer( econmt_256_par_rev_metric[:,2])
 
-    plt.figure(figsize=(6, 8))
+    plt.figure(figsize=(8, 8))
+    # plt.figure()
 
     def _annotate(x, metric):
         plt.annotate((r'$%.1f\times$') % (metric / default_128_par_rev_metric),
@@ -193,7 +194,7 @@ plt_default_vs_econmt_full_training_end2end()
 
 plt_default_vs_econmt_full_training_throughput(metric='throughput', metric_unit='samples/s', 
                                                measurer=np.average,
-                                               ylabel='Training Throughput (samples/s)')
+                                               ylabel='Avg Throughput (samples/s)')
 plt_default_vs_econmt_full_training_throughput(metric='memory_usage', metric_unit='GB', 
                                                measurer=np.max, 
-                                               ylabel='Memory Consumption (GB)',)
+                                               ylabel='Max Memory Consumption (GB)',)

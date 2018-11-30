@@ -6,7 +6,12 @@ def gen_from_txt(fname, metric, metric_unit=None, skip=None):
     data = np.genfromtxt(fname=fname, delimiter=',').astype(np.float64)[1:,:]
 
     if metric == 'throughput' and skip != None:
-        data = data[np.mod(np.arange(data.shape[0])+1,skip)!=0,:]
+        data_filter = np.mod(np.arange(data.shape[0])+1,skip)!=0
+        data_filter = np.mod(data_filter,skip)!=1
+        data_filter = np.mod(data_filter,skip)!=2
+        data_filter = np.mod(data_filter,skip)!=3
+
+        data = data[data_filter,:]
     if metric == 'memory_usage' and metric_unit == 'GB':
         data[:,2] = data[:,2] / 1000
     if metric == 'validation_bleu':
