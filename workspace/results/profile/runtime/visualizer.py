@@ -29,7 +29,7 @@ sorted_stats_list.append(("Others", [gpu_kernel_sum - sorted_stats_list[0][1][0]
                                                       sorted_stats_list[1][1][0]]))
 
 plt_breakdown(sorted_stats_list=sorted_stats_list,
-              expected_sum=62.587 / 0.4119, extra_sum=cuda_api_sum,
+              expected_sum=gpu_kernel_sum, extra_sum=cuda_api_sum,
               xlabel='GPU Kernel', ylabel='Runtime (ms)', 
               fig_name='iwslt15-vi_en-groundhog-runtime_profile-gpu_kernel', ymax=250)
 
@@ -42,6 +42,6 @@ sorted_stats_list.append(("Others", [cuda_api_sum - sorted_stats_list[0][1][0] -
                                                     sorted_stats_list[1][1][0]]))
 
 plt_breakdown(sorted_stats_list=sorted_stats_list,
-              expected_sum=62.587 / 0.4119, extra_sum=gpu_kernel_sum,
+              expected_sum=cuda_api_sum, extra_sum=gpu_kernel_sum,
               xlabel='CUDA API', ylabel='Runtime (ms)', 
               fig_name='iwslt15-vi_en-groundhog-runtime_profile-cuda_api', ymax=250)
