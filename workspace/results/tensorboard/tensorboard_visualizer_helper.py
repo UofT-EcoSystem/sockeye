@@ -14,7 +14,12 @@ def gen_from_txt(fname, metric, metric_unit=None, skip=None):
     data = np.genfromtxt(fname=fname, delimiter=',').astype(np.float64)[1:,:]
 
     if metric == 'throughput' and skip is not None:
-        data = data[np.mod(np.arange(data.shape[0])+1,skip)!=0,:]
+        data_filter = np.all([np.mod(np.arange(data.shape[0])+1,skip)!=0, \
+                              np.mod(np.arange(data.shape[0])+1,skip)!=1, \
+                              np.mod(np.arange(data.shape[0])+1,skip)!=2, \
+                              np.mod(np.arange(data.shape[0])+1,skip)!=3], axis=0)
+
+        data = data[data_filter,:]
     if metric == 'memory_usage' and metric_unit == 'GB':
         data[:,2] = data[:,2] / 1000
     if metric == 'validation_bleu':
@@ -139,14 +144,15 @@ def plt_throughput_vs_batch_size():
     plt.savefig("throughput_vs_batch_size-sockeye.png")
 
 
-def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev, first_k_ckpts, suffix='', discard=None):
+def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev, first_k_ckpts, 
+                                                        prefix='', suffix='', discard=None):
 
     metric, metric_unit = 'validation_bleu', None
 
     if xscale != 'N' and xscale != 'T':
         assert False, "Invalid xlabel %s. It must be either \'N\' or \'T\'."
     
-    title ='default_vs_econmt%s%s-%s-%s' % (suffix, '-par_rev' if par_rev else '', xscale, metric)
+    title ='%sdefault_vs_econmt%s%s-%s-%s' % (prefix, suffix, '-par_rev' if par_rev else '', xscale, metric)
 
     default_128_metric = gen_from_txt("default-B_128%s/csv/%s.csv" % ('-par_rev' if par_rev else '', metric), metric, metric_unit, 
                                       discard[0] if discard is not None else None)
@@ -190,21 +196,21 @@ def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev, first_k
     plt.xlim(xmin=0)
     plt.ylim(ymin=0)
 
-    plt.legend(fontsize=20)
+    plt.legend(fontsize=22)
     plt.grid(linestyle='-.', linewidth=1)
 
     plt.tight_layout()
     plt.savefig(title + ".png")
 
 
-def plt_default_vs_econmt_full_training_perplexity(xscale, par_rev, suffix=''):
+def plt_default_vs_econmt_full_training_perplexity(xscale, par_rev, prefix='', suffix=''):
 
     metric, metric_unit = 'perplexity', None
 
     if xscale != 'N' and xscale != 'T':
         assert False, "Invalid xlabel %s. It must be either \'N\' or \'T\'."
     
-    title ='default_vs_econmt%s%s-%s-%s' % (suffix, '-par_rev' if par_rev else '', xscale, metric)
+    title ='%sdefault_vs_econmt%s%s-%s-%s' % (prefix, suffix, '-par_rev' if par_rev else '', xscale, metric)
 
     default_128_metric = gen_from_txt("default-B_128%s/csv/%s.csv" % ('-par_rev' if par_rev else '', metric), metric, metric_unit)
     econmt_128_metric  = gen_from_txt( "econmt-B_128%s/csv/%s.csv" % ('-par_rev' if par_rev else '', metric), metric, metric_unit)
@@ -243,7 +249,7 @@ def plt_default_vs_econmt_full_training_perplexity(xscale, par_rev, suffix=''):
     plt.xlim(xmin=0)
     plt.ylim(ymin=0)
 
-    plt.legend(fontsize=20)
+    plt.legend(fontsize=22)
     plt.grid(linestyle='-.', linewidth=1)
 
     plt.tight_layout()
@@ -251,14 +257,16 @@ def plt_default_vs_econmt_full_training_perplexity(xscale, par_rev, suffix=''):
 
 
 def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, ylabel,
-                                                suffix='', bar_width=0.3):
+                                                prefix='', suffix='', bar_width=0.3):
 
-    title ='default_vs_econmt%s-%s' % (suffix, metric)
+    title ='%sdefault_vs_econmt%s-%s' % (prefix, suffix, metric)
 
     default_128_metric = gen_from_txt("default-B_128/csv/%s.csv" % metric,
                                       metric=metric, metric_unit=metric_unit, skip=40)
     default_128_par_rev_metric = gen_from_txt("default-B_128-par_rev/csv/%s.csv" % metric,
                                               metric=metric, metric_unit=metric_unit, skip=40)
+    # cudnn_128_par_rev_metric   = gen_from_txt(  "cudnn-B_128-par_rev/csv/%s.csv" % metric,
+    #                                           metric=metric, metric_unit=metric_unit)
     econmt_128_par_rev_metric  = gen_from_txt( "econmt-B_128-par_rev/csv/%s.csv" % metric,
                                               metric=metric, metric_unit=metric_unit, skip=40)
     econmt_256_par_rev_metric  = gen_from_txt( "econmt-B_256-par_rev/csv/%s.csv" % metric,
@@ -268,6 +276,7 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
 
     default_128_metric = measurer(default_128_metric[:,2])
     default_128_par_rev_metric = measurer(default_128_par_rev_metric[:,2])
+    # cudnn_128_par_rev_metric   = measurer(  cudnn_128_par_rev_metric[:,2])
     econmt_128_par_rev_metric  = measurer( econmt_128_par_rev_metric[:,2])
     econmt_256_par_rev_metric  = measurer( econmt_256_par_rev_metric[:,2])
 
@@ -278,36 +287,42 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
         plt.annotate((r'$%.2f\times$') % (metric / default_128_par_rev_metric),
                  xy    =(x, metric + 0.04*plt.ylim()[1]), 
                  xytext=(x, metric + 0.04*plt.ylim()[1]), 
-                 fontsize=20, ha='center', va='center', 
+                 fontsize=18, ha='center', va='center', 
                  bbox=dict(boxstyle='square', facecolor='white', linewidth=3))
 
     handles = []
 
-    handles.append(plt.bar(x=-1.5*bar_width, height=default_128_metric,
+    handles.append(plt.bar(x=-2*bar_width, height=default_128_metric,
             width=bar_width, edgecolor='black', linewidth=3,
-            color='black',
+            color='grey',
             label=r"Default$_{B=128}$"))
-    handles.append(plt.bar(x=-0.5*bar_width, height=default_128_par_rev_metric,
-            width=bar_width, edgecolor='black', linewidth=3,
-            color= 'grey', 
-            label=r"Default$_{B=128}^\mathrm{par\_rev}$"))
-    handles.append(plt.bar(x= 0.5*bar_width, height= econmt_128_par_rev_metric,
+    handles.append(plt.bar(x=-1*bar_width, height=default_128_par_rev_metric,
             width=bar_width, edgecolor='black', linewidth=3,
             color='white', 
-            label= r"EcoRNN$_{B=128}^\mathrm{par\_rev}$"))
-    handles.append(plt.bar(x= 1.5*bar_width, height= econmt_256_par_rev_metric,
+            label=r"Default$_{B=128}^\mathrm{par\_rev}$"))
+    # handles.append(plt.bar(x=0, height=cudnn_128_par_rev_metric,
+    #         width=bar_width, edgecolor='black', linewidth=3,
+    #         color='white', 
+    #         label=  r"CuDNN$_{B=128}^\mathrm{par\_rev}$"))
+    handles.append(plt.bar(x= 0*bar_width, height= econmt_128_par_rev_metric,
             width=bar_width, edgecolor='black', linewidth=3,
-            color='green', 
+            color=np.array([0, 0.2, 0]),
+            label= r"EcoRNN$_{B=128}^\mathrm{par\_rev}$"))
+    handles.append(plt.bar(x= 1*bar_width, height= econmt_256_par_rev_metric,
+            width=bar_width, edgecolor='black', linewidth=3,
+            color=np.array([0, 0.8, 0]),
             label= r"EcoRNN$_{B=256}^\mathrm{par\_rev}$"))
 
-    _annotate(x=-1.5*bar_width, metric=default_128_metric)
-    _annotate(x=-0.5*bar_width, metric=default_128_par_rev_metric)
-    _annotate(x= 0.5*bar_width, metric= econmt_128_par_rev_metric)
-    _annotate(x= 1.5*bar_width, metric= econmt_256_par_rev_metric)
+    _annotate(x=-2*bar_width, metric=default_128_metric)
+    _annotate(x=-1*bar_width, metric=default_128_par_rev_metric)
+    # _annotate(x= 0          , metric=  cudnn_128_par_rev_metric)
+    _annotate(x= 0*bar_width, metric= econmt_128_par_rev_metric)
+    _annotate(x= 1*bar_width, metric= econmt_256_par_rev_metric)
 
+    plt.xlim([-3*bar_width, 2*bar_width])
     plt.xticks([])
     plt.yticks(fontsize=20)
-    plt.ylabel(ylabel, fontsize=32)
+    plt.ylabel(ylabel)
 
     # plt.legend(fontsize=20, ncol=1)
     plt.grid(linestyle='-.', linewidth=1)
@@ -315,3 +330,5 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
     plt.tight_layout()
     plt.savefig(title + ".png")
     plt_legend(handles, "default_vs_econmt-legend")
+    plt_legend(handles, "default_vs_econmt-legend-ncol_2", ncol=2)
+    plt_legend(handles, "default_vs_econmt-legend-horizontal", ncol=len(handles))
