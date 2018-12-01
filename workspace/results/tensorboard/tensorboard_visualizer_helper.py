@@ -145,7 +145,7 @@ def plt_throughput_vs_batch_size():
 
 
 def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev, first_k_ckpts, 
-                                                        prefix='', suffix='', discard=None):
+                                                        prefix='', suffix='', bar=None, discard=None):
 
     metric, metric_unit = 'validation_bleu', None
 
@@ -184,7 +184,8 @@ def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev, first_k
              marker='^', markersize=10,
              color='black', label= r'EcoRNN$_{B=256}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
 
-    plt.axhline(y=22.6, color='r', linewidth=2, linestyle='-.')
+    if bar is not None:
+        plt.axhline(y=bar, color='r', linewidth=2, linestyle='-.')
 
     plt.xlabel('Training Checkpoint Number' if xscale == 'N' else 'Time (min)')
     plt.ylabel("Validation BLEU Score")
