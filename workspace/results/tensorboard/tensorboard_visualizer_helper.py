@@ -331,4 +331,4 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
     plt.savefig(title + ".png")
     plt_legend(handles, "default_vs_econmt-legend")
     plt_legend(handles, "default_vs_econmt-legend-ncol_2", ncol=2)
-    plt_legend(handles, "default_vs_econmt-legend-vertical", ncol=len(handles))
+    plt_legend(handles, "default_vs_econmt-legend-horizontal", ncol=len(handles))
