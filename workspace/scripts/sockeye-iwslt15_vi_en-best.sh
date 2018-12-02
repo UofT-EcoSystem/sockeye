@@ -5,7 +5,7 @@
 SOCKEYE_ROOT=$(cd $(dirname $0)/../.. && pwd)
 PROJECT_ROOT=${SOCKEYE_ROOT}/../..
 CONFERENCE_SRC_TGT=iwslt15-vi_en
-CONFERENCE_SRC_TGT_MODEL=${CONFERENCE_SRC_TGT}-groundhog
+CONFERENCE_SRC_TGT_MODEL=${CONFERENCE_SRC_TGT}-best
 
 PARTIAL_FORWARD_PROP=
 if [ "$1" == "--legacy" ]
@@ -56,20 +56,12 @@ python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SR
                          --validation-source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SRC_TGT}/tst2012.vi \
                          --validation-target ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SRC_TGT}/tst2012.en \
                          --output ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} --seed=1 \
-                         --batch-type=sentence --batch-size=${BATCH_SIZE} --bucket-width=10 \
-                         --checkpoint-frequency=${CHECKPOINT_FREQUENCY} --device-ids=0 --embed-dropout=0.3:0.3 \
-                         --encoder=rnn --decoder=rnn --num-layers=1:1 --rnn-cell-type=lstm --rnn-num-hidden=1000 \
-                         --rnn-residual-connections --layer-normalization \
-                         --rnn-attention-type=mlp --rnn-attention-num-hidden=512 \
-                         --rnn-attention-use-prev-word --rnn-attention-in-upper-layers --rnn-attention-coverage-num-hidden=1 \
-                         --rnn-attention-coverage-type=count --rnn-decoder-state-init=zero \
-                         --rnn-attention-use-prev-word --rnn-dropout-inputs=0:0 --rnn-dropout-states=0.0:0.0 \
-                         --rnn-dropout-recurrent=0.0:0.0 --rnn-decoder-hidden-dropout=0.3 \
-                         --fill-up=replicate --max-seq-len=50:50 --loss=cross-entropy \
-                         --num-embed 500:500 --num-words 50000:50000 --word-min-count 1:1 \
-                         --optimizer=adam --optimized-metric=perplexity --clip-gradient=1.0 \
-                         --initial-learning-rate=${INITIAL_LEARNING_RATE} --learning-rate-reduce-num-not-improved=8 --learning-rate-reduce-factor=0.7 \
-                         --learning-rate-scheduler-type=plateau-reduce --learning-rate-warmup=0 \
-                         --max-num-checkpoint-not-improved=16 --min-num-epochs=1 \
+                         --batch-size=${BATCH_SIZE} --checkpoint-frequency=${CHECKPOINT_FREQUENCY} \
+                         --embed-dropout=0.1:0.1 --rnn-decoder-hidden-dropout=0.2 --layer-normalization \
+                         --num-layers=4:4 --max-seq-len=100:100 --label-smoothing 0.1 \
+                         --weight-tying --weight-tying-type=src_trg --num-embed 512:512 --num-words 50000:50000 \
+                         --word-min-count 1:1 --optimizer=adam  --initial-learning-rate=${INITIAL_LEARNING_RATE} \
+                         --learning-rate-reduce-num-not-improved=8 --learning-rate-reduce-factor=0.7 \
+                         --learning-rate-scheduler-type=plateau-reduce --max-num-checkpoint-not-improved=32 --min-num-epochs=0 --rnn-attention-type mlp \
                          --monitor-bleu=500 --keep-last-params=60 --lock-dir /var/lock --use-tensorboard \
                          --max-updates=${MAX_UPDATES} ${PARTIAL_FORWARD_PROP} 2>&1 | tee ${SOCKEYE_ROOT}/workspace/results/log/${CONFERENCE_SRC_TGT_MODEL}.log
