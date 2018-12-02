@@ -21,7 +21,7 @@ plt_rc_setup()
 
 plt_default_vs_econmt_full_training_perplexity('N', True, prefix='iwslt15-vi_en-tbd-')
 plt_default_vs_econmt_full_training_perplexity('T', True, prefix='iwslt15-vi_en-tbd-')
-plt_default_vs_econmt_full_training_validation_bleu('T', True, first_k_ckpts=(7, 7, 6), prefix='iwslt15-vi_en-tbd-')
+plt_default_vs_econmt_full_training_validation_bleu('T', True, first_k_ckpts=(7, 7, 6), bar=22.6, prefix='iwslt15-vi_en-tbd-')
 
 plt_default_vs_econmt_full_training_metrics(metric='throughput', metric_unit='samples/s', 
                                             measurer=np.average,

@@ -165,24 +165,42 @@ def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev, first_k
 
     plt.figure()
 
+    handles = []
+
     if par_rev:
         default_128_raw_metric = gen_from_txt("default-B_128/csv/%s.csv" % metric, metric, metric_unit)
-        plt.plot(default_128_raw_metric[:first_k_ckpts[0],1] if xscale == 'N' else default_128_raw_metric[:first_k_ckpts[0],0], 
+        handles.append(plt.plot(default_128_raw_metric[:first_k_ckpts[0],1] if xscale == 'N' else default_128_raw_metric[:first_k_ckpts[0],0], 
                  default_128_raw_metric[:first_k_ckpts[0],2], linewidth=2, linestyle='-', 
                  marker='v', markersize=10,
-                 color='black', label=r'Default$_{B=128}$')
-    plt.plot(default_128_metric[:first_k_ckpts[1],1] if xscale == 'N' else default_128_metric[:first_k_ckpts[1],0], 
+                 color='black', label=r'Default$_{B=128}$')[0])
+    handles.append(plt.plot(default_128_metric[:first_k_ckpts[1],1] if xscale == 'N' else default_128_metric[:first_k_ckpts[1],0], 
              default_128_metric[:first_k_ckpts[1],2], linewidth=2, linestyle='-', 
              marker='X', markersize=10,
-             color='black', label=r'Default$_{B=128}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
-    plt.plot(econmt_128_metric [:first_k_ckpts[1],1] if xscale == 'N' else econmt_128_metric [:first_k_ckpts[1],0], 
+             color='black', label=r'Default$_{B=128}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))[0])
+    handles.append(plt.plot(econmt_128_metric [:first_k_ckpts[1],1] if xscale == 'N' else econmt_128_metric [:first_k_ckpts[1],0], 
              econmt_128_metric [:first_k_ckpts[1],2], linewidth=2, linestyle='-', 
              marker='.', markersize=10,
-             color='black', label= r'EcoRNN$_{B=128}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
-    plt.plot(econmt_256_metric [:first_k_ckpts[2],1] if xscale == 'N' else econmt_256_metric [:first_k_ckpts[2],0], 
+             color='black', label= r'EcoRNN$_{B=128}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))[0])
+    handles.append(plt.plot(econmt_256_metric [:first_k_ckpts[2],1] if xscale == 'N' else econmt_256_metric [:first_k_ckpts[2],0], 
              econmt_256_metric [:first_k_ckpts[2],2], linewidth=2, linestyle='-', 
              marker='^', markersize=10,
-             color='black', label= r'EcoRNN$_{B=256}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))
+             color='black', label= r'EcoRNN$_{B=256}%s$' % ('^{\mathrm{par\_rev}}' if par_rev else ''))[0])
+
+    def _annotate(x, y):
+        plt.annotate(r"$%.2f\times$" % (x / default_128_metric[first_k_ckpts[1]-2,0]), 
+                    xy    =(0, y),
+                    xytext=(x, y),
+                    fontsize=24,
+                    va="center", ha="left",
+                    bbox=dict(boxstyle="square", fc="white", ec='blue', linewidth=3),
+                    arrowprops=dict(arrowstyle="<|-|>", color='blue', linewidth=3))
+    
+    if xscale == 'T':
+        if par_rev:
+            _annotate(default_128_raw_metric[first_k_ckpts[0]-2,0], 4*bar/5)
+        _annotate(default_128_metric[first_k_ckpts[1]-2,0], 3*bar/5)
+        _annotate( econmt_128_metric[first_k_ckpts[1]-2,0], 2*bar/5)
+        _annotate( econmt_256_metric[first_k_ckpts[2]-2,0], 1*bar/5)
 
     if bar is not None:
         plt.axhline(y=bar, color='r', linewidth=2, linestyle='-.')
@@ -197,11 +215,12 @@ def plt_default_vs_econmt_full_training_validation_bleu(xscale, par_rev, first_k
     plt.xlim(xmin=0)
     plt.ylim(ymin=0)
 
-    plt.legend(fontsize=22)
+    # plt.legend(fontsize=24)
     plt.grid(linestyle='-.', linewidth=1)
 
     plt.tight_layout()
     plt.savefig(title + ".png")
+    plt_legend(handles, 'default_vs_econmt-plot-legend-horizontal', ncol=len(handles))
 
 
 def plt_default_vs_econmt_full_training_perplexity(xscale, par_rev, prefix='', suffix=''):
@@ -330,6 +349,4 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
 
     plt.tight_layout()
     plt.savefig(title + ".png")
-    plt_legend(handles, "default_vs_econmt-legend")
-    plt_legend(handles, "default_vs_econmt-legend-ncol_2", ncol=2)
-    plt_legend(handles, "default_vs_econmt-legend-horizontal", ncol=len(handles))
+    plt_legend(handles, "default_vs_econmt-bar-legend-horizontal", ncol=len(handles))
