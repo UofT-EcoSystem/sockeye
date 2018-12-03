@@ -41,7 +41,7 @@ python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SR
 			 --source-vocab ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SRC_TGT}/vocab.en \
 			 --target-vocab ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SRC_TGT}/vocab.vi \
 			 --output ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} --seed=1 \
-			 --encoder rnn --decoder rnn \
+			 --encoder rnn --decoder rnn --use-fused-rnn \
 			 --num-layers 2:2 \
 			 --rnn-cell-type lstm \
 			 --rnn-num-hidden 512 \
