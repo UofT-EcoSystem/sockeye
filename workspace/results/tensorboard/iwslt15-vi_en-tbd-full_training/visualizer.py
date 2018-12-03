@@ -16,12 +16,16 @@ from visualizer_helper import plt_rc_setup
 from tensorboard_visualizer_helper import gen_from_txt, plt_default_vs_econmt_full_training_perplexity, \
     plt_default_vs_econmt_full_training_validation_bleu, \
     plt_default_vs_econmt_full_training_metrics, \
+    plt_cudnn_vs_econmt_full_training_validation_bleu, \
     plt_cudnn_vs_econmt_full_training_metrics
 
 plt_rc_setup()
 
 plt_default_vs_econmt_full_training_perplexity('N', prefix='iwslt15-vi_en-tbd-')
-plt_default_vs_econmt_full_training_validation_bleu('T', first_k_ckpts=(7, 7, 7, 7, 6),
+plt_default_vs_econmt_full_training_validation_bleu(first_k_ckpts=(7, 7, 7, 6),
+                                                    bar=22.6, prefix='iwslt15-vi_en-tbd-')
+plt_cudnn_vs_econmt_full_training_validation_bleu  (first_k_ckpts=(7, 10, 6),
+                                                    cross_bar=(2, 2, 2),
                                                     bar=22.6, prefix='iwslt15-vi_en-tbd-')
 
 plt_default_vs_econmt_full_training_metrics(metric='throughput', metric_unit='samples/s',

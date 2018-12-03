@@ -75,15 +75,11 @@ def plt_default_vs_econmt_preliminary(metric, metric_unit=None):
     plt.savefig(title + ".png")
 
 
-def plt_default_vs_econmt_full_training_validation_bleu(xscale, first_k_ckpts, 
-                                                        prefix='', suffix='', bar=None, discard=None):
+def plt_default_vs_econmt_full_training_validation_bleu(first_k_ckpts, prefix='', suffix='', bar=None, discard=None):
 
     metric, metric_unit = 'validation_bleu', None
-
-    if xscale != 'N' and xscale != 'T':
-        assert False, "Invalid xlabel %s. It must be either \'N\' or \'T\'."
     
-    title ='%sdefault_vs_econmt%s-par_rev-%s-%s' % (prefix, suffix, xscale, metric)
+    title ='%sdefault_vs_econmt%s-par_rev-T-%s' % (prefix, suffix, metric)
 
     default_128_raw_metric = gen_from_txt("default-B_128/csv/%s.csv" % metric, metric, metric_unit)
     default_128_metric = gen_from_txt("default-B_128-par_rev/csv/%s.csv" % metric, metric, metric_unit, 
@@ -99,23 +95,19 @@ def plt_default_vs_econmt_full_training_validation_bleu(xscale, first_k_ckpts,
 
     handles = []
 
-    handles.append(plt.plot(default_128_raw_metric[:first_k_ckpts[0],1] if xscale == 'N' \
-                                else default_128_raw_metric[:first_k_ckpts[0],0], 
+    handles.append(plt.plot(default_128_raw_metric[:first_k_ckpts[0],0], 
                             default_128_raw_metric[:first_k_ckpts[0],2], linewidth=2, linestyle='-', 
                             marker='v', markersize=10,
                             color='black', label=r'Default$_{B=128}$')[0])
-    handles.append(plt.plot(default_128_metric[:first_k_ckpts[1],1] if xscale == 'N' \
-                                else default_128_metric[:first_k_ckpts[1],0], 
+    handles.append(plt.plot(default_128_metric[:first_k_ckpts[1],0], 
                             default_128_metric[:first_k_ckpts[1],2], linewidth=2, linestyle='-', 
                             marker='X', markersize=10,
                             color='black', label=r'Default$_{B=128}^{\mathrm{par\_rev}}$')[0])
-    handles.append(plt.plot(econmt_128_metric [:first_k_ckpts[2],1] if xscale == 'N' \
-                                else econmt_128_metric [:first_k_ckpts[2],0], 
+    handles.append(plt.plot(econmt_128_metric [:first_k_ckpts[2],0], 
                             econmt_128_metric [:first_k_ckpts[2],2], linewidth=2, linestyle='-', 
                             marker='.', markersize=10,
                             color='black', label= r'EcoRNN$_{B=128}^{\mathrm{par\_rev}}$')[0])
-    handles.append(plt.plot(econmt_256_metric [:first_k_ckpts[3],1] if xscale == 'N' \
-                                else econmt_256_metric[:first_k_ckpts[3],0], 
+    handles.append(plt.plot(econmt_256_metric [:first_k_ckpts[3],0], 
                             econmt_256_metric [:first_k_ckpts[3],2], linewidth=2, linestyle='-', 
                             marker='^', markersize=10, 
                             color='black', label= r'EcoRNN$_{B=256}^{\mathrm{par\_rev}}$')[0])
@@ -129,23 +121,19 @@ def plt_default_vs_econmt_full_training_validation_bleu(xscale, first_k_ckpts,
                     bbox=dict(boxstyle="square", fc="white", ec='blue', linewidth=3),
                     arrowprops=dict(arrowstyle="<|-|>", color='blue', linewidth=3))
     
-    if xscale == 'T':
-        _annotate(default_128_raw_metric[first_k_ckpts[0]-2,0], 4*bar/5)
-        _annotate(default_128_metric[first_k_ckpts[1]-2,0], 3*bar/5)
-        _annotate( econmt_128_metric[first_k_ckpts[3]-2,0], 2*bar/5)
-        _annotate( econmt_256_metric[first_k_ckpts[4]-2,0], 1*bar/5)
+    _annotate(default_128_raw_metric[first_k_ckpts[0]-2,0], 4*bar/5)
+    _annotate(default_128_metric[first_k_ckpts[1]-2,0], 3*bar/5)
+    _annotate( econmt_128_metric[first_k_ckpts[2]-2,0], 2*bar/5)
+    _annotate( econmt_256_metric[first_k_ckpts[3]-2,0], 1*bar/5)
 
     if bar is not None:
-        plt.text(2, bar + 2, 'Target BLEU Score %.1f' % bar, fontsize=18,
+        plt.text(2, bar + 1.5, 'Target BLEU Score %.1f' % bar, fontsize=18,
                  bbox=dict(boxstyle="square", fc="white", ec='red', linewidth=3))
         plt.axhline(y=bar, color='r', linewidth=2, linestyle='-.')
 
-    plt.xlabel('Training Checkpoint Number' if xscale == 'N' else 'Time (min)')
+    plt.xlabel('Time (min)')
     plt.ylabel("Validation BLEU Score")
-    if xscale == 'N':
-        plt.xticks(np.arange(0, 9, 2), fontsize=20)
-    else:
-        plt.xticks(fontsize=20)
+    plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
     plt.xlim(xmin=0)
     plt.ylim(ymin=0)
@@ -156,6 +144,93 @@ def plt_default_vs_econmt_full_training_validation_bleu(xscale, first_k_ckpts,
     plt.tight_layout()
     plt.savefig(title + ".png")
     plt_legend(handles, 'default_vs_econmt-plot-legend-horizontal', ncol=len(handles))
+
+
+def plt_cudnn_vs_econmt_full_training_validation_bleu(first_k_ckpts, cross_bar, 
+                                                      prefix='', suffix='', bar=None, discard=None):
+
+    metric, metric_unit = 'validation_bleu', None
+    
+    title ='%scudnn_vs_econmt%s-par_rev-T-%s' % (prefix, suffix, metric)
+
+    default_128_metric = gen_from_txt("default-B_128-par_rev/csv/%s.csv" % metric, metric, metric_unit, 
+                                      discard[0] if discard is not None else None)
+    cudnn_128_metric   = gen_from_txt(  "cudnn-B_128-par_rev/csv/%s.csv" % metric, metric, metric_unit, 
+                                      discard[0] if discard is not None else None)
+    econmt_256_metric  = gen_from_txt( "econmt-B_256-par_rev/csv/%s.csv" % metric, metric, metric_unit,
+                                      discard[1] if discard is not None else None)
+
+    # ==============================================================================================
+
+    plt.figure()
+
+    handles = []
+
+    handles.append(plt.plot(default_128_metric[:first_k_ckpts[0],0], 
+                            default_128_metric[:first_k_ckpts[0],2], linewidth=2, linestyle='-', 
+                            marker='X', markersize=10,
+                            color='black', label=r'Default$_{B=128}^{\mathrm{par\_rev}}$')[0])
+    handles.append(plt.plot(cudnn_128_metric  [:first_k_ckpts[1],0], 
+                            cudnn_128_metric  [:first_k_ckpts[1],2], linewidth=2, linestyle='-', 
+                            marker='P', markersize=10,
+                            color='black', label=  r'CuDNN$_{B=128}^{\mathrm{par\_rev}}$')[0])
+    handles.append(plt.plot(econmt_256_metric [:first_k_ckpts[2],0], 
+                            econmt_256_metric [:first_k_ckpts[2],2], linewidth=2, linestyle='-', 
+                            marker='^', markersize=10, 
+                            color='black', label= r'EcoRNN$_{B=256}^{\mathrm{par\_rev}}$')[0])
+
+    def _find_intersection(start, end, bar):
+        x = np.arange(start[0], end[0], (end[0] - start[0]) / 100)
+        y = np.arange(start[1], end[1], (end[1] - start[1]) / 100)
+        idx = np.argwhere(np.diff(np.sign(y - bar))).flatten()
+        return x[idx[0]]
+
+    default_intersection = _find_intersection((default_128_metric[cross_bar[0]  ,0],
+                                               default_128_metric[cross_bar[0]  ,2]),
+                                              (default_128_metric[cross_bar[0]+1,0],
+                                               default_128_metric[cross_bar[0]+1,2]), 20.0)
+    cudnn_intersection   = _find_intersection((cudnn_128_metric  [cross_bar[1]  ,0],
+                                               cudnn_128_metric  [cross_bar[1]  ,2]),
+                                              (cudnn_128_metric  [cross_bar[1]+1,0],
+                                               cudnn_128_metric  [cross_bar[1]+1,2]), 20.0)
+    econmt_intersection  = _find_intersection((econmt_256_metric [cross_bar[2]  ,0],
+                                               econmt_256_metric [cross_bar[2]  ,2]),
+                                              (econmt_256_metric [cross_bar[2]+1,0],
+                                               econmt_256_metric [cross_bar[2]+1,2]), 20.0)
+
+    def _annotate(x, y):
+        plt.annotate(r"$%.2f\times$" % (x / default_intersection), 
+                    xy    =(0, y),
+                    xytext=(x, y),
+                    fontsize=20,
+                    va="center", ha="left",
+                    bbox=dict(boxstyle="square", fc="white", ec='blue', linewidth=3),
+                    arrowprops=dict(arrowstyle="<|-|>", color='blue', linewidth=3))
+    
+    _annotate(default_intersection, 3*bar/4)
+    _annotate(  cudnn_intersection, 2*bar/4)
+    _annotate( econmt_intersection, 1*bar/4)
+
+    # print(default_intersection, cudnn_intersection, econmt_intersection)
+
+    if bar is not None:
+        plt.text(2, bar + 1.5, 'Target BLEU Score %.1f' % bar, fontsize=18,
+                 bbox=dict(boxstyle="square", fc="white", ec='red', linewidth=3))
+        plt.axhline(y=bar, color='r', linewidth=2, linestyle='-.')
+
+    plt.xlabel('Time (min)')
+    plt.ylabel("Validation BLEU Score")
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.xlim(xmin=0)
+    plt.ylim(ymin=0)
+
+    # plt.legend(fontsize=24)
+    plt.grid(linestyle='-.', linewidth=1)
+
+    plt.tight_layout()
+    plt.savefig(title + ".png")
+    plt_legend(handles, 'cudnn_vs_econmt-plot-legend-horizontal', ncol=len(handles))
 
 
 def plt_default_vs_econmt_full_training_perplexity(xscale, prefix='', suffix=''):
