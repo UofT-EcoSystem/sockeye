@@ -319,7 +319,7 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
 
     handles.append(plt.bar(x=-2*bar_width, height=default_128_metric,
             width=bar_width, edgecolor='black', linewidth=3,
-            color='grey',
+            color='black',
             label=r"Default$_{B=128}$"))
     handles.append(plt.bar(x=-1*bar_width, height=default_128_par_rev_metric,
             width=bar_width, edgecolor='black', linewidth=3,
@@ -327,11 +327,11 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
             label=r"Default$_{B=128}^\mathrm{par\_rev}$"))
     handles.append(plt.bar(x= 0*bar_width, height= econmt_128_par_rev_metric,
             width=bar_width, edgecolor='black', linewidth=3,
-            color=np.array([0, 0.2, 0]),
+            color=np.array([0, 0.5, 0]),
             label= r"EcoRNN$_{B=128}^\mathrm{par\_rev}$"))
     handles.append(plt.bar(x= 1*bar_width, height= econmt_256_par_rev_metric,
             width=bar_width, edgecolor='black', linewidth=3,
-            color=np.array([0, 0.8, 0]),
+            color=np.array([0, 0.9, 0]),
             label= r"EcoRNN$_{B=256}^\mathrm{par\_rev}$"))
 
     _annotate(x=-2*bar_width, metric=default_128_metric)
