@@ -16,8 +16,7 @@ from visualizer_helper import plt_rc_setup
 from tensorboard_visualizer_helper import gen_from_txt, plt_default_vs_econmt_full_training_perplexity, \
     plt_default_vs_econmt_full_training_validation_bleu, \
     plt_default_vs_econmt_full_training_metrics, \
-    plt_cudnn_vs_econmt_full_training_validation_bleu, \
-    plt_cudnn_vs_econmt_full_training_metrics
+    plt_cudnn_vs_econmt_full_training_validation_bleu
 
 plt_rc_setup()
 
@@ -36,11 +35,3 @@ plt_default_vs_econmt_full_training_metrics(metric='memory_usage', metric_unit='
                                             measurer=np.max,
                                             prefix='iwslt15-vi_en-tbd-',
                                             ylabel='Memory Consumption (GB)',)
-plt_cudnn_vs_econmt_full_training_metrics(metric='throughput', metric_unit='samples/s',
-                                          measurer=np.average,
-                                          prefix='iwslt15-vi_en-tbd-',
-                                          ylabel='Throughput (samples/s)')
-plt_cudnn_vs_econmt_full_training_metrics(metric='memory_usage', metric_unit='GB',
-                                          measurer=np.max,
-                                          prefix='iwslt15-vi_en-tbd-',
-                                          ylabel='Memory Consumption (GB)',)
