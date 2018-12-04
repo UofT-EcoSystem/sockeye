@@ -116,7 +116,7 @@ plt_hparam_sweep_rnn_layers()
 plt_hparam_sweep_hidden_dimension()
 
 
-def plt_default_vs_econmt_full_training_pe(metric, metric_unit, measurer, ylabel, first_k_ckpts,
+def plt_default_vs_econmt_full_training_pe(metric, metric_unit, measurer, ylabel, yticks, first_k_ckpts,
                                            prefix='iwslt15-vi_en-tbd-',
                                             suffix='', bar_width=0.3):
 
@@ -142,14 +142,14 @@ def plt_default_vs_econmt_full_training_pe(metric, metric_unit, measurer, ylabel
         econmt_128_par_rev_metric  = econmt_128_par_rev_metric [first_k_ckpts[2],2]
         econmt_256_par_rev_metric  = econmt_256_par_rev_metric [first_k_ckpts[3],2]
 
-    # plt.figure(figsize=(6, 8))
-    plt.figure()
+    plt.figure(figsize=(8, 3))
+    # plt.figure()
 
     def _annotate(x, metric):
         plt.annotate((r'$%.2f\times$') % (metric / default_128_par_rev_metric),
-                 xy    =(x, metric + 0.04*plt.ylim()[1]), 
-                 xytext=(x, metric + 0.04*plt.ylim()[1]), 
-                 fontsize=18, ha='center', va='center', 
+                 xy    =(x, metric), 
+                 xytext=(x, metric), 
+                 fontsize=24, ha='center', va='bottom', 
                  bbox=dict(boxstyle='square', facecolor='white', linewidth=3))
 
     handles = []
@@ -178,7 +178,7 @@ def plt_default_vs_econmt_full_training_pe(metric, metric_unit, measurer, ylabel
 
     plt.xlim([-3*bar_width, 2*bar_width])
     plt.xticks([])
-    plt.yticks(fontsize=20)
+    plt.yticks(yticks, fontsize=20)
     plt.ylabel(ylabel)
 
     # plt.legend(fontsize=20, ncol=1)
@@ -193,9 +193,11 @@ plt_default_vs_econmt_full_training_pe(metric='power', metric_unit='W',
                                        measurer=np.average,
                                        first_k_ckpts=(6*40, 6*40, 6*40, 5*20),
                                        prefix='iwslt15-vi_en-tbd-',
-                                       ylabel='Power (W)')
+                                       ylabel='Power (W)',
+                                       yticks=np.arange(0, 121, 20))
 plt_default_vs_econmt_full_training_pe(metric='energy', metric_unit='1e5 J',
                                        measurer=None,
                                        first_k_ckpts=(6*40, 6*40, 6*40, 5*20),
                                        prefix='iwslt15-vi_en-tbd-',
-                                       ylabel=r'Energy ($10^5$ J)')
+                                       ylabel=r'Energy ($10^5$ J)',
+                                       yticks=np.arange(0, 3.7, 0.6))
