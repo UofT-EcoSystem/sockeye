@@ -353,7 +353,7 @@ def plt_default_vs_econmt_full_training_perplexity(xscale, prefix='', suffix='')
     plt.savefig(title + ".png")
 
 
-def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, ylabel,
+def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, ylabel, yticks,
                                                 prefix='', suffix='', bar_width=0.3):
 
     title ='%sdefault_vs_econmt%s-%s' % (prefix, suffix, metric)
@@ -374,14 +374,14 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
     econmt_128_par_rev_metric  = measurer(econmt_128_par_rev_metric [:,2])
     econmt_256_par_rev_metric  = measurer(econmt_256_par_rev_metric [:,2])
 
-    # plt.figure(figsize=(6, 8))
-    plt.figure()
+    plt.figure(figsize=(8, 3))
+    # plt.figure()
 
     def _annotate(x, metric):
         plt.annotate((r'$%.2f\times$') % (metric / default_128_par_rev_metric),
-                 xy    =(x, metric + 0.04*plt.ylim()[1]), 
-                 xytext=(x, metric + 0.04*plt.ylim()[1]), 
-                 fontsize=18, ha='center', va='center', 
+                 xy    =(x, metric), 
+                 xytext=(x, metric), 
+                 fontsize=24, ha='center', va='bottom', 
                  bbox=dict(boxstyle='square', facecolor='white', linewidth=3))
 
     handles = []
@@ -410,8 +410,8 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
 
     plt.xlim([-3*bar_width, 2*bar_width])
     plt.xticks([])
-    plt.yticks(fontsize=20)
-    plt.ylabel(ylabel)
+    plt.yticks(yticks, fontsize=20)
+    plt.ylabel(ylabel, fontsize=32)
 
     # plt.legend(fontsize=20, ncol=1)
     plt.grid(linestyle='-.', linewidth=1)

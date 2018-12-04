@@ -31,11 +31,11 @@ plt_cudnn_vs_econmt_full_training_validation_bleu  (first_k_ckpts=(7, 10, 6),
 plt_default_vs_econmt_full_training_metrics(metric='throughput', metric_unit='samples/s',
                                             measurer=np.average,
                                             prefix='iwslt15-vi_en-tbd-',
-                                            ylabel='Throughput (samples/s)')
+                                            ylabel='Throughput\n(samples/s)', yticks=np.arange(0, 1501, 500))
 plt_default_vs_econmt_full_training_metrics(metric='memory_usage', metric_unit='GB',
                                             measurer=np.max,
                                             prefix='iwslt15-vi_en-tbd-',
-                                            ylabel='Memory Consumption (GB)',)
+                                            ylabel='Memory Con-\nsumption (GB)', yticks=np.arange(0, 11, 5))
 plt_cudnn_vs_econmt_full_training_metrics(metric='memory_usage', metric_unit='GB',
                                           measurer=np.max,
                                           prefix='iwslt15-vi_en-tbd-',
@@ -179,7 +179,7 @@ def plt_default_vs_econmt_full_training_pe(metric, metric_unit, measurer, ylabel
     plt.xlim([-3*bar_width, 2*bar_width])
     plt.xticks([])
     plt.yticks(yticks, fontsize=20)
-    plt.ylabel(ylabel)
+    plt.ylabel(ylabel, fontsize=32)
 
     # plt.legend(fontsize=20, ncol=1)
     plt.grid(linestyle='-.', linewidth=1)
@@ -194,10 +194,10 @@ plt_default_vs_econmt_full_training_pe(metric='power', metric_unit='W',
                                        first_k_ckpts=(6*40, 6*40, 6*40, 5*20),
                                        prefix='iwslt15-vi_en-tbd-',
                                        ylabel='Power (W)',
-                                       yticks=np.arange(0, 121, 20))
+                                       yticks=np.arange(0, 121, 30))
 plt_default_vs_econmt_full_training_pe(metric='energy', metric_unit='1e5 J',
                                        measurer=None,
                                        first_k_ckpts=(6*40, 6*40, 6*40, 5*20),
                                        prefix='iwslt15-vi_en-tbd-',
                                        ylabel=r'Energy ($10^5$ J)',
-                                       yticks=np.arange(0, 3.7, 0.6))
+                                       yticks=np.arange(0, 3.7, 1.2))

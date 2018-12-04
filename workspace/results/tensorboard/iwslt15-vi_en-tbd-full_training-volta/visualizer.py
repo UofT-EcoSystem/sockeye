@@ -28,9 +28,11 @@ plt_default_vs_econmt_full_training_metrics(metric='throughput', metric_unit='sa
                                             measurer=np.average, 
                                             prefix='iwslt15-vi_en-tbd-',
                                             suffix='-volta',
-                                            ylabel='Throughput (samples/s)')
+                                            ylabel='Throughput\n(samples/s)',
+                                            yticks=np.arange(0, 1601, 400))
 plt_default_vs_econmt_full_training_metrics(metric='memory_usage', metric_unit='GB', 
                                             measurer=np.max,
                                             prefix='iwslt15-vi_en-tbd-',
                                             suffix='-volta',
-                                            ylabel='Memory Consumption (GB)',)
+                                            ylabel='Memory Con-\nsumption (GB)',
+                                            yticks=np.arange(0, 13, 3))
