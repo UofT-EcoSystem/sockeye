@@ -114,3 +114,88 @@ def plt_hparam_sweep_hidden_dimension():
 
 plt_hparam_sweep_rnn_layers()
 plt_hparam_sweep_hidden_dimension()
+
+
+def plt_default_vs_econmt_full_training_pe(metric, metric_unit, measurer, ylabel, first_k_ckpts,
+                                           prefix='iwslt15-vi_en-tbd-',
+                                            suffix='', bar_width=0.3):
+
+    title ='%sdefault_vs_econmt-%s' % (prefix, metric)
+
+    default_128_metric = gen_from_txt("default-B_128/csv/%s.csv" % metric, 
+                                      metric=metric, metric_unit=metric_unit)
+    default_128_par_rev_metric = gen_from_txt("default-B_128-par_rev/csv/%s.csv" % metric, 
+                                              metric=metric, metric_unit=metric_unit)
+    econmt_128_par_rev_metric  = gen_from_txt( "econmt-B_128-par_rev/csv/%s.csv" % metric,
+                                              metric=metric, metric_unit=metric_unit)
+    econmt_256_par_rev_metric  = gen_from_txt( "econmt-B_256-par_rev/csv/%s.csv" % metric,
+                                              metric=metric, metric_unit=metric_unit)
+
+    if measurer is not None:
+        default_128_metric = measurer(default_128_metric[:first_k_ckpts[0],2])
+        default_128_par_rev_metric = measurer(default_128_par_rev_metric[:first_k_ckpts[1],2])
+        econmt_128_par_rev_metric  = measurer(econmt_128_par_rev_metric [:first_k_ckpts[2],2])
+        econmt_256_par_rev_metric  = measurer(econmt_256_par_rev_metric [:first_k_ckpts[3],2])
+    else:
+        default_128_metric = default_128_metric[first_k_ckpts[0],2]
+        default_128_par_rev_metric = default_128_par_rev_metric[first_k_ckpts[1],2]
+        econmt_128_par_rev_metric  = econmt_128_par_rev_metric [first_k_ckpts[2],2]
+        econmt_256_par_rev_metric  = econmt_256_par_rev_metric [first_k_ckpts[3],2]
+
+    # plt.figure(figsize=(6, 8))
+    plt.figure()
+
+    def _annotate(x, metric):
+        plt.annotate((r'$%.2f\times$') % (metric / default_128_par_rev_metric),
+                 xy    =(x, metric + 0.04*plt.ylim()[1]), 
+                 xytext=(x, metric + 0.04*plt.ylim()[1]), 
+                 fontsize=18, ha='center', va='center', 
+                 bbox=dict(boxstyle='square', facecolor='white', linewidth=3))
+
+    handles = []
+
+    handles.append(plt.bar(x=-2*bar_width, height=default_128_metric,
+                           width=bar_width, edgecolor='black', linewidth=3,
+                           color='black',
+                           label=r"Default$_{B=128}$"))
+    handles.append(plt.bar(x=-1*bar_width, height=default_128_par_rev_metric,
+                           width=bar_width, edgecolor='black', linewidth=3,
+                           color='white', 
+                           label=r"Default$_{B=128}^\mathrm{par\_rev}$"))
+    handles.append(plt.bar(x= 0*bar_width, height= econmt_128_par_rev_metric,
+                           width=bar_width, edgecolor='black', linewidth=3,
+                           color=np.array([0, 0.5, 0]),
+                           label= r"EcoRNN$_{B=128}^\mathrm{par\_rev}$"))
+    handles.append(plt.bar(x= 1*bar_width, height= econmt_256_par_rev_metric,
+                           width=bar_width, edgecolor='black', linewidth=3,
+                           color=np.array([0, 0.9, 0]),
+                           label= r"EcoRNN$_{B=256}^\mathrm{par\_rev}$"))
+
+    _annotate(x=-2*bar_width, metric=default_128_metric)
+    _annotate(x=-1*bar_width, metric=default_128_par_rev_metric)
+    _annotate(x= 0*bar_width, metric= econmt_128_par_rev_metric)
+    _annotate(x= 1*bar_width, metric= econmt_256_par_rev_metric)
+
+    plt.xlim([-3*bar_width, 2*bar_width])
+    plt.xticks([])
+    plt.yticks(fontsize=20)
+    plt.ylabel(ylabel)
+
+    # plt.legend(fontsize=20, ncol=1)
+    plt.grid(linestyle='-.', linewidth=1)
+
+    plt.tight_layout()
+    plt.savefig(title + ".png")
+    plt_legend(handles, "legend-default_vs_econmt-bar-horizontal", ncol=len(handles))
+
+
+plt_default_vs_econmt_full_training_pe(metric='power', metric_unit='W',
+                                       measurer=np.average,
+                                       first_k_ckpts=(6*40, 6*40, 6*40, 5*20),
+                                       prefix='iwslt15-vi_en-tbd-',
+                                       ylabel='Power (W)')
+plt_default_vs_econmt_full_training_pe(metric='energy', metric_unit='1e5 J',
+                                       measurer=None,
+                                       first_k_ckpts=(6*40, 6*40, 6*40, 5*20),
+                                       prefix='iwslt15-vi_en-tbd-',
+                                       ylabel=r'Energy ($10^5$ J)')

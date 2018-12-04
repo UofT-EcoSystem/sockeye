@@ -20,6 +20,8 @@ def gen_from_txt(fname, metric, metric_unit=None, skip=None):
                               np.mod(np.arange(data.shape[0])+1,skip)!=3], axis=0)
 
         data = data[data_filter,:]
+    if metric == 'energy' and metric_unit == '1e5 J':
+        data[:,2] = data[:,2] / 1e5
     if metric == 'memory_usage' and metric_unit == 'GB':
         data[:,2] = data[:,2] / 1000
     if metric == 'validation_bleu':
