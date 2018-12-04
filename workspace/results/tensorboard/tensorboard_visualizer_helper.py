@@ -196,7 +196,7 @@ def plt_default_vs_econmt_full_training_validation_bleu(first_k_ckpts, prefix=''
     _annotate( econmt_256_metric[first_k_ckpts[3]-2,0], 1*bar/5)
 
     if bar is not None:
-        plt.text(2, bar + 1.5, 'Target BLEU Score %.1f' % bar, fontsize=18,
+        plt.text(2, bar + 2, 'Target BLEU Score %.1f' % bar, fontsize=18,
                  bbox=dict(boxstyle="square", fc="white", ec='red', linewidth=3))
         plt.axhline(y=bar, color='r', linewidth=2, linestyle='-.')
 
