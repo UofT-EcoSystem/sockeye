@@ -27,10 +27,10 @@ then
                 --csv --log-file ${SOCKEYE_ROOT}/workspace/results/profile/runtime/${CONFERENCE_SRC_TGT_MODEL}.csv"
 fi
 # ==================================================================================================
-BATCH_SIZE=256
-INITIAL_LEARNING_RATE=0.0006
-MAX_UPDATES=10000
-CHECKPOINT_FREQUENCY=1000
+BATCH_SIZE=128
+INITIAL_LEARNING_RATE=0.0003
+MAX_UPDATES=500
+CHECKPOINT_FREQUENCY=2000
 
 cd ${SOCKEYE_ROOT} && rm -rf ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} && \
 PYTHONPATH=${SOCKEYE_ROOT} ${NVPROF_PREFIX} \
@@ -42,7 +42,7 @@ python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SR
 			 --target-vocab ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SRC_TGT}/vocab.vi \
 			 --output ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} --seed=3 \
 			 --encoder rnn --decoder rnn \
-			 --num-layers 2:2 \
+			 --num-layers 5:5 \
 			 --rnn-cell-type lstm \
 			 --rnn-num-hidden 512 \
 			 --rnn-encoder-reverse-input \

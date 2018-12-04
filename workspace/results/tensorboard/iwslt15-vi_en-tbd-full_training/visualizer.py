@@ -52,21 +52,21 @@ def plt_hparam_sweep_rnn_layers():
              linewidth=2, linestyle='-', 
              marker='X', markersize=10, 
              color='black', label=r'Default$_{B=128}^{\mathrm{par\_rev}}$')
-    plt.plot([3, 4], [10.715, 12.378],
+    plt.plot([3, 4, 5], [10.715, 12.378, 13.506],
              linewidth=2, linestyle='--', 
              marker='X', markersize=10, 
              color='black')
-    plt.plot([1, 2, 3, 4], [3.077, 4.343, 5.779, 7.213], 
+    plt.plot([1, 2, 3, 4, 5], [3.077, 4.343, 5.779, 7.213, 8.051], 
              linewidth=2, linestyle='-', 
              marker='^', markersize=10, 
              color='black', label= r'EcoRNN$_{B=128}^{\mathrm{par\_rev}}$')
 
     plt.xlabel('Number of RNN Layers')
     plt.ylabel("Memory Consumption (GB)")
-    plt.xticks([1, 2, 3, 4], fontsize=20)
-    plt.yticks(np.arange(0, 13, 4), fontsize=20)
-    plt.xlim(xmin=0, xmax=5)
-    plt.ylim(ymin=0, ymax=13)
+    plt.xticks([1, 2, 3, 4, 5], fontsize=20)
+    plt.yticks(np.arange(0, 17, 4), fontsize=20)
+    plt.xlim(xmin=0, xmax=6)
+    plt.ylim(ymin=0, ymax=15)
 
     # plt.legend(fontsize=20)
     plt.grid(linestyle='-.', linewidth=1)
