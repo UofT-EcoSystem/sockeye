@@ -24,6 +24,6 @@ plt_rc_setup()
 # plt_default_vs_econmt_preliminary(metric='memory_usage', metric_unit='GB')
 # plt_default_vs_econmt_preliminary(metric='throughput', metric_unit='samples/s')
 
-plt_default_vs_econmt_preliminary_metric(prefix='iwslt15-vi_en-best-', batch_size=80, 
-                                         max_memory_usage=8,
-                                         max_throughput=600)
+plt_default_vs_econmt_preliminary_metric(prefix='iwslt15-vi_en-best-', batch_size=32, 
+                                         max_memory_usage=12,
+                                         max_throughput=160)

@@ -75,11 +75,75 @@ def plt_default_vs_econmt_preliminary(metric, metric_unit=None):
     plt.savefig(title + ".png")
 
 
+def plt_default_vs_econmt_preliminary_metric(prefix, batch_size,
+                                             max_memory_usage,
+                                             max_throughput, bar_width=0.3):
+
+    title = '%sdefault_vs_econmt-metric' % prefix
+
+    default_memory_usage = gen_from_txt("default-B_%d/csv/%s.csv" % (batch_size, 'memory_usage'), 'memory_usage', 'GB')
+    econmt_memory_usage  = gen_from_txt( "econmt-B_%d/csv/%s.csv" % (batch_size, 'memory_usage'), 'memory_usage', 'GB')
+    default_throughput = gen_from_txt("default-B_%d/csv/%s.csv" % (batch_size, 'throughput'), 'throughput')
+    econmt_throughput  = gen_from_txt( "econmt-B_%d/csv/%s.csv" % (batch_size, 'throughput'), 'throughput')
+
+    fig, axes = plt.subplots()
+
+    def _annotate(x, metric, reference):
+        plt.annotate((r'$%.2f\times$') % (metric / reference),
+                 xy    =(x, metric), 
+                 xytext=(x, metric), 
+                 fontsize=13, ha='center', va='bottom', 
+                 bbox=dict(boxstyle='square', facecolor='white', linewidth=3))
+
+    axes.bar(x=0-0.5*bar_width, height=np.max(default_memory_usage[:,2]),
+             width=bar_width, edgecolor='black', linewidth=3,
+             color='white',
+             label="Default")
+    axes.bar(x=0+0.5*bar_width, height=np.max(econmt_memory_usage [:,2]),
+             width=bar_width, edgecolor='black', linewidth=3,
+             color='green',
+             label="EcoRNN")
+    _annotate(0-0.5*bar_width, np.max(default_memory_usage[:,2]), np.max(default_memory_usage[:,2]))
+    _annotate(0+0.5*bar_width, np.max( econmt_memory_usage[:,2]), np.max(default_memory_usage[:,2]))
+
+    axes.set_xticks([0, 1])
+    axes.set_xticklabels(['Memory\nConsumption', 'Throughput'])
+    axes.set_ylim(ymin=0, ymax=max_memory_usage)
+    axes.set_ylabel("Memory Consumption (GB)")
+    axes.set_yticks(np.arange(0, max_memory_usage + 1, max_memory_usage / 4))
+
+    for ticklabel in axes.get_xticklabels() + axes.get_yticklabels():
+        ticklabel.set_fontsize(20)
+
+    axes.grid(linestyle='-.', linewidth=1, axis='y')
+
+    axes = axes.twinx()
+
+    axes.bar(x=1-0.5*bar_width, height=np.average(default_throughput[:,2]),
+             width=bar_width, edgecolor='black', linewidth=3,
+             color='white',
+             label="Default")
+    axes.bar(x=1+0.5*bar_width, height=np.average(econmt_throughput [:,2]),
+             width=bar_width, edgecolor='black', linewidth=3,
+             color='green',
+             label="EcoRNN")
+
+    _annotate(1-0.5*bar_width, np.average(default_throughput[:,2]), np.average(default_throughput[:,2]))
+    _annotate(1+0.5*bar_width, np.average( econmt_throughput[:,2]), np.average(default_throughput[:,2]))
+
+    axes.set_ylim(ymin=0, ymax=max_throughput)
+    axes.set_ylabel("Throughput (samples/s)")
+    axes.set_yticks(np.arange(0, max_throughput + 1, max_throughput / 4))
+
+    plt.tight_layout()
+    plt.savefig(title + ".png")
+
+
 def plt_default_vs_econmt_full_training_validation_bleu(first_k_ckpts, prefix='', suffix='', bar=None, discard=None):
 
     metric, metric_unit = 'validation_bleu', None
     
-    title ='%sdefault_vs_econmt%s-par_rev-T-%s' % (prefix, suffix, metric)
+    title = '%sdefault_vs_econmt%s-par_rev-T-%s' % (prefix, suffix, metric)
 
     default_128_raw_metric = gen_from_txt("default-B_128/csv/%s.csv" % metric, metric, metric_unit)
     default_128_metric = gen_from_txt("default-B_128-par_rev/csv/%s.csv" % metric, metric, metric_unit, 
@@ -143,7 +207,7 @@ def plt_default_vs_econmt_full_training_validation_bleu(first_k_ckpts, prefix=''
 
     plt.tight_layout()
     plt.savefig(title + ".png")
-    plt_legend(handles, 'default_vs_econmt-plot-legend-horizontal', ncol=len(handles))
+    plt_legend(handles, 'legend-default_vs_econmt-plot-horizontal', ncol=len(handles))
 
 
 def plt_cudnn_vs_econmt_full_training_validation_bleu(first_k_ckpts, cross_bar, 
@@ -230,7 +294,7 @@ def plt_cudnn_vs_econmt_full_training_validation_bleu(first_k_ckpts, cross_bar,
 
     plt.tight_layout()
     plt.savefig(title + ".png")
-    plt_legend(handles, 'cudnn_vs_econmt-plot-legend-horizontal', ncol=len(handles))
+    plt_legend(handles, 'legend-cudnn_vs_econmt-plot-horizontal', ncol=len(handles))
 
 
 def plt_default_vs_econmt_full_training_perplexity(xscale, prefix='', suffix=''):
@@ -318,21 +382,21 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
     handles = []
 
     handles.append(plt.bar(x=-2*bar_width, height=default_128_metric,
-            width=bar_width, edgecolor='black', linewidth=3,
-            color='black',
-            label=r"Default$_{B=128}$"))
+                           width=bar_width, edgecolor='black', linewidth=3,
+                           color='black',
+                           label=r"Default$_{B=128}$"))
     handles.append(plt.bar(x=-1*bar_width, height=default_128_par_rev_metric,
-            width=bar_width, edgecolor='black', linewidth=3,
-            color='white', 
-            label=r"Default$_{B=128}^\mathrm{par\_rev}$"))
+                           width=bar_width, edgecolor='black', linewidth=3,
+                           color='white', 
+                           label=r"Default$_{B=128}^\mathrm{par\_rev}$"))
     handles.append(plt.bar(x= 0*bar_width, height= econmt_128_par_rev_metric,
-            width=bar_width, edgecolor='black', linewidth=3,
-            color=np.array([0, 0.5, 0]),
-            label= r"EcoRNN$_{B=128}^\mathrm{par\_rev}$"))
+                           width=bar_width, edgecolor='black', linewidth=3,
+                           color=np.array([0, 0.5, 0]),
+                           label= r"EcoRNN$_{B=128}^\mathrm{par\_rev}$"))
     handles.append(plt.bar(x= 1*bar_width, height= econmt_256_par_rev_metric,
-            width=bar_width, edgecolor='black', linewidth=3,
-            color=np.array([0, 0.9, 0]),
-            label= r"EcoRNN$_{B=256}^\mathrm{par\_rev}$"))
+                           width=bar_width, edgecolor='black', linewidth=3,
+                           color=np.array([0, 0.9, 0]),
+                           label= r"EcoRNN$_{B=256}^\mathrm{par\_rev}$"))
 
     _annotate(x=-2*bar_width, metric=default_128_metric)
     _annotate(x=-1*bar_width, metric=default_128_par_rev_metric)
@@ -349,7 +413,7 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
 
     plt.tight_layout()
     plt.savefig(title + ".png")
-    plt_legend(handles, "default_vs_econmt-bar-legend-horizontal", ncol=len(handles))
+    plt_legend(handles, "legend-default_vs_econmt-bar-horizontal", ncol=len(handles))
 
 
 def plt_cudnn_vs_econmt_full_training_metrics(metric, metric_unit, measurer, ylabel,
@@ -409,4 +473,4 @@ def plt_cudnn_vs_econmt_full_training_metrics(metric, metric_unit, measurer, yla
 
     plt.tight_layout()
     plt.savefig(title + ".png")
-    plt_legend(handles, "cudnn_vs_econmt-bar-legend-horizontal", ncol=len(handles))
+    plt_legend(handles, "legend-cudnn_vs_econmt-bar-horizontal", ncol=len(handles))
