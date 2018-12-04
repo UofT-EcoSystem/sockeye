@@ -79,7 +79,7 @@ def plt_default_vs_econmt_preliminary(metric, metric_unit=None):
 
 def plt_default_vs_econmt_preliminary_metric(prefix, batch_size,
                                              max_memory_usage,
-                                             max_throughput, bar_width=0.3):
+                                             max_throughput, bar_width=0.4):
 
     title = '%sdefault_vs_econmt-metric' % prefix
 
@@ -88,13 +88,13 @@ def plt_default_vs_econmt_preliminary_metric(prefix, batch_size,
     default_throughput = gen_from_txt("default-B_%d/csv/%s.csv" % (batch_size, 'throughput'), 'throughput')
     econmt_throughput  = gen_from_txt( "econmt-B_%d/csv/%s.csv" % (batch_size, 'throughput'), 'throughput')
 
-    fig, axes = plt.subplots()
+    fig, axes = plt.subplots(figsize=(8, 3))
 
     def _annotate(x, metric, reference):
         plt.annotate((r'$%.2f\times$') % (metric / reference),
                  xy    =(x, metric), 
                  xytext=(x, metric), 
-                 fontsize=13, ha='center', va='bottom', 
+                 fontsize=18, ha='center', va='bottom', 
                  bbox=dict(boxstyle='square', facecolor='white', linewidth=3))
 
     handles = []
@@ -110,14 +110,15 @@ def plt_default_vs_econmt_preliminary_metric(prefix, batch_size,
     _annotate(0-0.5*bar_width, np.max(default_memory_usage[:,2]), np.max(default_memory_usage[:,2]))
     _annotate(0+0.5*bar_width, np.max( econmt_memory_usage[:,2]), np.max(default_memory_usage[:,2]))
 
-    axes.set_xticks([0, 1])
-    axes.set_xticklabels(['Memory\nConsumption', 'Throughput'])
+    axes.set_xticks([])
+    # axes.set_xticks([0, 1])
+    # axes.set_xticklabels(['Memory\nConsumption', 'Throughput'])
     axes.set_ylim(ymin=0, ymax=max_memory_usage)
-    axes.set_ylabel("Memory Consumption (GB)")
+    axes.set_ylabel("Memory Con-\nsumption (GB)", fontsize=30)
     axes.set_yticks(np.arange(0, max_memory_usage + 1, max_memory_usage / 4))
 
     for ticklabel in axes.get_xticklabels() + axes.get_yticklabels():
-        ticklabel.set_fontsize(20)
+        ticklabel.set_fontsize(24)
 
     axes.grid(linestyle='-.', linewidth=1, axis='y')
 
@@ -136,12 +137,12 @@ def plt_default_vs_econmt_preliminary_metric(prefix, batch_size,
     _annotate(1+0.5*bar_width, np.average( econmt_throughput[:,2]), np.average(default_throughput[:,2]))
 
     axes.set_ylim(ymin=0, ymax=max_throughput)
-    axes.set_ylabel("Throughput (samples/s)")
+    axes.set_ylabel("Throughput\n(samples/s)", fontsize=30)
     axes.set_yticks(np.arange(0, max_throughput + 1, max_throughput / 4))
 
     plt.tight_layout()
     plt.savefig(title + ".png")
-    plt_legend(handles, 'legend-default_vs_cudnn-preliminary_bar-horizontal', len(handles))
+    plt_legend(handles, 'legend-default_vs_econmt-preliminary_bar-horizontal', len(handles))
 
 
 def plt_default_vs_econmt_full_training_validation_bleu(first_k_ckpts, prefix='', suffix='', bar=None, discard=None):
