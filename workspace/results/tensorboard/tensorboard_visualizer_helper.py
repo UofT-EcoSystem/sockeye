@@ -95,14 +95,16 @@ def plt_default_vs_econmt_preliminary_metric(prefix, batch_size,
                  fontsize=13, ha='center', va='bottom', 
                  bbox=dict(boxstyle='square', facecolor='white', linewidth=3))
 
-    axes.bar(x=0-0.5*bar_width, height=np.max(default_memory_usage[:,2]),
-             width=bar_width, edgecolor='black', linewidth=3,
-             color='white',
-             label="Default")
-    axes.bar(x=0+0.5*bar_width, height=np.max(econmt_memory_usage [:,2]),
-             width=bar_width, edgecolor='black', linewidth=3,
-             color='green',
-             label="EcoRNN")
+    handles = []
+
+    handles.append(axes.bar(x=0-0.5*bar_width, height=np.max(default_memory_usage[:,2]),
+                   width=bar_width, edgecolor='black', linewidth=3,
+                   color='white',
+                   label="Default"))
+    handles.append(axes.bar(x=0+0.5*bar_width, height=np.max(econmt_memory_usage [:,2]),
+                   width=bar_width, edgecolor='black', linewidth=3,
+                   color='green',
+                   label="EcoRNN"))
     _annotate(0-0.5*bar_width, np.max(default_memory_usage[:,2]), np.max(default_memory_usage[:,2]))
     _annotate(0+0.5*bar_width, np.max( econmt_memory_usage[:,2]), np.max(default_memory_usage[:,2]))
 
@@ -137,6 +139,7 @@ def plt_default_vs_econmt_preliminary_metric(prefix, batch_size,
 
     plt.tight_layout()
     plt.savefig(title + ".png")
+    plt_legend(handles, 'legend-default_vs_cudnn-preliminary_bar-horizontal', len(handles))
 
 
 def plt_default_vs_econmt_full_training_validation_bleu(first_k_ckpts, prefix='', suffix='', bar=None, discard=None):
