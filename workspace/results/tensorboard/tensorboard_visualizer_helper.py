@@ -457,7 +457,7 @@ def plt_cudnn_vs_econmt_full_training_metrics(metric, metric_unit, measurer, yla
             label=r"Default$_{B=128}^\mathrm{par\_rev}$"))
     handles.append(plt.bar(x= 0*bar_width, height=  cudnn_128_par_rev_metric,
             width=bar_width, edgecolor='black', linewidth=3,
-            color='grey',
+            color='black',
             label=  r"CuDNN$_{B=128}^\mathrm{par\_rev}$"))
     handles.append(plt.bar(x= 1*bar_width, height= econmt_256_par_rev_metric,
             width=bar_width, edgecolor='black', linewidth=3,
