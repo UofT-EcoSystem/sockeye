@@ -34,16 +34,16 @@ then
                 --csv --log-file ${SOCKEYE_ROOT}/workspace/results/profile/dram_traffic/${CONFERENCE_SRC_TGT_MODEL}.csv"
 fi
 # ==================================================================================================
-MAX_UPDATES=500
+MAX_UPDATES=2000
 if [ "$1" == "--full-run" ] || [ "$2" == "--full-run" ]
 then
         echo "Training will run until completion."
 	MAX_UPDATES=10000
 else
-        echo "Training will stop after 500 updates."
+        echo "Training will stop after 2000 updates."
 fi
 # ==================================================================================================
-BATCH_SIZE=32
+BATCH_SIZE=80
 INITIAL_LEARNING_RATE=0.0002
 CHECKPOINT_FREQUENCY=4000
 
