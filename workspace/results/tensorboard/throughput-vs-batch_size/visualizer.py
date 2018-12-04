@@ -76,7 +76,7 @@ def plt_throughput_vs_batch_size():
                                   color='black', marker='X', markersize=5, label="Memory\nConsumption")
     
     axes.set_ylabel("Memory Consumption (GB)")
-    axes.set_yticks(np.arange(0, 10, 2))
+    axes.set_yticks(np.arange(0, 11, 2))
 
     legends = throughput_plot + memory_usage_plot
     axes.legend(legends, [legend.get_label() for legend in legends], fontsize=20, loc=4)
