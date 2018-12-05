@@ -38,6 +38,7 @@ def plt_breakdown(sorted_stats_list,
                   xlabel, ylabel,
                   fig_name,
                   ymax=None,
+                  yticks=None,
                   extra_sum=0.0,
                   bar_width=0.3,
                   annotation_top_k=None,
@@ -89,10 +90,12 @@ def plt_breakdown(sorted_stats_list,
                          va='center', 
                          bbox=dict(boxstyle='square', facecolor='white', linewidth=3),
                          arrowprops=dict(arrowstyle="-[, widthB=%f, lengthB=0.3" % 
-                            (0.52 / plt.ylim()[1] * annotation_fontsize * bar_length), linewidth=2))
+                            (0.52 / (plt.ylim()[1] if yticks is None else yticks[-1]) * annotation_fontsize * bar_length), linewidth=2))
     # x- & y- axis
     plt.xlim([-2*bar_width, 2*bar_width])
     plt.xticks([])
+    if yticks is not None:
+        plt.yticks(yticks)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
 
