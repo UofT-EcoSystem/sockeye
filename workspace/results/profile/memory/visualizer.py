@@ -20,7 +20,9 @@ def plt_memory_breakdown(memory_profile, expected_sum, yticks=None):
     plt_breakdown(sorted_stats_list=sorted_stats_list, 
                   expected_sum=expected_sum / 1e3, 
                   xlabel="Layer Type",
-                  ylabel="Memory Consumption (GB)", yticks=yticks,
+                  ylabel="Memory Consumption (GB)", yticks=yticks, 
+                  colors=[np.array([0, 0, 0]), np.array([0.5, 0.5, 0.5]), np.array([1, 0, 0]),
+                          np.array([1, 1, 1]), np.array([1, 1, 1])] if 'partial_fw_prop' in memory_profile else None,
                   fig_name=memory_profile.replace('.log', '-layer.png'),
                   annotation_top_k=4)
     sorted_stats_list = parse_memory_profile(memory_profile=memory_profile, 
@@ -28,7 +30,7 @@ def plt_memory_breakdown(memory_profile, expected_sum, yticks=None):
     plt_breakdown(sorted_stats_list=sorted_stats_list, 
                   expected_sum=expected_sum / 1e3, 
                   xlabel="Data Structure",
-                  ylabel="Memory Consumption (GB)", yticks=yticks,
+                  ylabel="Memory Consumption (GB)", yticks=yticks, 
                   fig_name=memory_profile.replace('.log', '-function.png'),
                   annotation_top_k=3)
 

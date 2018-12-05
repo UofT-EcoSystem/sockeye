@@ -39,6 +39,7 @@ def plt_breakdown(sorted_stats_list,
                   fig_name,
                   ymax=None,
                   yticks=None,
+                  colors=None,
                   extra_sum=0.0,
                   bar_width=0.3,
                   annotation_top_k=None,
@@ -67,7 +68,7 @@ def plt_breakdown(sorted_stats_list,
         plt.bar(x=0, height=sorted_stats_vlist[i], bottom=np.sum(sorted_stats_vlist[i+1:]),
                 width=0.8*bar_width, edgecolor='black', linewidth=3,
                 # color=np.array([1, i * 1.0 / 3, i * 1.0 / 3]) if i < 3 else 'white',
-                color=np.array([1, 0, 0]) if i == 0 else \
+                color=colors[i] if colors is not None else np.array([1, 0, 0]) if i == 0 else \
                       'white' if 'Other'       in sorted_stats_klist[i] or \
                                  'Untrackable' in sorted_stats_klist[i] else \
                       np.array([0, 0, 0]) if sorted_stats_list_len <= 3 else \
@@ -101,7 +102,8 @@ def plt_breakdown(sorted_stats_list,
 
     # Grid & Legend
     plt.grid(linestyle='-.', linewidth=1, axis='y')
-    plt.legend(loc=2, fontsize=18)
+    if colors is None:
+        plt.legend(loc=2, fontsize=18)
     # plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=annotation_fontsize)
     
     # Tighten Layout and Savefig
