@@ -52,7 +52,7 @@ def plt_hparam_sweep_rnn_layers():
     # Number of LSTM RNN Layers
     title ='iwslt15-vi_en-tbd-default_vs_econmt-par_rev-hparam-rnn_layers'
 
-    plt.figure()
+    plt.figure(figsize=(8, 3))
 
     plt.plot([1, 2, 3], [7.931, 9.297, 10.715],
              linewidth=2, linestyle='-', 
@@ -67,12 +67,12 @@ def plt_hparam_sweep_rnn_layers():
              marker='^', markersize=10, 
              color='black', label= r'EcoRNN$_{B=128}^{\mathrm{par\_rev}}$')
 
-    plt.xlabel('Number of RNN Layers')
-    plt.ylabel("Memory Consumption (GB)")
+    plt.xlabel('Number of RNN Layers', fontsize=28)
+    plt.ylabel("Memory Con-\nsumption (GB)", fontsize=28)
     plt.xticks([1, 2, 3, 4, 5], fontsize=20)
-    plt.yticks(np.arange(0, 17, 4), fontsize=20)
+    plt.yticks(np.arange(0, 21, 4), fontsize=20)
     plt.xlim(xmin=0, xmax=6)
-    plt.ylim(ymin=0, ymax=15)
+    plt.ylim(ymin=0, ymax=20)
 
     # plt.legend(fontsize=20)
     plt.grid(linestyle='-.', linewidth=1)
@@ -86,7 +86,7 @@ def plt_hparam_sweep_hidden_dimension():
     # Number of LSTM RNN Layers
     title ='iwslt15-vi_en-tbd-default_vs_econmt-par_rev-hparam-hidden_dimension'
 
-    plt.figure()
+    plt.figure(figsize=(8, 3))
 
     handles = []
 
@@ -103,12 +103,12 @@ def plt_hparam_sweep_hidden_dimension():
              marker='^', markersize=10, 
              color='black', label= r'EcoRNN$_{B=128}^{\mathrm{par\_rev}}$')[0])
 
-    plt.xlabel('Hidden Dimension')
-    plt.ylabel("Memory Consumption (GB)")
+    plt.xlabel('Hidden Dimension', fontsize=28)
+    plt.ylabel("Memory Con-\nsumption (GB)", fontsize=28)
     plt.xticks([256, 512, 1024], fontsize=20)
-    plt.yticks(np.arange(0, 19, 4), fontsize=20)
+    plt.yticks(np.arange(0, 21, 4), fontsize=20)
     plt.xlim(xmin=0, xmax=1280)
-    plt.ylim(ymin=0, ymax=19)
+    plt.ylim(ymin=0, ymax=20)
 
     # plt.legend(fontsize=20, loc=2)
     plt.grid(linestyle='-.', linewidth=1)
