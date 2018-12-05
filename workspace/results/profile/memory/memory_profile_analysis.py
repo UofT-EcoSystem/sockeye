@@ -83,7 +83,7 @@ SOCKEYE_LAYER_REGEX_DICT = {
                             '(target_label)',
                             'untagged',
                             'warning!,ctx_source_unclear',
-                            ':concat',
+                            ':concat', 
                             ':sequencelast'],
 }
 

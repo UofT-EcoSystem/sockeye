@@ -36,7 +36,7 @@ fi
 # ==================================================================================================
 BATCH_SIZE=128
 INITIAL_LEARNING_RATE=0.0003
-MAX_UPDATES=500
+MAX_UPDATES=100
 CHECKPOINT_FREQUENCY=2000
 
 cd ${SOCKEYE_ROOT} && rm -rf ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} && \
