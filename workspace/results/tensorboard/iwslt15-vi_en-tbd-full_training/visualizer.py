@@ -36,10 +36,16 @@ plt_default_vs_econmt_full_training_metrics(metric='memory_usage', metric_unit='
                                             measurer=np.max,
                                             prefix='iwslt15-vi_en-tbd-',
                                             ylabel='Memory Con-\nsumption (GB)', yticks=np.arange(0, 11, 5))
+plt_cudnn_vs_econmt_full_training_metrics(metric='throughput', metric_unit='samples/s',
+                                          measurer=np.average,
+                                          prefix='iwslt15-vi_en-tbd-',
+                                          ylabel='Throughput\n(samples/s)',
+                                          yticks=np.arange(0, 1501, 500))
 plt_cudnn_vs_econmt_full_training_metrics(metric='memory_usage', metric_unit='GB',
                                           measurer=np.max,
                                           prefix='iwslt15-vi_en-tbd-',
-                                          ylabel='Memory Consumption (GB)',)
+                                          ylabel='Memory Con-\nsumption (GB)',
+                                          yticks=np.arange(0, 13, 4))
 
 def plt_hparam_sweep_rnn_layers():
 
