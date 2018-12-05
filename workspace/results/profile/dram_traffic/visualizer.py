@@ -42,8 +42,8 @@ def parse_dram_traffic_profile(fname):
         
 
 if __name__ == "__main__":
-    dram_read_default, dram_write_default = parse_dram_traffic_profile("iwslt15-vi_en-groundhog-default.csv")
-    dram_read_econmt , dram_write_econmt  = parse_dram_traffic_profile("iwslt15-vi_en-groundhog-econmt.csv")
+    dram_read_default, dram_write_default = parse_dram_traffic_profile("iwslt15-vi_en-tbd-default.csv")
+    dram_read_econmt , dram_write_econmt  = parse_dram_traffic_profile("iwslt15-vi_en-tbd-econmt.csv")
     
     plt_rc_setup()
 
@@ -64,6 +64,8 @@ if __name__ == "__main__":
             width=bar_width, edgecolor='black', linewidth=3, 
             color='white')
     
+    print(dram_read_default + dram_write_default, dram_read_econmt + dram_write_econmt)
+
     xticklabels = ['Default', 'EcoNMT']
  
     plt.xlim([-2*bar_width, 1+2*bar_width])
@@ -77,5 +79,5 @@ if __name__ == "__main__":
     plt.grid(linestyle='-.', linewidth=1, axis='y')
 
     plt.tight_layout()
-    plt.savefig("iwslt15-vi_en-groundhog-dram_traffic-default_vs_econmt.png")
+    plt.savefig("iwslt15-vi_en-tbd-dram_traffic-default_vs_econmt.png")
 

@@ -26,6 +26,13 @@ then
 	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off \
                 --csv --log-file ${SOCKEYE_ROOT}/workspace/results/profile/runtime/${CONFERENCE_SRC_TGT_MODEL}.csv"
 fi
+if [ "$1" == "--nvprof-dram" ] || [ "$2" == "--nvprof-dram" ]
+then
+	echo "nvprof is enabled to profile the DRAM traffic."
+	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off \
+                --metrics dram_read_transactions,dram_write_transactions \
+                --csv --log-file ${SOCKEYE_ROOT}/workspace/results/profile/dram_traffic/${CONFERENCE_SRC_TGT_MODEL}.csv"
+fi
 # ==================================================================================================
 BATCH_SIZE=128
 INITIAL_LEARNING_RATE=0.0003
@@ -42,7 +49,7 @@ python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SR
 			 --target-vocab ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SRC_TGT}/vocab.vi \
 			 --output ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} --seed=3 \
 			 --encoder rnn --decoder rnn \
-			 --num-layers 5:5 \
+			 --num-layers 2:2 \
 			 --rnn-cell-type lstm \
 			 --rnn-num-hidden 512 \
 			 --rnn-encoder-reverse-input \
