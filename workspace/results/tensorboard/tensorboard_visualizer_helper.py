@@ -375,14 +375,14 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
     econmt_128_par_rev_metric  = measurer(econmt_128_par_rev_metric [:,2])
     econmt_256_par_rev_metric  = measurer(econmt_256_par_rev_metric [:,2])
 
-    plt.figure(figsize=(8, 3))
-    # plt.figure()
+    # plt.figure(figsize=(8, 3))
+    plt.figure()
 
     def _annotate(x, metric):
         plt.annotate((r'$%.2f\times$') % (metric / default_128_par_rev_metric),
                  xy    =(x, metric), 
                  xytext=(x, metric), 
-                 fontsize=24, ha='center', va='bottom', 
+                 fontsize=20, ha='center', va='bottom', 
                  bbox=dict(boxstyle='square', facecolor='white', linewidth=3))
 
     handles = []
@@ -412,7 +412,7 @@ def plt_default_vs_econmt_full_training_metrics(metric, metric_unit, measurer, y
     plt.xlim([-3*bar_width, 2*bar_width])
     plt.xticks([])
     plt.yticks(yticks, fontsize=20)
-    plt.ylabel(ylabel, fontsize=32)
+    plt.ylabel(ylabel, fontsize=24)
 
     # plt.legend(fontsize=20, ncol=1)
     plt.grid(linestyle='-.', linewidth=1)

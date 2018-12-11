@@ -31,11 +31,11 @@ plt_cudnn_vs_econmt_full_training_validation_bleu  (first_k_ckpts=(7, 10, 6),
 plt_default_vs_econmt_full_training_metrics(metric='throughput', metric_unit='samples/s',
                                             measurer=np.average,
                                             prefix='iwslt15-vi_en-tbd-',
-                                            ylabel='Throughput\n(samples/s)', yticks=np.arange(0, 1501, 500))
+                                            ylabel='Throughput (samples/s)', yticks=np.arange(0, 1501, 500))
 plt_default_vs_econmt_full_training_metrics(metric='memory_usage', metric_unit='GB',
                                             measurer=np.max,
                                             prefix='iwslt15-vi_en-tbd-',
-                                            ylabel='Memory Con-\nsumption (GB)', yticks=np.arange(0, 11, 5))
+                                            ylabel='Memory Consumption (GB)', yticks=np.arange(0, 11, 5))
 plt_cudnn_vs_econmt_full_training_metrics(metric='throughput', metric_unit='samples/s',
                                           measurer=np.average,
                                           prefix='iwslt15-vi_en-tbd-',
