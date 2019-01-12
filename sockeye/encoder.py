@@ -132,7 +132,7 @@ def get_recurrent_encoder(config: RecurrentEncoderConfig, fused: bool,
     encoders.append(BatchMajor2TimeMajor())
 
     if config.reverse_input:
-        encoders.append(ReverseSequence(ParSequenceReverse=C.PAR_SEQUENCE_REVERSE))
+        encoders.append(ReverseSequence())
 
     if config.rnn_config.residual:
         utils.check_condition(config.rnn_config.first_residual_layer >= 2,
@@ -142,8 +142,7 @@ def get_recurrent_encoder(config: RecurrentEncoderConfig, fused: bool,
     # One layer bi-directional RNN:
     encoders.append(BiDirectionalRNNEncoder(rnn_config=config.rnn_config.copy(num_layers=1),
                                             prefix=C.BIDIRECTIONALRNN_PREFIX,
-                                            layout=C.TIME_MAJOR,
-                                            ParSequenceReverse=C.PAR_SEQUENCE_REVERSE))
+                                            layout=C.TIME_MAJOR))
 
     if config.rnn_config.num_layers > 1:
         # Stacked uni-directional RNN:
@@ -287,19 +286,16 @@ class ReverseSequence(Encoder):
     Reverses the input sequence. Requires time-major layout.
     """
 
-    def __init__(self,
-                 ParSequenceReverse: bool) -> None:
-        self.par_sequence_reverse = ParSequenceReverse
-
     def encode(self,
                data: mx.sym.Symbol,
                data_length: mx.sym.Symbol,
                seq_len: int) -> Tuple[mx.sym.Symbol, mx.sym.Symbol, int]:
         # @ArmageddonKnight Fixed the inefficiency of `SequenceReverse`.
-        if self.par_sequence_reverse:
-            data = mx.sym.ParSequenceReverse(IData=data,  SequenceLength=data_length, use_sequence_length=True)
+        import os
+        if int(os.environ["USE_PAR_SEQUENCE_REVERSE"]):
+            data = mx.sym.ParSequenceReverse(data=data, sequence_length=data_length, use_sequence_length=True)
         else:
-            data = mx.sym.   SequenceReverse( data=data, sequence_length=data_length, use_sequence_length=True)
+            data = mx.sym.   SequenceReverse(data=data, sequence_length=data_length, use_sequence_length=True)
         return data, data_length, seq_len
 
 
@@ -702,8 +698,7 @@ class BiDirectionalRNNEncoder(Encoder):
                  rnn_config: rnn.RNNConfig,
                  prefix=C.BIDIRECTIONALRNN_PREFIX,
                  layout=C.TIME_MAJOR,
-                 encoder_class: Callable = RecurrentEncoder,
-                 ParSequenceReverse: bool = False) -> None:
+                 encoder_class: Callable = RecurrentEncoder) -> None:
         utils.check_condition(rnn_config.num_hidden % 2 == 0,
                               "num_hidden must be a multiple of 2 for BiDirectionalRNNEncoders.")
         self.rnn_config = rnn_config
@@ -720,7 +715,6 @@ class BiDirectionalRNNEncoder(Encoder):
                                          layout=C.TIME_MAJOR)
         self.layout = layout
         self.prefix = prefix
-        self.par_sequence_reverse = ParSequenceReverse
 
     def encode(self,
                data: mx.sym.Symbol,
@@ -747,23 +741,24 @@ class BiDirectionalRNNEncoder(Encoder):
         """
         # @ArmageddonKnight Fixed the inefficiency of `SequenceReverse`.
         # (seq_len, batch_size, num_embed)
-        if self.par_sequence_reverse:
-            data_reverse = mx.sym.ParSequenceReverse(IData=data, SequenceLength=data_length,
+        import os
+        if int(os.environ["USE_PAR_SEQUENCE_REVERSE"]):
+            data_reverse = mx.sym.ParSequenceReverse(data=data, sequence_length=data_length,
                                                      use_sequence_length=True)
         else:
-            data_reverse = mx.sym.SequenceReverse(data=data, sequence_length=data_length,
-                                                  use_sequence_length=True)
+            data_reverse = mx.sym.   SequenceReverse(data=data, sequence_length=data_length,
+                                                     use_sequence_length=True)
         # (seq_length, batch, cell_num_hidden)
         hidden_forward, _, _ = self.forward_rnn.encode(data, data_length, seq_len)
         # (seq_length, batch, cell_num_hidden)
         hidden_reverse, _, _ = self.reverse_rnn.encode(data_reverse, data_length, seq_len)
         # (seq_length, batch, cell_num_hidden)
-        if self.par_sequence_reverse:
-            hidden_reverse = mx.sym.ParSequenceReverse(IData=hidden_reverse, SequenceLength=data_length,
+        if int(os.environ["USE_PAR_SEQUENCE_REVERSE"]):
+            hidden_reverse = mx.sym.ParSequenceReverse(data=hidden_reverse, sequence_length=data_length,
                                                        use_sequence_length=True)
         else:
-            hidden_reverse = mx.sym.SequenceReverse(data=hidden_reverse, sequence_length=data_length,
-                                                    use_sequence_length=True)
+            hidden_reverse = mx.sym.   SequenceReverse(data=hidden_reverse, sequence_length=data_length,
+                                                       use_sequence_length=True)
         # (seq_length, batch, 2 * cell_num_hidden)
         hidden_concat = mx.sym.concat(hidden_forward, hidden_reverse, dim=2, name="%s_rnn" % self.prefix)
 

@@ -7,18 +7,6 @@ PROJECT_ROOT=${SOCKEYE_ROOT}/../..
 CONFERENCE_SRC_TGT=iwslt15-vi_en
 CONFERENCE_SRC_TGT_MODEL=${CONFERENCE_SRC_TGT}-groundhog
 
-PARTIAL_FORWARD_PROP=
-if [ "$1" == "--legacy" ]
-then
-	echo "Backpropagation will be done using Legacy approach."
-elif [ "$1" == "--partial-fw-prop" ]
-then
-	echo "Backpropagation will be done using Partial Forward Propagation."
-	PARTIAL_FORWARD_PROP="--rnn-attention-partial-fw-prop"
-else
-	echo "Backpropagation will be done using Legacy approach."
-fi
-# ==================================================================================================
 NVPROF_PREFIX=
 if [ "$1" == "--nvprof-runtime" ] || [ "$2" == "--nvprof-runtime" ]
 then
@@ -72,4 +60,4 @@ python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SR
                          --learning-rate-scheduler-type=plateau-reduce --learning-rate-warmup=0 \
                          --max-num-checkpoint-not-improved=16 --min-num-epochs=1 \
                          --monitor-bleu=500 --keep-last-params=60 --lock-dir /var/lock --use-tensorboard \
-                         --max-updates=${MAX_UPDATES} ${PARTIAL_FORWARD_PROP} 2>&1 | tee ${SOCKEYE_ROOT}/workspace/results/log/${CONFERENCE_SRC_TGT_MODEL}.log
+                         --max-updates=${MAX_UPDATES} 2>&1 | tee ${SOCKEYE_ROOT}/workspace/log/${CONFERENCE_SRC_TGT_MODEL}.log
