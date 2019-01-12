@@ -8,25 +8,27 @@ CONFERENCE_SRC_TGT=iwslt15-vi_en
 CONFERENCE_SRC_TGT_MODEL_OPT=${CONFERENCE_SRC_TGT}-groundhog-${USE_MLP_ATT_SCORING_FUNC}${USE_FUSED_LSTM_NONLIN_BLOCK}${USE_PAR_SEQUENCE_REVERSE}
 
 MAX_UPDATES=
-if [ "$1" == "--full-run" ] || [ "$2" == "--full-run" ]
+if [ "$1" == "--full-run" ]
 then
         echo "Training will run until completion."
 else
-        echo "Training will stop after 500 updates."
+        echo "Training will stop early."
         MAX_UPDATES="--max-updates=500"
 fi
 # ==================================================================================================
 NVPROF_PREFIX=
-if [ "$1" == "--nvprof-runtime" ] || [ "$2" == "--nvprof-runtime" ]
+if [ "$1" == "--nvprof-runtime" ]
 then
 	echo "nvprof is enabled to profile the runtime."
+        mkdir -p ${SOCKEYE_ROOT}/workspace/profile/runtime
 	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off \
                 --csv --log-file ${SOCKEYE_ROOT}/workspace/profile/runtime/${CONFERENCE_SRC_TGT_MODEL_OPT}.csv"
         MAX_UPDATES="--max-updates=200"
 fi
-if [ "$1" == "--nvprof-dram" ] || [ "$2" == "--nvprof-dram" ]
+if [ "$1" == "--nvprof-dram-traffic" ]
 then
 	echo "nvprof is enabled to profile the DRAM traffic."
+        mkdir -p ${SOCKEYE_ROOT}/workspace/profile/dram_traffic
 	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off \
                 --metrics dram_read_transactions,dram_write_transactions \
                 --csv --log-file ${SOCKEYE_ROOT}/workspace/profile/dram_traffic/${CONFERENCE_SRC_TGT_MODEL_OPT}.csv"
