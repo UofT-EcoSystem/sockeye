@@ -25,13 +25,13 @@ then
                 --csv --log-file ${SOCKEYE_ROOT}/workspace/profile/runtime/${CONFERENCE_SRC_TGT_MODEL_OPT}.csv"
         MAX_UPDATES="--max-updates=200"
 fi
-if [ "$1" == "--nvprof-dram-traffic" ]
+if [ "$1" == "--nvprof-dram-transactions" ]
 then
-	echo "nvprof is enabled to profile the DRAM traffic."
-        mkdir -p ${SOCKEYE_ROOT}/workspace/profile/dram_traffic
+	echo "nvprof is enabled to profile the DRAM transactions."
+        mkdir -p ${SOCKEYE_ROOT}/workspace/profile/dram_transactions
 	NVPROF_PREFIX="/usr/local/cuda/bin/nvprof --profile-from-start off \
                 --metrics dram_read_transactions,dram_write_transactions \
-                --csv --log-file ${SOCKEYE_ROOT}/workspace/profile/dram_traffic/${CONFERENCE_SRC_TGT_MODEL_OPT}.csv"
+                --csv --log-file ${SOCKEYE_ROOT}/workspace/profile/dram_transactions/${CONFERENCE_SRC_TGT_MODEL_OPT}.csv"
         MAX_UPDATES="--max-updates=200"
 fi
 # ==================================================================================================
