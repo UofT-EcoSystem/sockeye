@@ -55,4 +55,5 @@ python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SR
                          --word-min-count 1:1 --optimizer=adam  --initial-learning-rate=${INITIAL_LEARNING_RATE} \
                          --learning-rate-reduce-num-not-improved=8 --learning-rate-reduce-factor=0.7 \
                          --learning-rate-scheduler-type=plateau-reduce --max-num-checkpoint-not-improved=32 --min-num-epochs=0 --rnn-attention-type mlp \
-                         --monitor-bleu=500 --keep-last-params=60 --lock-dir /var/lock --use-tensorboard ${MAX_UPDATES}
+                         --monitor-bleu=500 --keep-last-params=60 --lock-dir /var/lock --use-tensorboard ${MAX_UPDATES} \
+                         2>&1 | tee /tmp/${CONFERENCE_SRC_TGT_MODEL_OPT}.log
