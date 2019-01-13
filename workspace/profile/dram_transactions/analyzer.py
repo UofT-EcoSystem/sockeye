@@ -42,5 +42,6 @@ dram_transactions, dram_read_transactions, dram_write_transactions = parse_dram_
 
 import pprint, operator 
 
-sorted_dram_transactions = sorted(dram_transactions.items(), key=lambda kv: kv[1], reverse=True)
+sorted_dram_transactions = sorted(dram_transactions.items(), 
+                                  key=lambda kv: kv[1], reverse=True)
 pprint.pprint(sorted_dram_transactions[:10])
