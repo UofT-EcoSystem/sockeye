@@ -75,4 +75,4 @@ def parse_memory_profile(memory_profile, regex_dict):
 
 parse_memory_profile('iwslt15-vi_en-groundhog-010.log', LAYER_REGEX_DICT)
 parse_memory_profile('iwslt15-vi_en-groundhog-110.log', LAYER_REGEX_DICT)
-parse_memory_profile('/tmp/iwslt15-vi_en-groundhog-110.log', LAYER_REGEX_DICT)
+parse_memory_profile('iwslt15-vi_en-groundhog-2:2-110.log', LAYER_REGEX_DICT)
