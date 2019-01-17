@@ -13,7 +13,10 @@ LAYER_REGEX_DICT = {
     'LSTM Feature Maps'  : ['reserved_space'],
     'LSTM Cell State'    : ['lstmnonlinblock'],
     # 'RNN'                : ['rnn'],
-    'RNN'                : ['i2h', 'h2h'],
+    'RNN'                : ['in_arg:encoder', 'arg_grad:encoder', 
+                            'in_arg:decoder', 'arg_grad:decoder',
+                            '_optimizer_weight_update_encoder',
+                            '_optimizer_weight_update_decoder'],
     'Decoder Concat'     : ['hidden_concat', 'concat_target'],
     'Decoder MLP'        : ['hidden_norminp', 'hidden_fc', 'next_hidden'],
     'Square'             : ['square'],
@@ -57,6 +60,10 @@ def parse_memory_profile(memory_profile, regex_dict):
                     print("[WARNING]: " "[Memory Profile Analyzer] " "Unknown Tag: %s, " "Allocation Size: %5.2f" % \
                         (words[6], float(words[2]) * 1.0 / 1e6))
 
+    import pprint
+
+    pprint.pprint(stats_dict['RNN'])
+
     sorted_stats_list = sorted(stats_dict.items(), key=lambda kv: kv[1][0], reverse=True)
     
     for stats in sorted_stats_list:
@@ -76,3 +83,4 @@ def parse_memory_profile(memory_profile, regex_dict):
 parse_memory_profile('iwslt15-vi_en-groundhog-010.log', LAYER_REGEX_DICT)
 parse_memory_profile('iwslt15-vi_en-groundhog-110.log', LAYER_REGEX_DICT)
 parse_memory_profile('iwslt15-vi_en-groundhog-2:2-110.log', LAYER_REGEX_DICT)
+parse_memory_profile('iwslt15-vi_en-groundhog-3:3-110.log', LAYER_REGEX_DICT)
