@@ -50,7 +50,7 @@ python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SR
                          --output ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL_OPT} --seed=1 \
                          --batch-type=sentence --batch-size=${BATCH_SIZE} --bucket-width=10 \
                          --checkpoint-frequency=${CHECKPOINT_FREQUENCY} --device-ids=0 --embed-dropout=0.3:0.3 \
-                         --encoder=rnn --decoder=rnn --num-layers=3:3 --rnn-cell-type=lstm --rnn-num-hidden=1000 \
+                         --encoder=rnn --decoder=rnn --num-layers=1:1 --rnn-cell-type=lstm --rnn-num-hidden=1000 \
                          --rnn-residual-connections --layer-normalization \
                          --rnn-attention-type=mlp --rnn-attention-num-hidden=512 \
                          --rnn-attention-use-prev-word --rnn-attention-in-upper-layers --rnn-attention-coverage-num-hidden=1 \
