@@ -5,7 +5,11 @@
 SOCKEYE_ROOT=$(cd $(dirname $0)/../.. && pwd)
 PROJECT_ROOT=${SOCKEYE_ROOT}/../..
 CONFERENCE_SRC_TGT=iwslt15-vi_en
-CONFERENCE_SRC_TGT_MODEL_OPT=${CONFERENCE_SRC_TGT}-best-${USE_MLP_ATT_SCORING_FUNC}${USE_LSTM_NONLINEAR_BLOCK}${USE_PAR_SEQUENCE_REVERSE}
+CONFERENCE_SRC_TGT_MODEL_OPT=${CONFERENCE_SRC_TGT}-best
+CONFERENCE_SRC_TGT_MODEL_OPT=${CONFERENCE_SRC_TGT_MODEL_OPT}-${USE_MLP_ATT_SCORING_FUNC}
+CONFERENCE_SRC_TGT_MODEL_OPT=${CONFERENCE_SRC_TGT_MODEL_OPT}-${USE_LSTM_NONLINEAR_BLOCK}
+CONFERENCE_SRC_TGT_MODEL_OPT=${CONFERENCE_SRC_TGT_MODEL_OPT}-${USE_ECO_LSTM_CELL}
+CONFERENCE_SRC_TGT_MODEL_OPT=${CONFERENCE_SRC_TGT_MODEL_OPT}-${USE_PAR_SEQUENCE_REVERSE}
 
 MAX_UPDATES=
 if [ "$1" == "--full-run" ]
@@ -39,7 +43,7 @@ BATCH_SIZE=32
 INITIAL_LEARNING_RATE=0.0002
 CHECKPOINT_FREQUENCY=4000
 
-cd ${SOCKEYE_ROOT} && rm -rf ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} && \
+cd ${SOCKEYE_ROOT} && rm -rf ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL_OPT} && \
 PYTHONPATH=${SOCKEYE_ROOT} ${NVPROF_PREFIX} \
 python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SRC_TGT}/train-preproc.vi \
                          --target ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SRC_TGT}/train-preproc.en \
@@ -47,7 +51,7 @@ python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SR
                          --target-vocab ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SRC_TGT}/vocab.en \
                          --validation-source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SRC_TGT}/tst2012.vi \
                          --validation-target ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SRC_TGT}/tst2012.en \
-                         --output ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL} --seed=1 \
+                         --output ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL_OPT} --seed=1 \
                          --batch-size=${BATCH_SIZE} --checkpoint-frequency=${CHECKPOINT_FREQUENCY} \
                          --embed-dropout=0.1:0.1 --rnn-decoder-hidden-dropout=0.2 --layer-normalization \
                          --num-layers=4:4 --max-seq-len=100:100 --label-smoothing 0.1 \
