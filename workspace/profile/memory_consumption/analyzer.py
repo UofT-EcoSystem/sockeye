@@ -10,15 +10,15 @@ FUNCTION_REGEX_DICT = {
 
 LAYER_REGEX_DICT = {
     'Attention'          : ['att'],
-    'LSTM Feature Maps'  : ['reserved_space'],
+    'LSTM Feature Maps'  : ['forward_features:lstm_cell'],
     'LSTM Cell State'    : ['lstmnonlinblock'],
-    # 'RNN'                : ['rnn'],
-    'RNN'                : ['in_arg:encoder', 'arg_grad:encoder', 
-                            'in_arg:decoder', 'arg_grad:decoder',
-                            '_optimizer_weight_update_encoder',
-                            '_optimizer_weight_update_decoder'],
-    'Decoder Concat'     : ['hidden_concat', 'concat_target'],
-    'Decoder MLP'        : ['hidden_norminp', 'hidden_fc', 'next_hidden'],
+    'RNN'                : ['rnn'],
+    # 'RNN'                : ['in_arg:encoder', 'arg_grad:encoder', 
+    #                         'in_arg:decoder', 'arg_grad:decoder',
+    #                         '_optimizer_weight_update_encoder',
+    #                         '_optimizer_weight_update_decoder'],
+    # 'Decoder Concat'     : ['hidden_concat', 'concat_target'],
+    # 'Decoder MLP'        : ['hidden_norminp', 'hidden_fc', 'next_hidden'],
     'Square'             : ['square'],
     'Output'             : ['logit', 'softmax'],
     'Others'             : ['target_embed', 'source_embed', 'mul', 'rsqrt', 'rminus', ':mean', 'split',
@@ -52,7 +52,7 @@ def parse_memory_profile(memory_profile, regex_dict):
 
                             if key in stats_dict.keys():
                                 stats_dict[key][0] += float(words[2])
-                                stats_dict[key][1].append(words[6])
+                                stats_dict[key][1].append((words[6], float(words[2])))
                             else:
                                 stats_dict[key] = [float(words[2]), [words[6]]]
                                 break
@@ -60,9 +60,9 @@ def parse_memory_profile(memory_profile, regex_dict):
                     print("[WARNING]: " "[Memory Profile Analyzer] " "Unknown Tag: %s, " "Allocation Size: %5.2f" % \
                         (words[6], float(words[2]) * 1.0 / 1e6))
 
-    import pprint
+    # import pprint
 
-    pprint.pprint(stats_dict['RNN'])
+    # pprint.pprint(sorted(stats_dict['RNN'][1], key=lambda pair: pair[1]))
 
     sorted_stats_list = sorted(stats_dict.items(), key=lambda kv: kv[1][0], reverse=True)
     
@@ -79,8 +79,8 @@ def parse_memory_profile(memory_profile, regex_dict):
 
     return sorted_stats_list
 
-
-parse_memory_profile('iwslt15-vi_en-groundhog-010.log', LAYER_REGEX_DICT)
-parse_memory_profile('iwslt15-vi_en-groundhog-110.log', LAYER_REGEX_DICT)
-parse_memory_profile('iwslt15-vi_en-groundhog-2:2-110.log', LAYER_REGEX_DICT)
-parse_memory_profile('iwslt15-vi_en-groundhog-3:3-110.log', LAYER_REGEX_DICT)
+parse_memory_profile('iwslt15-vi_en-best-1100.log', FUNCTION_REGEX_DICT)
+# parse_memory_profile('iwslt15-vi_en-groundhog-010.log', LAYER_REGEX_DICT)
+# parse_memory_profile('iwslt15-vi_en-groundhog-110.log', LAYER_REGEX_DICT)
+# parse_memory_profile('iwslt15-vi_en-groundhog-2:2-110.log', LAYER_REGEX_DICT)
+# parse_memory_profile('iwslt15-vi_en-groundhog-3:3-110.log', LAYER_REGEX_DICT)
