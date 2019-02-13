@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export USE_MLP_ATT_SCORING_FUNC=1
+export USE_ECO_LSTM_CELL=1
+export USE_PAR_SEQUENCE_REVERSE=1

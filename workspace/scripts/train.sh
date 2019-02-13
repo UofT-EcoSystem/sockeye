@@ -33,11 +33,17 @@ fi
 # ==============================================================================
 MODEL=
 HPARAM_SETTINGS=
+BATCH_SIZE=
+CHECKPOINT_FREQUENCY=
+INITIAL_LEARNING_RATE=
 
 if [ "$2" == '--best' ]
 then 
         echo "Running with best hyperparameter settings."
         MODEL=best
+        BATCH_SIZE=32
+        CHECKPOINT_FREQUENCY=4000
+        INITIAL_LEARNING_RATE=0.0002
         HPARAM_SETTINGS="--device-ids=0 --embed-dropout=0.1:0.1 --rnn-decoder-hidden-dropout=0.2 --layer-normalization \
                          --num-layers=4:4 --max-seq-len=100:100 --label-smoothing 0.1 \
                          --weight-tying --weight-tying-type=src_trg --num-embed 512:512 --num-words 50000:50000 \
@@ -45,11 +51,12 @@ then
                          --learning-rate-reduce-num-not-improved=8 --learning-rate-reduce-factor=0.7 \
                          --learning-rate-scheduler-type=plateau-reduce --max-num-checkpoint-not-improved=32 --min-num-epochs=0 --rnn-attention-type mlp \
                          --monitor-bleu=500 --keep-last-params=60 --lock-dir /var/lock --use-tensorboard"
-        BATCH_SIZE=32
-        CHECKPOINT_FREQUENCY=4000
 else 
         echo "Running with groundhog hyperparameter settings."
         MODEL=groundhog
+        BATCH_SIZE=80
+        CHECKPOINT_FREQUENCY=2000
+        INITIAL_LEARNING_RATE=0.0002
         HPARAM_SETTINGS="--bucket-width=10 --device-ids=0 --embed-dropout=0.3:0.3 \
                          --encoder=rnn --decoder=rnn --num-layers=1:1 --rnn-cell-type=lstm --rnn-num-hidden=1000 \
                          --rnn-residual-connections --layer-normalization \
@@ -65,8 +72,6 @@ else
                          --learning-rate-scheduler-type=plateau-reduce --learning-rate-warmup=0 \
                          --max-num-checkpoint-not-improved=16 --min-num-epochs=1 \
                          --monitor-bleu=500 --keep-last-params=60 --lock-dir /var/lock --use-tensorboard"
-        BATCH_SIZE=80
-        CHECKPOINT_FREQUENCY=2000
 fi
 
 SOCKEYE_ROOT=$(cd $(dirname $0)/../.. && pwd)
@@ -106,8 +111,6 @@ then
         MAX_UPDATES="--max-updates=200"
 fi
 # ==============================================================================
-BATCH_SIZE=32
-
 cd ${SOCKEYE_ROOT} && rm -rf ${SOCKEYE_ROOT}/workspace/${CONFERENCE_SRC_TGT_MODEL_OPT} && \
 PYTHONPATH=${SOCKEYE_ROOT} ${NVPROF_PREFIX} \
 python3 -m sockeye.train --source ${SOCKEYE_ROOT}/workspace/data/${CONFERENCE_SRC_TGT}/${TRAIN_SRC} \
