@@ -1,4 +1,4 @@
 */*
 !.gitignore
-!download-wmt16_en_de.sh
-!iwslt15-vi_en/download-iwslt15-vi_en.sh
+!wmt16-de_en/download.sh
+!iwslt15-vi_en/download.sh
