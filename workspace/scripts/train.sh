@@ -54,7 +54,7 @@ then
 else 
         echo "Running with groundhog hyperparameter settings."
         MODEL=groundhog
-        BATCH_SIZE=80
+        BATCH_SIZE=160
         CHECKPOINT_FREQUENCY=2000
         INITIAL_LEARNING_RATE=0.0002
         HPARAM_SETTINGS="--bucket-width=10 --device-ids=0 --embed-dropout=0.3:0.3 \
