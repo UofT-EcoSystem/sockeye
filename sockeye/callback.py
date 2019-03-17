@@ -84,15 +84,19 @@ class TrainingMonitor(object):
         self.decoder_metric_queue = self.ctx.Queue()
         self.decoder_processes = []  # type: List[mp.Process]
         # TODO(fhieber): MXNet Speedometer uses root logger. How to fix this?
-        # @ArmageddonKnight Changed the callback subroutine from default `Speedometer` to `TensorboardSpeedometer`.
-        # `TensorboardSpeedometer` has the ability of logging Training Throughput, Memory Usage, and Evaluation Metrics.
+        # @ArmageddonKnight Changed the callback subroutine from default `Speedometer` to `CSVSpeedometer`.
+        # `CSVSpeedometer` has the ability of logging Training Throughput, 
+        #   Memory Usage, and Evaluation Metrics, Power, and Energy.
         # self.speedometer = mx.callback.Speedometer(batch_size=batch_size,
         #                                            frequent=C.MEASURE_SPEED_EVERY,
         #                                            auto_reset=False)
-        self.speedometer = mx.callback.TensorboardSpeedometer(summary_writer=self.summary_writer,
-                                                              batch_size=batch_size,
-                                                              frequent=C.MEASURE_SPEED_EVERY,
-                                                              auto_reset=False)
+        # self.speedometer = mx.callback.TensorboardSpeedometer(summary_writer=self.summary_writer,
+        #                                                       batch_size=batch_size,
+        #                                                       frequent=C.MEASURE_SPEED_EVERY,
+        #                                                       auto_reset=False)
+        self.speedometer = mx.callback.CSVSpeedometer(batch_size=batch_size,
+                                                      frequent=C.MEASURE_SPEED_EVERY,
+                                                      auto_reset=False)
         utils.check_condition(optimized_metric in C.METRICS, "Unsupported metric: %s" % optimized_metric)
         if optimized_metric == C.BLEU:
             utils.check_condition(self.cp_decoder is not None, "%s requires CheckpointDecoder" % C.BLEU)
