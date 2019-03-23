@@ -86,7 +86,7 @@ class TrainingMonitor(object):
         # TODO(fhieber): MXNet Speedometer uses root logger. How to fix this?
         # @ArmageddonKnight Changed the callback subroutine from default `Speedometer` to `CSVSpeedometer`.
         # `CSVSpeedometer` has the ability of logging Training Throughput, 
-        #   Memory Usage, and Evaluation Metrics, Power, and Energy.
+        # Memory Usage, and Evaluation Metrics, Power, and Energy.
         # self.speedometer = mx.callback.Speedometer(batch_size=batch_size,
         #                                            frequent=C.MEASURE_SPEED_EVERY,
         #                                            auto_reset=False)
