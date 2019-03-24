@@ -94,9 +94,11 @@ class TrainingMonitor(object):
         #                                                       batch_size=batch_size,
         #                                                       frequent=C.MEASURE_SPEED_EVERY,
         #                                                       auto_reset=False)
+        self.csv_fname = '/tmp/mxnet_speedometer.csv'
         self.speedometer = mx.callback.CSVSpeedometer(batch_size=batch_size,
                                                       frequent=C.MEASURE_SPEED_EVERY,
-                                                      auto_reset=False)
+                                                      auto_reset=False,
+                                                      csv_fname=self.csv_fname)
         utils.check_condition(optimized_metric in C.METRICS, "Unsupported metric: %s" % optimized_metric)
         if optimized_metric == C.BLEU:
             utils.check_condition(self.cp_decoder is not None, "%s requires CheckpointDecoder" % C.BLEU)
@@ -158,6 +160,7 @@ class TrainingMonitor(object):
 
         if self.summary_writer:
             write_tensorboard(self.summary_writer, metrics, checkpoint)
+        write_csv(self.csv_fname, metrics, checkpoint)
 
     def eval_end_callback(self, checkpoint: int, val_metric: mx.metric.EvalMetric) -> Tuple[bool, int]:
         """
@@ -179,6 +182,7 @@ class TrainingMonitor(object):
 
         if self.summary_writer:
             write_tensorboard(self.summary_writer, metrics, checkpoint)
+        write_csv(self.csv_fname, metrics, checkpoint)
 
         if self.cp_decoder:
             self._empty_decoder_metric_queue()
@@ -238,6 +242,7 @@ class TrainingMonitor(object):
             if self.summary_writer:
                 write_tensorboard(self.summary_writer, decoder_metrics,
                                   decoded_checkpoint)
+            write_csv(self.csv_fname, decoder_metrics, decoded_checkpoint)
 
     def _wait_for_decode_slot(self, timeout: int = 5):
         while len(self.decoder_processes) == self.num_concurrent_decodes:
@@ -287,6 +292,19 @@ def _decode_and_evaluate(checkpoint_decoder: checkpoint_decoder.CheckpointDecode
     """
     metrics = checkpoint_decoder.decode_and_evaluate(checkpoint, output_name)
     queue.put((checkpoint, metrics))
+
+
+def write_csv(csv_fname,
+              metrics: Dict[str, float],
+              checkpoint: int):
+    with open(csv_fname, 'a') as fout:
+        log_entry = ['ckpt',    '%d' % checkpoint,
+                     'wc_time', '%f' % time.time()]
+        for name, value in metrics.items():
+            log_entry.extend(['%s' % name, '%f' % value])
+
+        fout.write(",".join(log_entry))
+        fout.write('\n')
 
 
 def write_tensorboard(summary_writer,
