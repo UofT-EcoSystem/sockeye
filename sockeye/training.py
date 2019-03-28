@@ -380,10 +380,10 @@ class TrainingModel(model.SockeyeModel):
                 mxmonitor.tic()
 
             # Forward-backward to get outputs, gradients
-            self.module.forward_backward(batch)
-
+            self.module.forward(batch, is_train=True)
             # Update aggregate training loss
             self.module.update_metric(metric_train, batch.label)
+            self.module.backward()
 
             # If using an extended optimizer, provide extra state information about the current batch
             # Loss: training loss
