@@ -26,6 +26,9 @@ from typing import AnyStr, List, Optional
 
 import mxnet as mx
 import numpy as np
+import ctypes
+
+_cudart = ctypes.CDLL('libcudart.so')
 
 from . import callback
 from . import checkpoint_decoder
@@ -365,13 +368,11 @@ class TrainingModel(model.SockeyeModel):
                 logger.info("Maximum # of updates (%s) or epochs (%s) reached.", max_updates, max_num_epochs)
                 break
 
-            import numba.cuda as cuda 
-
             # @ArmageddonKnight: Added the numba subroutine calls for profiling training iteration 101.
             if train_state.updates == 100:
-                cuda.profile_start()
+                _cudart.cudaProfilerStart()
             if train_state.updates == 101:
-                cuda.profile_stop()
+                _cudart.cudaProfilerStop()
 
             # process batch
             batch = next_data_batch
