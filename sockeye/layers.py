@@ -12,6 +12,7 @@
 # permissions and limitations under the License.
 
 import logging
+import os
 from typing import Optional, Tuple, Union
 from . import constants as C
 
@@ -60,9 +61,14 @@ class LayerNormalization:
         :param inputs: Shape: (d0, ..., dn, hidden).
         :return: mean, var: Shape: (d0, ..., dn, 1).
         """
-        mean = mx.sym.mean(data=inputs, axis=-1, keepdims=True)
+        if os.environ['MXNET_BACKWARD_DO_MIRROR']:
+            mean_functor = mx.sym.EcoMean
+        else:
+            mean_functor = mx.sym.mean
+
+        mean = mean_functor(data=inputs, axis=-1, keepdims=True)
         # TODO(fhieber): MXNet should have this.
-        var = mx.sym.mean(mx.sym.square(mx.sym.broadcast_minus(inputs, mean)), axis=-1, keepdims=True)
+        var  = mean_functor(mx.sym.square(mx.sym.broadcast_minus(inputs, mean)), axis=-1, keepdims=True)
         return mean, var
 
     def normalize(self, inputs: mx.sym.Symbol, eps: float = 0.000001) -> mx.sym.Symbol:

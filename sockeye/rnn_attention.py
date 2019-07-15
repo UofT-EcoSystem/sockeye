@@ -15,6 +15,7 @@
 Implementations of different attention mechanisms in sequence-to-sequence models.
 """
 import logging
+import os
 from typing import Callable, NamedTuple, Optional, Tuple
 
 import mxnet as mx
@@ -449,7 +450,13 @@ class MultiHeadDotAttention(Attention):
             # (batch, heads, length)
             attention_probs = mx.sym.reshape(data=attention_probs, shape=(-4, -1, self.heads, source_seq_len))
             # just average over distributions
-            attention_probs = mx.sym.mean(attention_probs, axis=1, keepdims=False)
+            
+            if os.environ['MXNET_BACKWARD_DO_MIRROR']:
+                mean_functor = mx.sym.EcoMean
+            else:
+                mean_functor = mx.sym.mean
+
+            attention_probs = mean_functor(attention_probs, axis=1, keepdims=False)
 
             return AttentionState(context=context,
                                   probs=attention_probs,

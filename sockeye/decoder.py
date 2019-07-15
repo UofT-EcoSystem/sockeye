@@ -15,6 +15,7 @@
 Decoders for sequence-to-sequence models.
 """
 import logging
+import os
 from abc import ABC, abstractmethod
 from typing import Callable, List, NamedTuple, Tuple
 from typing import Optional
@@ -330,13 +331,18 @@ class TransformerDecoder(Decoder):
         target = mx.sym.broadcast_mul(target, mask)
         # reduce to single prediction
         # target: (batch_size, model_size)
-        target = mx.sym.sum(target, axis=1, keepdims=False, name=C.LOGIT_INPUTS_NAME)
+        if os.environ['MXNET_BACKWARD_DO_MIRROR']:
+            sum_functor = mx.sym.EcoReduceSum
+        else:
+            sum_functor = mx.sym.sum
+
+        target = sum_functor(target, axis=1, keepdims=False, name=C.LOGIT_INPUTS_NAME)
 
         # logits: (batch_size, vocab_size)
         logits = self.output_layer(target)
 
         # TODO(fhieber): no attention probs for now
-        attention_probs = mx.sym.sum(mx.sym.zeros_like(source_encoded), axis=2, keepdims=False)
+        attention_probs = sum_functor(mx.sym.zeros_like(source_encoded), axis=2, keepdims=False)
 
         new_states = [source_encoded, source_encoded_lengths]
         return target, logits, attention_probs, new_states
@@ -811,7 +817,12 @@ class RecurrentDecoder(Decoder):
                     init = source_encoded_last
                 elif self.config.state_init == C.RNN_DEC_INIT_AVG:
                     # (batch_size, encoder_num_hidden)
-                    init = mx.sym.broadcast_div(mx.sym.sum(source_masked, axis=0, keepdims=False),
+
+                    if os.environ['MXNET_BACKWARD_DO_MIRROR']:
+                        sum_functor = mx.sym.EcoReduceSum
+                    else:
+                        sum_functor = mx.sym.sum
+                    init = mx.sym.broadcast_div(sum_functor(source_masked, axis=0, keepdims=False),
                                                 mx.sym.expand_dims(source_encoded_length, axis=1))
                 else:
                     raise ValueError("Unknown decoder state init type '%s'" % self.config.state_init)
