@@ -78,7 +78,7 @@ class LayerNormalization:
         :param eps: Variance epsilon.
         :return: inputs_norm: Normalized inputs. Shape: (d0, ..., dn, num_hidden).
         """
-        if os.environ['USE_FUSED_LAYER_NORM']:
+        if int(os.environ['USE_FUSED_LAYER_NORM']):
             inputs_norm = mx.sym.LayerNorm(inputs,
                 eps=eps, 
                 gamma=self.scale,
