@@ -78,11 +78,19 @@ class LayerNormalization:
         :param eps: Variance epsilon.
         :return: inputs_norm: Normalized inputs. Shape: (d0, ..., dn, num_hidden).
         """
-        mean, var = self.moments(inputs)
-        inputs_norm = mx.sym.broadcast_minus(inputs, mean, name='%sinp_minus_mean' % self.prefix)
-        inputs_norm = mx.sym.broadcast_mul(inputs_norm, mx.sym.rsqrt(var + eps), name='%sinp_norm' % self.prefix)
-        inputs_norm = mx.sym.broadcast_mul(inputs_norm, self.scale, name='%sinp_norm_scaled' % self.prefix)
-        inputs_norm = mx.sym.broadcast_add(inputs_norm, self.shift, name='%sinp_norm_scaled_shifted' % self.prefix)
+        if os.environ['USE_FUSED_LAYER_NORM']:
+            inputs_norm = mx.sym.LayerNorm(inputs,
+                eps=eps, 
+                gamma=self.scale,
+                beta =self.shift,
+                name='%sinp_layer_norm' % self.prefix)
+        else:
+            mean, var = self.moments(inputs)
+            inputs_norm = mx.sym.broadcast_minus(inputs, mean, name='%sinp_minus_mean' % self.prefix)
+            inputs_norm = mx.sym.broadcast_mul(inputs_norm, mx.sym.rsqrt(var + eps), name='%sinp_norm' % self.prefix)
+            inputs_norm = mx.sym.broadcast_mul(inputs_norm, self.scale, name='%sinp_norm_scaled' % self.prefix)
+            inputs_norm = mx.sym.broadcast_add(inputs_norm, self.shift, name='%sinp_norm_scaled_shifted' % self.prefix)
+        
         return inputs_norm
 
 
