@@ -12,7 +12,6 @@
 # permissions and limitations under the License.
 
 import logging
-import os
 from typing import Optional, Tuple, Union
 from . import constants as C
 
