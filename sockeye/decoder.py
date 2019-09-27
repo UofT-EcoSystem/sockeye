@@ -15,7 +15,6 @@
 Decoders for sequence-to-sequence models.
 """
 import logging
-import os
 from abc import ABC, abstractmethod
 from typing import Callable, List, NamedTuple, Tuple
 from typing import Optional
@@ -812,7 +811,6 @@ class RecurrentDecoder(Decoder):
                     init = source_encoded_last
                 elif self.config.state_init == C.RNN_DEC_INIT_AVG:
                     # (batch_size, encoder_num_hidden)
-
                     init = mx.sym.broadcast_div(mx.sym.sum(source_masked, axis=0, keepdims=False),
                                                 mx.sym.expand_dims(source_encoded_length, axis=1))
                 else:
